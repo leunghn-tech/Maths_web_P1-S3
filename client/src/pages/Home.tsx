@@ -1,0 +1,403 @@
+/**
+ * Maths Quest —「數學探險手帳」：以非對稱學習軌跡、暖白紙張與解題橘紅引導學生選擇下一個練習站。
+ */
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  ArrowRight,
+  BookOpen,
+  Check,
+  ChevronDown,
+  CircleHelp,
+  Compass,
+  Dices,
+  LineChart,
+  Menu,
+  Play,
+  Search,
+  Sparkles,
+  Target,
+  X,
+} from "lucide-react";
+
+type Stage = "primary" | "secondary";
+
+type Course = {
+  grade: string;
+  shortLabel: string;
+  stage: Stage;
+  title: string;
+  checkpoint: string;
+  accent: string;
+  categories: Array<{ name: string; topics: string[] }>;
+};
+
+const courses: Course[] = [
+  {
+    grade: "P1",
+    shortLabel: "小一",
+    stage: "primary",
+    title: "建立數感與圖形直覺",
+    checkpoint: "20 以內加減法",
+    accent: "#0e8b87",
+    categories: [
+      { name: "數", topics: ["20 以內的數", "100 以內的數", "順數和倒數", "基本加法和減法（不進位／不退位及進位／退位）"] },
+      { name: "度量", topics: ["長度和距離（常用單位）", "時間（星期、鐘面的認識）"] },
+      { name: "圖形與空間", topics: ["立體圖形（球體、柱體、錐體）", "平面圖形（三角形、正方形、長方形、圓形）", "直線和曲線"] },
+      { name: "數據處理", topics: ["象形圖（一個圖形代表 1 個單位）"] },
+    ],
+  },
+  {
+    grade: "P2",
+    shortLabel: "小二",
+    stage: "primary",
+    title: "連結乘除與生活量度",
+    checkpoint: "九九乘法表",
+    accent: "#c8811e",
+    categories: [
+      { name: "數", topics: ["三位數", "乘法和除法（九九乘法表）", "加減乘除混合計算", "分數的初步認識"] },
+      { name: "度量", topics: ["長度和距離（米、厘米）", "時間（時、分、秒）", "貨幣（香港硬幣和紙幣）"] },
+      { name: "圖形與空間", topics: ["角（直角、銳角、鈍角）", "四邊形（正方形、長方形的特性）", "方向（東、南、西、北）"] },
+      { name: "數據處理", topics: ["象形圖（一個圖形代表 1、2、5 或 10 個單位）"] },
+    ],
+  },
+  {
+    grade: "P3",
+    shortLabel: "小三",
+    stage: "primary",
+    title: "擴闊數字與量的觀察",
+    checkpoint: "四則混合計算",
+    accent: "#4f6eae",
+    categories: [
+      { name: "數", topics: ["四位數", "五位數", "四則混合計算"] },
+      { name: "度量", topics: ["重量（克、公斤）", "容量（升、毫升）", "時間（24 小時報時制）"] },
+      { name: "圖形與空間", topics: ["平行線和垂直線", "平行四邊形", "梯形"] },
+      { name: "數據處理", topics: ["方塊圖", "棒形圖（一個單位代表 1 個數據）"] },
+    ],
+  },
+  {
+    grade: "P4",
+    shortLabel: "小四",
+    stage: "primary",
+    title: "看懂關係、面積與分數",
+    checkpoint: "分數加減法",
+    accent: "#b15979",
+    categories: [
+      { name: "數", topics: ["因數和倍數", "公因數和公倍數（HCF & LCM）", "分數的加減法", "小數的初步認識"] },
+      { name: "度量", topics: ["周界（正方形和長方形）", "面積（正方形和長方形）"] },
+      { name: "圖形與空間", topics: ["三角形的分類（等邊、等腰、直角）", "四邊形的關係", "方向（八個方向）"] },
+      { name: "數據處理", topics: ["棒形圖（一個單位代表 2、5、10 或 100 個數據）"] },
+    ],
+  },
+  {
+    grade: "P5",
+    shortLabel: "小五",
+    stage: "primary",
+    title: "靈活運算與空間推理",
+    checkpoint: "小數四則運算",
+    accent: "#7c6cb0",
+    categories: [
+      { name: "數", topics: ["分數乘法和除法", "小數加減乘除", "異分母分數加減"] },
+      { name: "度量", topics: ["平行四邊形、三角形及梯形的面積", "體積（立方厘米、立方米）"] },
+      { name: "圖形與空間", topics: ["多邊形", "八向度與旋轉", "軸對稱"] },
+      { name: "數據處理", topics: ["折線圖", "平均數"] },
+    ],
+  },
+  {
+    grade: "P6",
+    shortLabel: "小六",
+    stage: "primary",
+    title: "為升中建立應用能力",
+    checkpoint: "百分數應用",
+    accent: "#6c8b4c",
+    categories: [
+      { name: "數", topics: ["百分數", "分數／小數／百分數的互化", "百分數的應用（折扣、利潤）"] },
+      { name: "度量", topics: ["圓周", "圓面積", "排水法求不規則立體體積", "速率"] },
+      { name: "圖形與空間", topics: ["立體圖形的截面和摺紙圖樣", "坐標幾何（第一象限）"] },
+      { name: "數據處理", topics: ["圓形圖", "圓形圖的應用"] },
+      { name: "代數", topics: ["簡易方程（一步及兩步方程）"] },
+    ],
+  },
+  {
+    grade: "S1",
+    shortLabel: "中一",
+    stage: "secondary",
+    title: "踏入代數與坐標世界",
+    checkpoint: "一元一次方程",
+    accent: "#3867a7",
+    categories: [
+      { name: "數與代數", topics: ["有向數及數線（正負數）", "估算與近似（四捨五入、有效數字）", "代數初步與公式", "一元一次方程", "整數指數定律（基本）", "百分率（一）：單利息、百分增減"] },
+      { name: "圖形與空間", topics: ["幾何初步（點、線、角、多邊形）", "面積與體積（一）：棱柱及圓柱的表面積和體積", "坐標幾何初步（直角坐標系、距離公式）", "對稱與變換"] },
+      { name: "數據處理", topics: ["統計圖表的組織及表述（組織頻數表、組織統計圖）"] },
+    ],
+  },
+  {
+    grade: "S2",
+    shortLabel: "中二",
+    stage: "secondary",
+    title: "用關係、證明與圖像解題",
+    checkpoint: "聯立一元一次方程",
+    accent: "#7d5ea8",
+    categories: [
+      { name: "數與代數", topics: ["乘法公式與因式分解（十字相乘法、平方差、完全平方）", "代數分數與分式方程", "聯立一元一次方程（代入法、消去法、圖像法）", "速率、比例及比"] },
+      { name: "圖形與空間", topics: ["畢氏定理（勾股定理）及無理數", "幾何證明的初步（三角形內角和、外角、全等三角形、相似三角形）", "面積與體積（二）：錐體及圓錐的表面積和體積", "凸多邊形的內角與外角"] },
+      { name: "數據處理", topics: ["統計學的誤用", "散點圖"] },
+    ],
+  },
+  {
+    grade: "S3",
+    shortLabel: "中三",
+    stage: "secondary",
+    title: "整合理論與真實應用",
+    checkpoint: "三角學初步",
+    accent: "#1f8378",
+    categories: [
+      { name: "數與代數", topics: ["指數定律（負指數及零指數）", "根式與實數系統", "一元一次不等式", "百分率（二）：複利息、折舊、稅務及增長問題"] },
+      { name: "圖形與空間", topics: ["三角學初步（正弦 sin、餘弦 cos、正切 tan、仰角與俯角、方位角）", "面積與體積（三）：球體的表面積和體積、相似立體的體積比", "坐標幾何（二）：直線的斜率、平行線與垂直線的斜率關係", "三角形的幾何特性（內心、外心、重心、垂心）"] },
+      { name: "數據處理", topics: ["集中趨勢的量度（平均數、中位數、眾數、加權平均數）", "概率初步（理論概率、經驗概率）"] },
+    ],
+  },
+];
+
+const categoryIcons = [BookOpen, Compass, LineChart, Dices, CircleHelp];
+
+export default function Home() {
+  const [activeStage, setActiveStage] = useState<Stage>("primary");
+  const [selectedGrade, setSelectedGrade] = useState("P1");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const visibleCourses = useMemo(
+    () => courses.filter((course) => course.stage === activeStage),
+    [activeStage],
+  );
+  const course = courses.find((item) => item.grade === selectedGrade) ?? courses[0];
+  const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
+
+  const selectStage = (stage: Stage) => {
+    setActiveStage(stage);
+    setSelectedGrade(stage === "primary" ? "P1" : "S1");
+  };
+
+  const notifyComingSoon = (label: string) => {
+    toast.message(`${label}將在題目系統完成後開放`, {
+      description: "現階段先讓你確認學習路徑與頁面設計。",
+    });
+  };
+
+  return (
+    <div className="min-h-screen overflow-x-clip bg-[#f8f5ed] text-[#172b3f]">
+      <header className="sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl">
+        <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 lg:px-10">
+          <a href="#top" className="group flex items-center gap-3" aria-label="Maths Quest 首頁">
+            <span className="grid size-11 place-items-center rounded-[15px] bg-[#f05a3c] shadow-[0_7px_0_#c84932] transition-transform duration-200 group-hover:-translate-y-0.5">
+              <img src="/manus-storage/maths-quest-logo_cf7e4a6a.png" alt="" className="size-7 brightness-0 invert" />
+            </span>
+            <span className="leading-none">
+              <strong className="block text-[17px] font-extrabold tracking-[-0.04em]">Maths Quest</strong>
+              <small className="mt-1 block font-mono text-[10px] font-bold tracking-[0.16em] text-[#f05a3c]">數學操題地圖</small>
+            </span>
+          </a>
+
+          <nav className="hidden items-center gap-7 text-sm font-bold lg:flex" aria-label="主要導覽">
+            <a href="#path" className="transition-colors hover:text-[#f05a3c]">學習路徑</a>
+            <a href="#curriculum" className="transition-colors hover:text-[#f05a3c]">課程地圖</a>
+            <button onClick={() => notifyComingSoon("我的進度")} className="transition-colors hover:text-[#f05a3c]">我的進度</button>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <button onClick={() => notifyComingSoon("登入功能")} className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] sm:block">登入</button>
+            <button onClick={() => notifyComingSoon("開始練習")} className="hidden items-center gap-2 rounded-full bg-[#172b3f] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_0_#0e1d2a] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none sm:flex">
+              開始練習 <ArrowRight className="size-4" />
+            </button>
+            <button onClick={() => setMenuOpen((open) => !open)} className="grid size-10 place-items-center rounded-full border border-[#172b3f]/15 lg:hidden" aria-label="開啟選單" aria-expanded={menuOpen}>
+              {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
+        </div>
+        {menuOpen && (
+          <nav className="border-t border-[#172b3f]/10 bg-[#f8f5ed] px-5 py-5 lg:hidden" aria-label="流動版主要導覽">
+            <div className="mx-auto grid max-w-[1440px] gap-2 text-sm font-bold">
+              <a onClick={() => setMenuOpen(false)} href="#path" className="rounded-xl px-3 py-3 hover:bg-white">學習路徑</a>
+              <a onClick={() => setMenuOpen(false)} href="#curriculum" className="rounded-xl px-3 py-3 hover:bg-white">課程地圖</a>
+              <button onClick={() => notifyComingSoon("登入功能")} className="rounded-xl px-3 py-3 text-left hover:bg-white">登入</button>
+            </div>
+          </nav>
+        )}
+      </header>
+
+      <main id="top">
+        <section className="relative border-b border-[#172b3f]/10">
+          <div className="hero-grid pointer-events-none absolute inset-0 opacity-80" />
+          <div className="relative mx-auto grid min-h-[590px] max-w-[1440px] items-center gap-10 px-5 py-14 lg:grid-cols-[0.93fr_1.07fr] lg:px-10 lg:py-20">
+            <div className="relative z-10 max-w-[650px]">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 bg-white/70 px-3 py-1.5 text-xs font-bold text-[#41566e] shadow-sm">
+                <span className="size-2 rounded-full bg-[#f05a3c]" />
+                為香港 P1–S3 學生設計
+              </div>
+              <p className="font-mono text-xs font-bold tracking-[0.18em] text-[#f05a3c]">YOUR LEARNING TRAIL — 01</p>
+              <h1 className="mt-4 text-balance text-[clamp(2.8rem,6vw,5.5rem)] font-black leading-[0.94] tracking-[-0.075em] text-[#172b3f]">
+                選一個主題，<br />
+                <span className="relative inline-block text-[#f05a3c]">解開下一題。</span>
+              </h1>
+              <p className="mt-7 max-w-[510px] text-[17px] leading-8 text-[#53677d]">由基礎數感到三角學，把你的年級、主題和下一個練習站連起來。每次練習，都是一次更清楚的理解。</p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <a href="#path" className="group inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-6 py-4 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
+                  探索我的年級 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </a>
+                <button onClick={() => notifyComingSoon("診斷練習")} className="inline-flex items-center gap-2 rounded-full border border-[#172b3f]/20 bg-white/75 px-6 py-4 text-sm font-extrabold transition hover:border-[#172b3f] hover:bg-white">
+                  <Target className="size-4 text-[#0e8b87]" /> 先做診斷練習
+                </button>
+              </div>
+              <div className="mt-12 flex items-center gap-6 text-xs font-bold text-[#53677d]">
+                <span className="flex items-center gap-2"><Check className="size-4 text-[#0e8b87]" /> 按年級整理</span>
+                <span className="flex items-center gap-2"><Check className="size-4 text-[#0e8b87]" /> 清楚主題路徑</span>
+              </div>
+            </div>
+            <div className="relative min-h-[350px] lg:min-h-[460px]">
+              <div className="absolute -right-[22%] -top-[17%] size-[460px] rounded-full border border-[#f05a3c]/20 lg:size-[640px]" />
+              <div className="absolute bottom-[8%] left-[7%] z-10 rounded-2xl border border-white/60 bg-white/88 px-4 py-3 shadow-[0_15px_35px_rgba(23,43,63,0.12)] backdrop-blur-md">
+                <p className="font-mono text-[10px] font-bold tracking-widest text-[#f05a3c]">NEXT STOP</p>
+                <p className="mt-1 text-sm font-extrabold">今天，從一題開始。</p>
+              </div>
+              <img src="/manus-storage/maths-quest-hero_80a0a3df.png" alt="數學探險手帳風格的幾何與量度插畫" className="relative z-[1] mx-auto w-full max-w-[720px] drop-shadow-[0_24px_28px_rgba(23,43,63,0.14)]" />
+            </div>
+          </div>
+        </section>
+
+        <section id="path" className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
+          <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">CHOOSE YOUR STATION — 02</p>
+              <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">你的學習路徑，從年級開始。</h2>
+            </div>
+            <div className="inline-flex w-fit rounded-full bg-[#e8e3d9] p-1.5" aria-label="選擇學習階段">
+              <button onClick={() => selectStage("primary")} className={`rounded-full px-4 py-2.5 text-sm font-extrabold transition ${activeStage === "primary" ? "bg-white text-[#172b3f] shadow-sm" : "text-[#617286] hover:text-[#172b3f]"}`}>小學 P1–P6</button>
+              <button onClick={() => selectStage("secondary")} className={`rounded-full px-4 py-2.5 text-sm font-extrabold transition ${activeStage === "secondary" ? "bg-white text-[#172b3f] shadow-sm" : "text-[#617286] hover:text-[#172b3f]"}`}>初中 S1–S3</button>
+            </div>
+          </div>
+
+          <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
+            <aside className="relative overflow-hidden rounded-[28px] bg-[#172b3f] px-5 py-7 text-white shadow-[0_15px_0_#0e1d2a] xl:min-h-[620px]">
+              <div className="absolute -right-14 top-4 size-52 rounded-full border border-white/10" />
+              <div className="relative">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#f6be5d]">GRADE TRAIL</span>
+                  <span className="rounded-full bg-white/10 px-2.5 py-1 font-mono text-[10px] font-bold">{activeStage === "primary" ? "P1–P6" : "S1–S3"}</span>
+                </div>
+                <p className="mt-4 max-w-[205px] text-lg font-extrabold leading-6">點選年級，查看它的數學站點。</p>
+                <div className="relative mt-8 space-y-1 before:absolute before:bottom-5 before:left-[17px] before:top-5 before:w-px before:bg-white/20">
+                  {visibleCourses.map((item, index) => {
+                    const selected = item.grade === selectedGrade;
+                    return (
+                      <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition ${selected ? "bg-white text-[#172b3f] shadow-[0_5px_0_rgba(0,0,0,0.12)]" : "text-white/75 hover:bg-white/10 hover:text-white"}`}>
+                        <span className={`grid size-7 shrink-0 place-items-center rounded-full font-mono text-[11px] font-bold ${selected ? "bg-[#f05a3c] text-white" : "border border-white/25 bg-[#172b3f]"}`}>{index + 1}</span>
+                        <span className="font-extrabold">{item.shortLabel}</span>
+                        <span className="ml-auto font-mono text-[10px] opacity-55">{item.grade}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </aside>
+
+            <div className="rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_15px_35px_rgba(23,43,63,0.06)] md:p-8">
+              <div className="flex flex-col gap-5 border-b border-[#172b3f]/10 pb-7 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="grid size-14 place-items-center rounded-2xl text-xl font-black text-white shadow-[0_5px_0_rgba(0,0,0,0.15)]" style={{ backgroundColor: course.accent }}>{course.grade}</div>
+                  <div>
+                    <p className="font-mono text-[11px] font-bold tracking-[0.16em]" style={{ color: course.accent }}>{course.shortLabel.toUpperCase()} LEARNING MAP</p>
+                    <h3 className="mt-1 text-2xl font-black tracking-[-0.045em]">{course.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[#617286]">共 {topicCount} 個課程焦點 · 從最常用的核心概念開始整理。</p>
+                  </div>
+                </div>
+                <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#172b3f] px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 active:translate-y-0">
+                  <Play className="size-4 fill-current" /> 開始 {course.grade} 練習
+                </button>
+              </div>
+
+              <div className="mt-7 grid gap-4 md:grid-cols-2">
+                {course.categories.map((category, index) => {
+                  const Icon = categoryIcons[index] ?? BookOpen;
+                  return (
+                    <article key={category.name} className="group relative overflow-hidden rounded-2xl border border-[#172b3f]/10 bg-[#fcfbf7] p-5 transition duration-200 hover:-translate-y-1 hover:border-[#172b3f]/25 hover:shadow-[0_12px_25px_rgba(23,43,63,0.08)]">
+                      <div className="flex items-center justify-between">
+                        <span className="grid size-9 place-items-center rounded-xl text-white" style={{ backgroundColor: course.accent }}><Icon className="size-4" /></span>
+                        <span className="font-mono text-[10px] font-bold tracking-widest text-[#8390a0]">{String(index + 1).padStart(2, "0")}</span>
+                      </div>
+                      <h4 className="mt-4 text-lg font-extrabold">{category.name}</h4>
+                      <ul className="mt-3 space-y-2">
+                        {category.topics.slice(0, 3).map((topic) => <li key={topic} className="flex gap-2 text-sm leading-5 text-[#617286]"><span className="mt-[8px] size-1 shrink-0 rounded-full" style={{ backgroundColor: course.accent }} />{topic}</li>)}
+                        {category.topics.length > 3 && <li className="pl-3 text-xs font-bold text-[#617286]">另有 {category.topics.length - 3} 個焦點</li>}
+                      </ul>
+                    </article>
+                  );
+                })}
+              </div>
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
+                <p className="text-sm font-bold text-[#744230]"><span className="font-mono text-xs text-[#f05a3c]">CHECKPOINT →</span> 建議先挑戰：{course.checkpoint}</p>
+                <button onClick={() => notifyComingSoon(course.checkpoint)} className="inline-flex items-center gap-1 text-sm font-extrabold text-[#f05a3c] hover:underline">查看題型 <ArrowRight className="size-4" /></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="curriculum" className="border-y border-[#172b3f]/10 bg-[#ece6d9]">
+          <div className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
+            <div className="grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:gap-16">
+              <div>
+                <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">FULL CURRICULUM — 03</p>
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">所有年級，<br />都在同一張地圖。</h2>
+                <p className="mt-5 max-w-[360px] text-[15px] leading-7 text-[#53677d]">先確認我們是否完整收錄你的課程內容。下一階段將把每個主題變成可選難度、即時回饋的練習題。</p>
+                <div className="mt-8 rounded-2xl border border-[#172b3f]/10 bg-white/70 p-4">
+                  <div className="flex items-center gap-3"><Sparkles className="size-5 text-[#f05a3c]" /><p className="text-sm font-extrabold">UI 首版已完成</p></div>
+                  <p className="mt-2 text-sm leading-6 text-[#617286]">現時可瀏覽年級與主題；練習、登入和進度按鈕會在題目引擎完成後啟用。</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {courses.map((item) => (
+                  <details key={item.grade} className="group rounded-2xl border border-[#172b3f]/10 bg-white open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
+                    <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none">
+                      <span className="grid size-10 place-items-center rounded-xl font-mono text-xs font-bold text-white" style={{ backgroundColor: item.accent }}>{item.grade}</span>
+                      <span className="min-w-0 flex-1"><strong className="block text-sm font-extrabold">{item.shortLabel} · {item.title}</strong><small className="mt-0.5 block text-xs text-[#728195]">{item.categories.length} 個範疇 · {item.categories.reduce((sum, category) => sum + category.topics.length, 0)} 個主題</small></span>
+                      <ChevronDown className="size-5 text-[#617286] transition-transform group-open:rotate-180" />
+                    </summary>
+                    <div className="grid gap-4 border-t border-[#172b3f]/10 px-5 py-5 md:grid-cols-2">
+                      {item.categories.map((category) => (
+                        <div key={category.name}>
+                          <h3 className="font-mono text-[11px] font-bold tracking-[0.12em]" style={{ color: item.accent }}>{category.name.toUpperCase()}</h3>
+                          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-[#53677d]">{category.topics.map((topic) => <li key={topic}>· {topic}</li>)}</ul>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
+          <div className="relative overflow-hidden rounded-[30px] bg-[#0e8b87] px-6 py-10 text-white md:px-10 lg:px-14 lg:py-14">
+            <div className="absolute -right-20 -top-24 size-[360px] rounded-full border-[24px] border-white/10" />
+            <div className="absolute bottom-[-90px] right-[22%] size-[220px] rounded-full border-[18px] border-[#f6be5d]/70" />
+            <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+              <div className="max-w-[690px]">
+                <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#ffe4a0]">NEXT BUILD — 04</p>
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">下一步，讓每一站都能真正練習。</h2>
+                <p className="mt-4 text-[15px] leading-7 text-white/80">請先預覽這個首頁。你確認導航、色彩和年級分類後，我會按你指定的優先順序，從題目、答案檢查與進度紀錄開始建造。</p>
+              </div>
+              <a href="#path" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f8f5ed] px-5 py-3.5 text-sm font-extrabold text-[#172b3f] shadow-[0_4px_0_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">回到學習路徑 <ArrowRight className="size-4" /></a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-[#172b3f]/10 bg-[#f8f5ed]">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 py-8 text-xs text-[#617286] sm:flex-row sm:items-center sm:justify-between lg:px-10">
+          <p className="font-bold text-[#172b3f]">Maths Quest <span className="ml-2 font-normal text-[#617286]">P1–S3 數學操題地圖</span></p>
+          <p className="font-mono text-[10px] tracking-[0.12em]">LEARN · PRACTISE · UNDERSTAND</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
