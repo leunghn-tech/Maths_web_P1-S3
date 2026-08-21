@@ -187,7 +187,7 @@ export default function Home() {
   return (
     <div className="min-h-screen overflow-x-clip bg-[#f8f5ed] text-[#172b3f]">
       <header className="sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl">
-        <div className="mx-auto flex h-[76px] max-w-[1440px] items-center justify-between px-5 lg:px-10">
+          <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
           <a href="#top" className="group flex items-center gap-3" aria-label="Maths Quest 首頁">
             <span className="grid size-11 place-items-center rounded-[15px] bg-[#f05a3c] shadow-[0_7px_0_#c84932] transition-transform duration-200 group-hover:-translate-y-0.5">
               <img src="/manus-storage/maths-quest-logo_cf7e4a6a.png" alt="" className="size-7 brightness-0 invert" />
@@ -216,7 +216,7 @@ export default function Home() {
         </div>
         {menuOpen && (
           <nav className="border-t border-[#172b3f]/10 bg-[#f8f5ed] px-5 py-5 lg:hidden" aria-label="流動版主要導覽">
-            <div className="mx-auto grid max-w-[1440px] gap-2 text-sm font-bold">
+            <div className="mx-auto grid max-w-[1280px] gap-2 text-sm font-bold">
               <a onClick={() => setMenuOpen(false)} href="#path" className="rounded-xl px-3 py-3 hover:bg-white">學習路徑</a>
               <a onClick={() => setMenuOpen(false)} href="#curriculum" className="rounded-xl px-3 py-3 hover:bg-white">課程地圖</a>
               <button onClick={() => notifyComingSoon("登入功能")} className="rounded-xl px-3 py-3 text-left hover:bg-white">登入</button>
@@ -228,7 +228,7 @@ export default function Home() {
       <main id="top">
         <section className="relative border-b border-[#172b3f]/10">
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-80" />
-          <div className="relative mx-auto grid min-h-[590px] max-w-[1440px] items-center gap-10 px-5 py-14 lg:grid-cols-[0.93fr_1.07fr] lg:px-10 lg:py-20">
+          <div className="relative mx-auto grid min-h-[560px] max-w-[1280px] items-center gap-8 px-5 py-14 lg:grid-cols-[0.94fr_1.06fr] lg:px-8 lg:py-16">
             <div className="relative z-10 max-w-[650px]">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 bg-white/70 px-3 py-1.5 text-xs font-bold text-[#41566e] shadow-sm">
                 <span className="size-2 rounded-full bg-[#f05a3c]" />
@@ -264,8 +264,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="path" className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
-          <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <section id="path" className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
+          <div className="mb-7 flex flex-col justify-between gap-5 border-b border-[#172b3f]/10 pb-7 md:flex-row md:items-end">
             <div>
               <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">CHOOSE YOUR STATION — 02</p>
               <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">你的學習路徑，從年級開始。</h2>
@@ -277,7 +277,7 @@ export default function Home() {
           </div>
 
           <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="relative overflow-hidden rounded-[28px] bg-[#172b3f] px-5 py-7 text-white shadow-[0_15px_0_#0e1d2a] xl:min-h-[620px]">
+            <aside className="relative overflow-hidden rounded-[28px] bg-[#172b3f] px-5 py-7 text-white shadow-[0_12px_0_#0e1d2a]">
               <div className="absolute -right-14 top-4 size-52 rounded-full border border-white/10" />
               <div className="relative">
                 <div className="flex items-center justify-between">
@@ -300,8 +300,8 @@ export default function Home() {
               </div>
             </aside>
 
-            <div className="rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_15px_35px_rgba(23,43,63,0.06)] md:p-8">
-              <div className="flex flex-col gap-5 border-b border-[#172b3f]/10 pb-7 sm:flex-row sm:items-start sm:justify-between">
+            <div className="rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_12px_30px_rgba(23,43,63,0.06)] md:p-7">
+              <div className="flex flex-col gap-5 border-b border-[#172b3f]/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-start gap-4">
                   <div className="grid size-14 place-items-center rounded-2xl text-xl font-black text-white shadow-[0_5px_0_rgba(0,0,0,0.15)]" style={{ backgroundColor: course.accent }}>{course.grade}</div>
                   <div>
@@ -315,11 +315,11 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="mt-7 grid gap-4 md:grid-cols-2">
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {course.categories.map((category, index) => {
                   const Icon = categoryIcons[index] ?? BookOpen;
                   return (
-                    <article key={category.name} className="group relative overflow-hidden rounded-2xl border border-[#172b3f]/10 bg-[#fcfbf7] p-5 transition duration-200 hover:-translate-y-1 hover:border-[#172b3f]/25 hover:shadow-[0_12px_25px_rgba(23,43,63,0.08)]">
+                    <article key={category.name} className="group relative h-full overflow-hidden rounded-2xl border border-[#172b3f]/10 bg-[#fcfbf7] p-5 transition duration-200 hover:-translate-y-1 hover:border-[#172b3f]/25 hover:shadow-[0_12px_25px_rgba(23,43,63,0.08)]">
                       <div className="flex items-center justify-between">
                         <span className="grid size-9 place-items-center rounded-xl text-white" style={{ backgroundColor: course.accent }}><Icon className="size-4" /></span>
                         <span className="font-mono text-[10px] font-bold tracking-widest text-[#8390a0]">{String(index + 1).padStart(2, "0")}</span>
@@ -333,7 +333,7 @@ export default function Home() {
                   );
                 })}
               </div>
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
                 <p className="text-sm font-bold text-[#744230]"><span className="font-mono text-xs text-[#f05a3c]">CHECKPOINT →</span> 建議先挑戰：{course.checkpoint}</p>
                 <button onClick={() => notifyComingSoon(course.checkpoint)} className="inline-flex items-center gap-1 text-sm font-extrabold text-[#f05a3c] hover:underline">查看題型 <ArrowRight className="size-4" /></button>
               </div>
@@ -342,8 +342,8 @@ export default function Home() {
         </section>
 
         <section id="curriculum" className="border-y border-[#172b3f]/10 bg-[#ece6d9]">
-          <div className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
-            <div className="grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:gap-16">
+          <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
+            <div className="grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:gap-14">
               <div>
                 <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">FULL CURRICULUM — 03</p>
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">所有年級，<br />都在同一張地圖。</h2>
@@ -355,7 +355,7 @@ export default function Home() {
               </div>
               <div className="space-y-3">
                 {courses.map((item) => (
-                  <details key={item.grade} className="group rounded-2xl border border-[#172b3f]/10 bg-white open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
+                  <details key={item.grade} className="group rounded-2xl border border-[#172b3f]/10 bg-white transition-shadow open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
                     <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none">
                       <span className="grid size-10 place-items-center rounded-xl font-mono text-xs font-bold text-white" style={{ backgroundColor: item.accent }}>{item.grade}</span>
                       <span className="min-w-0 flex-1"><strong className="block text-sm font-extrabold">{item.shortLabel} · {item.title}</strong><small className="mt-0.5 block text-xs text-[#728195]">{item.categories.length} 個範疇 · {item.categories.reduce((sum, category) => sum + category.topics.length, 0)} 個主題</small></span>
@@ -376,7 +376,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1440px] px-5 py-16 lg:px-10 lg:py-24">
+        <section className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
           <div className="relative overflow-hidden rounded-[30px] bg-[#0e8b87] px-6 py-10 text-white md:px-10 lg:px-14 lg:py-14">
             <div className="absolute -right-20 -top-24 size-[360px] rounded-full border-[24px] border-white/10" />
             <div className="absolute bottom-[-90px] right-[22%] size-[220px] rounded-full border-[18px] border-[#f6be5d]/70" />
@@ -393,7 +393,7 @@ export default function Home() {
       </main>
 
       <footer className="border-t border-[#172b3f]/10 bg-[#f8f5ed]">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-5 py-8 text-xs text-[#617286] sm:flex-row sm:items-center sm:justify-between lg:px-10">
+        <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-5 py-8 text-xs text-[#617286] sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <p className="font-bold text-[#172b3f]">Maths Quest <span className="ml-2 font-normal text-[#617286]">P1–S3 數學操題地圖</span></p>
           <p className="font-mono text-[10px] tracking-[0.12em]">LEARN · PRACTISE · UNDERSTAND</p>
         </div>

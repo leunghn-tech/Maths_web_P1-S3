@@ -67,6 +67,10 @@
 }
 
 @layer utilities {
+  .content-tight {
+    text-wrap: balance;
+  }
+
   .hero-grid {
     background-image: linear-gradient(rgba(23,43,63,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.055) 1px, transparent 1px);
     background-size: 30px 30px;
