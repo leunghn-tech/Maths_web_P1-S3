@@ -3,6 +3,7 @@
  */
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { Link } from "wouter";
 import {
   ArrowRight,
   BookOpen,
@@ -339,9 +340,11 @@ export default function Home() {
                     <p className="mt-2 text-sm leading-6 text-[#617286]">共 {topicCount} 個課程焦點 · 從最常用的核心概念開始整理。</p>
                   </div>
                 </div>
-                <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
-                  <Play className="size-4 fill-current" /> 開始 {course.grade} 練習
-                </button>
+                {course.grade === "P1" ? (
+                  <Link href="/practice/p1-add-subtract" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 P1 練習</Link>
+                ) : (
+                  <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
+                )}
               </div>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
