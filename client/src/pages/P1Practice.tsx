@@ -50,10 +50,13 @@ export default function P1Practice() {
   const [seconds, setSeconds] = useState(0);
   const [streak, setStreak] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [wrongIndices, setWrongIndices] = useState<number[]>([]);
+  const [reviewMode, setReviewMode] = useState(false);
 
-  const question = questions[currentIndex];
-  const progress = Math.round(((currentIndex + (result === "correct" ? 1 : 0)) / questions.length) * 100);
-  const stars = score >= 5 ? 3 : score >= 3 ? 2 : score >= 1 ? 1 : 0;
+  const activeIndices = reviewMode ? wrongIndices : questions.map((_, index) => index);
+  const question = questions[activeIndices[currentIndex]];
+  const progress = Math.round(((currentIndex + (result === "correct" ? 1 : 0)) / activeIndices.length) * 100);
+  const stars = score >= activeIndices.length ? 3 : score >= Math.ceil(activeIndices.length * 0.6) ? 2 : score >= 1 ? 1 : 0;
   const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
   useEffect(() => {
@@ -77,14 +80,15 @@ export default function P1Practice() {
     } else {
       setResult("incorrect");
       setStreak(0);
+      setWrongIndices((indices) => indices.includes(activeIndices[currentIndex]) ? indices : [...indices, activeIndices[currentIndex]]);
       if (soundEnabled) playWrongSound();
     }
   };
 
   const nextQuestion = () => {
-    if (currentIndex === questions.length - 1) {
+    if (currentIndex === activeIndices.length - 1) {
       setFinished(true);
-      markPracticeCompleted("p1-add-subtract");
+      if (!reviewMode) markPracticeCompleted("p1-add-subtract");
       if (soundEnabled) playCelebrationSound();
       return;
     }
@@ -101,6 +105,18 @@ export default function P1Practice() {
     setFinished(false);
     setSeconds(0);
     setStreak(0);
+    setReviewMode(false);
+  };
+
+  const startWrongReview = () => {
+    setCurrentIndex(0);
+    setAnswer("");
+    setResult("idle");
+    setScore(0);
+    setSeconds(0);
+    setStreak(0);
+    setFinished(false);
+    setReviewMode(true);
   };
 
   return (
@@ -136,7 +152,7 @@ export default function P1Practice() {
           </div>
           <div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]">
             <span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">今日學習路徑</span>
-            <p className="mt-1 font-extrabold">已完成 {Math.min(currentIndex + (result === "correct" ? 1 : 0), questions.length)} / {questions.length} 題 <span className="mx-1 text-[#f05a3c]">·</span> {timeLabel}</p>
+            <p className="mt-1 font-extrabold">{reviewMode ? "重溫" : "已完成"} {Math.min(currentIndex + (result === "correct" ? 1 : 0), activeIndices.length)} / {activeIndices.length} 題 <span className="mx-1 text-[#f05a3c]">·</span> {timeLabel}</p>
           </div>
         </div>
 
@@ -144,10 +160,10 @@ export default function P1Practice() {
           <aside className="mq-practice-sidebar order-2 lg:order-1">
             <div className="rounded-[24px] border border-[#172b3f]/10 bg-[#172b3f] p-5 text-white shadow-[0_10px_0_#0e1d2a] dark:border-white/10 dark:bg-[#1b3042] dark:shadow-[0_10px_0_#0b131d]">
               <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">本次任務</p>
-              <h2 className="mt-3 text-xl font-black leading-7">完成 5 個計算站。</h2>
-              <p className="mt-3 text-sm leading-6 text-white/75">每題都可以慢慢想。答錯了也會看到提示，再試一次。</p>
+              <h2 className="mt-3 text-xl font-black leading-7">{reviewMode ? "逐題重溫錯題。" : "完成 5 個計算站。"}</h2>
+              <p className="mt-3 text-sm leading-6 text-white/75">{reviewMode ? "這次只會出現你剛才答錯的題目。" : "每題都可以慢慢想。答錯了也會看到提示，再試一次。"}</p>
               <div className="mq-mission-steps mt-5" aria-label="五個題目的完成進度">
-                {questions.map((_, index) => <span key={index} className={index < currentIndex + (result === "correct" ? 1 : 0) ? "mq-mission-step-done" : index === currentIndex ? "mq-mission-step-current" : ""}>{index + 1}</span>)}
+                {activeIndices.map((_, index) => <span key={index} className={index < currentIndex + (result === "correct" ? 1 : 0) ? "mq-mission-step-done" : index === currentIndex ? "mq-mission-step-current" : ""}>{index + 1}</span>)}
               </div>
               <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${progress}%` }} /></div>
               <div className="mt-3 flex justify-between font-mono text-[10px] font-bold text-white/65"><span>PROGRESS</span><span>{progress}%</span></div>
@@ -193,7 +209,7 @@ export default function P1Practice() {
                     <button onClick={() => setAnswer((value) => value.slice(0, -1))} disabled={result !== "idle" || !answer} className="mq-key col-span-3 rounded-xl border border-[#172b3f]/10 bg-[#fcfbf7] py-3 text-sm font-extrabold transition disabled:cursor-default disabled:opacity-45 dark:border-white/10 dark:bg-[#1c3041]">刪除一個數字</button>
                   </div>
                   <div className="flex flex-col justify-end gap-2">
-                    {result === "idle" ? <button onClick={checkAnswer} disabled={!answer} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">檢查答案</button> : result === "incorrect" ? <button onClick={() => { setAnswer(""); setResult("idle"); }} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition"><RotateCcw className="mr-1 inline size-4" /> 再試一次</button> : <button onClick={nextQuestion} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition">{currentIndex === questions.length - 1 ? "查看結果" : "下一題"} <ArrowRight className="ml-1 inline size-4" /></button>}
+                    {result === "idle" ? <button onClick={checkAnswer} disabled={!answer} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">檢查答案</button> : result === "incorrect" ? <button onClick={() => { setAnswer(""); setResult("idle"); }} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition"><RotateCcw className="mr-1 inline size-4" /> 再試一次</button> : <button onClick={nextQuestion} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition">{currentIndex === activeIndices.length - 1 ? "查看結果" : "下一題"} <ArrowRight className="ml-1 inline size-4" /></button>}
                     <p className="text-center font-mono text-[10px] font-bold tracking-[0.08em] text-[#8390a0] dark:text-[#9eb4bd]">按數字輸入答案</p>
                   </div>
                 </div>
@@ -202,11 +218,11 @@ export default function P1Practice() {
               <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
                 <span className="grid size-20 place-items-center rounded-[26px] bg-[#fff0e9] text-[#f05a3c] shadow-[0_10px_0_rgba(240,90,60,0.16)] dark:bg-[#3a2f2b]"><Trophy className="size-10" /></span>
                 <div className="mq-celebration-burst" aria-hidden="true">{Array.from({ length: 12 }).map((_, index) => <span key={index} style={{ "--burst": `${index * 30}deg` } as CSSProperties} />)}</div>
-                <p className="mt-7 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]">完成學習站</p>
-                <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">你完成了這段路徑！</h2>
+                <p className="mt-7 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]">{reviewMode ? "錯題重溫完成" : "完成學習站"}</p>
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">{reviewMode ? "你已重新走完錯題路徑！" : "你完成了這段路徑！"}</h2>
                 <div className="mq-finish-stars mt-4">{[1, 2, 3].map((star) => <Star key={star} className={`size-7 ${star <= stars ? "fill-[#f6be5d] text-[#f6be5d]" : "text-[#e8e3d9] dark:text-[#2a4051]"}`} />)}</div>
-                <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {questions.length} 題，用時 {timeLabel}。每一題都是更熟練的一步。</p>
-                <div className="mt-7 flex flex-wrap justify-center gap-3"><button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/#path" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">返回題目庫 <ArrowRight className="size-4" /></Link></div>
+                <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {activeIndices.length} 題，用時 {timeLabel}。每一題都是更熟練的一步。</p>
+                <div className="mt-7 flex flex-wrap justify-center gap-3">{!reviewMode && wrongIndices.length > 0 && <button onClick={startWrongReview} className="mq-review inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-5 py-3 text-sm font-extrabold text-[#f05a3c] transition"><Sparkles className="size-4" /> 重溫 {wrongIndices.length} 題錯題</button>}<button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/#path" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">返回題目庫 <ArrowRight className="size-4" /></Link></div>
               </div>
             )}
           </section>

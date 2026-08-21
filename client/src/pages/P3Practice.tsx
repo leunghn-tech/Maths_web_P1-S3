@@ -58,12 +58,15 @@ export default function P3Practice() {
   const [seconds, setSeconds] = useState(0);
   const [levelFinished, setLevelFinished] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [wrongIndices, setWrongIndices] = useState<number[]>([]);
+  const [reviewMode, setReviewMode] = useState(false);
 
   const level = levels[selectedLevel];
-  const question = level.questions[currentIndex];
+  const activeIndices = reviewMode ? wrongIndices : level.questions.map((_, index) => index);
+  const question = level.questions[activeIndices[currentIndex]];
   const completed = currentIndex + (result === "correct" ? 1 : 0);
-  const progress = Math.round((completed / level.questions.length) * 100);
-  const stars = levelScore >= 3 ? 3 : levelScore >= 2 ? 2 : levelScore >= 1 ? 1 : 0;
+  const progress = Math.round((completed / activeIndices.length) * 100);
+  const stars = levelScore >= activeIndices.length ? 3 : levelScore >= Math.ceil(activeIndices.length * 0.67) ? 2 : levelScore >= 1 ? 1 : 0;
   const passed = levelScore >= 2;
   const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
@@ -82,6 +85,8 @@ export default function P3Practice() {
     setStreak(0);
     setSeconds(0);
     setLevelFinished(false);
+    setWrongIndices([]);
+    setReviewMode(false);
   };
 
   const choose = (choice: number) => {
@@ -96,14 +101,15 @@ export default function P3Practice() {
     }
     setResult("incorrect");
     setStreak(0);
+    setWrongIndices((indices) => indices.includes(activeIndices[currentIndex]) ? indices : [...indices, activeIndices[currentIndex]]);
     if (soundEnabled) playWrongSound();
   };
 
   const nextQuestion = () => {
-    if (currentIndex === level.questions.length - 1) {
+    if (currentIndex === activeIndices.length - 1) {
       const justPassed = levelScore >= 2;
-      if (justPassed && selectedLevel < 3) setUnlockedLevel((value) => Math.max(value, (selectedLevel + 1) as Level) as Level);
-      if (justPassed) markPracticeCompleted(`p3-level-${selectedLevel}`);
+      if (!reviewMode && justPassed && selectedLevel < 3) setUnlockedLevel((value) => Math.max(value, (selectedLevel + 1) as Level) as Level);
+      if (!reviewMode && justPassed) markPracticeCompleted(`p3-level-${selectedLevel}`);
       setLevelFinished(true);
       if (soundEnabled) playCelebrationSound();
       return;
@@ -114,6 +120,7 @@ export default function P3Practice() {
   };
 
   const retry = () => { setResult("idle"); setSelectedAnswer(null); };
+  const startWrongReview = () => { setCurrentIndex(0); setResult("idle"); setSelectedAnswer(null); setLevelScore(0); setStreak(0); setSeconds(0); setLevelFinished(false); setReviewMode(true); };
 
   return (
     <div className="mq-practice mq-p3-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
@@ -129,6 +136,7 @@ export default function P3Practice() {
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#4f6eae]"><span className="size-2 rounded-full bg-[#4f6eae]" /> P3 · 分級運算站</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">四則混合計算</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">完成每一級 3 題，答對至少 2 題即可解鎖下一條運算路徑。</p></div><div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]"><span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">目前關卡</span><p className="mt-1 font-extrabold">L{selectedLevel} · {timeLabel}</p></div></div>
 
         <div className="mq-level-select" aria-label="選擇 P3 難度關卡">{([1, 2, 3] as Level[]).map((item) => <button key={item} onClick={() => item <= unlockedLevel && resetLevel(item)} disabled={item > unlockedLevel} aria-pressed={item === selectedLevel} className={item > unlockedLevel ? "mq-level-locked" : ""}>{item > unlockedLevel ? <Lock className="size-4" /> : <span className="font-mono">0{item}</span>}<span><strong>Level {item}</strong><small>{item === 1 ? "基礎" : item === 2 ? "進階" : "挑戰"}</small></span>{item < 3 && <ChevronRight className="ml-auto size-4 opacity-40" />}</button>)}</div>
+        {!reviewMode && wrongIndices.length > 0 && <button onClick={startWrongReview} className="mq-review mt-4 inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-4 py-2 text-sm font-extrabold text-[#f05a3c] transition"><RotateCcw className="size-4" /> 重溫本關 {wrongIndices.length} 題錯題</button>}
 
         <div className="mq-practice-grid mt-5 grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
           <aside className="mq-practice-sidebar order-2 lg:order-1"><div className="rounded-[24px] border border-[#172b3f]/10 bg-[#172b3f] p-5 text-white shadow-[0_10px_0_#0e1d2a] dark:border-white/10 dark:bg-[#1b3042]"><p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">過關任務</p><h2 className="mt-3 text-xl font-black leading-7">答對 2 題即可過關。</h2><p className="mt-3 text-sm leading-6 text-white/75">每題先看清乘、除、加、減的運算次序。</p><div className="mq-mission-steps mt-5">{level.questions.map((_, index) => <span key={index} className={index < completed ? "mq-mission-step-done" : index === currentIndex ? "mq-mission-step-current" : ""}>{index + 1}</span>)}</div><div className="mt-6 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${progress}%` }} /></div><div className="mq-stars mt-5" aria-label={`本關已獲得 ${stars} 顆星`}>{[1, 2, 3].map((star) => <Star key={star} className={`size-5 ${star <= stars ? "mq-star-earned fill-[#f6be5d] text-[#f6be5d]" : "text-white/20"}`} />)}<span className="ml-2 text-xs font-extrabold text-white/75">連續答對 {streak} 題</span></div></div><div className="mq-tip mt-5 rounded-2xl border border-[#172b3f]/10 bg-[#fff3e8] p-4 dark:border-white/10 dark:bg-[#3a2f2b]"><div className="flex items-center gap-2 text-[#4f6eae]"><Lightbulb className="size-4" /><span className="font-mono text-[10px] font-bold tracking-[0.12em]">運算次序</span></div><p className="mt-2 text-sm font-bold leading-6 text-[#744230] dark:text-[#ffe6d6]">先算乘法和除法；同級運算則由左至右。</p></div></aside>

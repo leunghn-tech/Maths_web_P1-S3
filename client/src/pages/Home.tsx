@@ -23,7 +23,8 @@ import {
   X,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import { getCompletedPractices, PRACTICE_COMPLETION_EVENT } from "@/lib/practiceCompletion";
+import { getCompletedPractices, PRACTICE_COMPLETION_EVENT, resetPracticeProgress } from "@/lib/practiceCompletion";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 type Stage = "primary" | "secondary";
 
@@ -171,6 +172,7 @@ export default function Home() {
   const [selectedGrade, setSelectedGrade] = useState("P1");
   const [menuOpen, setMenuOpen] = useState(false);
   const [completedPractices, setCompletedPractices] = useState<string[]>([]);
+  const [resetOpen, setResetOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -200,6 +202,13 @@ export default function Home() {
     setSelectedGrade(stage === "primary" ? "P1" : "S1");
   };
 
+  const resetProgress = () => {
+    resetPracticeProgress();
+    setCompletedPractices([]);
+    setResetOpen(false);
+    toast.success("學習進度已重設", { description: "你可以隨時重新挑戰每一個學習站。" });
+  };
+
   const notifyComingSoon = (label: string) => {
     toast.message(`${label}將在題目系統完成後開放`, {
       description: "現階段先讓你確認學習路徑與頁面設計。",
@@ -224,6 +233,13 @@ export default function Home() {
             <a href="#path" className="transition-colors hover:text-[#f05a3c]">學習路徑</a>
             <a href="#curriculum" className="transition-colors hover:text-[#f05a3c]">課程地圖</a>
             <button onClick={() => notifyComingSoon("我的進度")} className="transition-colors hover:text-[#f05a3c]">我的進度</button>
+            <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+              <AlertDialogTrigger asChild><button className="transition-colors hover:text-[#f05a3c]">重設進度</button></AlertDialogTrigger>
+              <AlertDialogContent className="border-[#172b3f]/15 bg-[#fffdf8] text-[#172b3f] dark:border-white/15 dark:bg-[#172737] dark:text-white">
+                <AlertDialogHeader><AlertDialogTitle className="font-black">要重設學習進度嗎？</AlertDialogTitle><AlertDialogDescription className="leading-6 dark:text-[#b7c8ce]">這會清除本機的完成徽章與錯題重溫紀錄，讓你可由第一個學習站重新挑戰。此操作無法復原。</AlertDialogDescription></AlertDialogHeader>
+                <AlertDialogFooter><AlertDialogCancel>保留目前進度</AlertDialogCancel><AlertDialogAction onClick={resetProgress} className="bg-[#f05a3c] text-white hover:bg-[#d84a34]">清除並重新開始</AlertDialogAction></AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -245,6 +261,7 @@ export default function Home() {
               <a onClick={() => setMenuOpen(false)} href="#path" className="rounded-xl px-3 py-3 hover:bg-white">學習路徑</a>
               <a onClick={() => setMenuOpen(false)} href="#curriculum" className="rounded-xl px-3 py-3 hover:bg-white">課程地圖</a>
               <button onClick={() => notifyComingSoon("登入功能")} className="rounded-xl px-3 py-3 text-left hover:bg-white">登入</button>
+              <button onClick={() => { setMenuOpen(false); setResetOpen(true); }} className="rounded-xl px-3 py-3 text-left text-[#f05a3c] hover:bg-white">重設進度</button>
             </div>
           </nav>
         )}

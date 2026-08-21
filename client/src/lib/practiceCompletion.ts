@@ -19,3 +19,9 @@ export function markPracticeCompleted(practiceId: string) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(completed)));
   window.dispatchEvent(new CustomEvent(PRACTICE_COMPLETION_EVENT));
 }
+
+export function resetPracticeProgress() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new CustomEvent(PRACTICE_COMPLETION_EVENT));
+}
