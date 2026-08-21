@@ -239,6 +239,11 @@
 .mq-operation-lane i { width: 26px; border-top: 1px dashed rgba(79,110,174,.32); }
 .mq-p3-card::before { content: "P3.01 · 四則混合"; }
 .mq-p3-card::after { border-color: rgba(79,110,174,.3); }
+.mq-fraction-model { display: flex; width: min(100%, 440px); overflow: hidden; border: 2px solid rgba(177,89,121,.34); border-radius: 1rem; background: rgba(177,89,121,.06); }
+.mq-fraction-model span { min-width: 0; flex: 1; min-height: 64px; border-right: 2px solid rgba(177,89,121,.25); transition: background-color 220ms cubic-bezier(.23,1,.32,1); }
+.mq-fraction-model span:last-child { border-right: none; }
+.mq-p4-card::before { content: "P4.01 · 分數與小數"; }
+.mq-p4-card::after { border-color: rgba(177,89,121,.3); }
 .mq-practice-card { position: relative; background-image: linear-gradient(rgba(23,43,63,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.035) 1px, transparent 1px); background-size: 25px 25px; }
 .mq-practice-card > * { position: relative; z-index: 1; }
 .mq-practice-card::before { content: "P1.01 · 20 內加減"; position: absolute; right: 28px; bottom: 24px; color: rgba(23,43,63,.16); font-family: "DM Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: .16em; transform: rotate(-90deg); transform-origin: bottom right; }
@@ -298,6 +303,8 @@
 .dark .mq-level-select button > span:nth-child(2) small { color: #b7c8ce; }
 .dark .mq-operation-lane { color: #9aace1; }
 .dark .mq-operation-lane i { border-color: rgba(154,172,225,.35); }
+.dark .mq-fraction-model { border-color: rgba(225,150,179,.38); background: rgba(60,41,53,.75); }
+.dark .mq-fraction-model span { border-color: rgba(225,150,179,.28); }
 .dark .mq-practice-card { background-image: linear-gradient(rgba(232,243,242,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.035) 1px, transparent 1px); }
 .dark .mq-practice-card::before { color: rgba(232,243,242,.16); }
 .dark .mq-question-head::after { border-color: rgba(232,243,242,.18); }
