@@ -7,12 +7,14 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import P1Practice from "./pages/P1Practice";
+import P2Practice from "./pages/P2Practice";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/practice/p1-add-subtract" component={P1Practice} />
+      <Route path="/practice/p2-multiplication" component={P2Practice} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

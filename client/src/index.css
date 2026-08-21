@@ -208,6 +208,11 @@
 
 /* P1 題庫：維持紙本工作台結構，答案、提示與鍵盤均以清晰而低壓的閱讀對比呈現。 */
 .mq-practice { background-image: radial-gradient(circle at 92% 10%, rgba(240,90,60,.09), transparent 22rem); }
+.mq-practice-header::after { content: ""; position: absolute; bottom: -1px; left: max(1.25rem, calc((100vw - 1280px) / 2 + 2rem)); width: 128px; border-bottom: 3px solid #f05a3c; }
+.mq-route-ruler { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.1rem; color: #8796a0; font-family: "DM Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+.mq-route-ruler i { width: 42px; border-top: 1px dashed rgba(23,43,63,.26); }
+.mq-route-ruler span:nth-of-type(2) { color: #f05a3c; }
+.mq-progress-label p { font-family: "DM Mono", monospace; font-size: 12px; letter-spacing: -.03em; }
 .mq-practice-card { position: relative; background-image: linear-gradient(rgba(23,43,63,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.035) 1px, transparent 1px); background-size: 25px 25px; }
 .mq-practice-card > * { position: relative; z-index: 1; }
 .mq-practice-card::before { content: "P1.01 · 20 內加減"; position: absolute; right: 28px; bottom: 24px; color: rgba(23,43,63,.16); font-family: "DM Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: .16em; transform: rotate(-90deg); transform-origin: bottom right; }
@@ -249,6 +254,8 @@
 }
 
 .dark .mq-practice { background-image: radial-gradient(circle at 92% 10%, rgba(255,118,91,.1), transparent 22rem); }
+.dark .mq-route-ruler { color: #8da4ae; }
+.dark .mq-route-ruler i { border-color: rgba(232,243,242,.24); }
 .dark .mq-practice-card { background-image: linear-gradient(rgba(232,243,242,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.035) 1px, transparent 1px); }
 .dark .mq-practice-card::before { color: rgba(232,243,242,.16); }
 .dark .mq-question-head::after { border-color: rgba(232,243,242,.18); }
@@ -258,8 +265,28 @@
 .dark .mq-answer-incorrect { background: #3a2f2b; }
 .dark .mq-token { border-color: rgba(232,243,242,.18); box-shadow: 0 3px 0 rgba(0,0,0,.24); }
 
+/* 星級、慶祝與 P2 分組點陣共用的學習激勵語言。 */
+.mq-stars, .mq-finish-stars { display: flex; align-items: center; justify-content: center; gap: .18rem; }
+.mq-star-earned { animation: mq-star-land 380ms cubic-bezier(.23,1,.32,1) both; }
+.mq-celebration-burst { position: relative; width: 160px; height: 78px; margin-top: -1.2rem; pointer-events: none; }
+.mq-celebration-burst span { position: absolute; left: 50%; top: 50%; width: 7px; height: 15px; border-radius: 999px; background: #f05a3c; transform: rotate(var(--burst)) translateY(-42px); animation: mq-confetti 920ms cubic-bezier(.23,1,.32,1) both; animation-delay: calc(var(--burst) / 900); }
+.mq-celebration-burst span:nth-child(3n) { background: #0e8b87; }
+.mq-celebration-burst span:nth-child(4n) { background: #f6be5d; }
+.mq-multiply-groups { display: flex; max-width: 560px; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.mq-multiply-group { display: grid; min-width: 92px; grid-template-columns: repeat(3, 1fr); gap: 7px; padding: 10px; border: 1px dashed rgba(200,129,30,.35); border-radius: 15px; background: rgba(255,247,233,.65); }
+.mq-multiply-group span { width: 17px; height: 17px; border: 2px solid rgba(23,43,63,.15); border-radius: 50%; box-shadow: 0 3px 0 rgba(23,43,63,.12); }
+.mq-choice:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(200,129,30,.55); box-shadow: 0 5px 0 rgba(23,43,63,.09); }
+.mq-choice:active:not(:disabled) { transform: translateY(2px) scale(.98); box-shadow: none; }
+.mq-p2-card::before { content: "P2.01 · 九九乘法表"; }
+.mq-p2-card::after { border-color: rgba(200,129,30,.32); }
+.dark .mq-multiply-group { border-color: rgba(246,190,93,.32); background: rgba(58,51,37,.6); }
+.dark .mq-multiply-group span { border-color: rgba(232,243,242,.17); box-shadow: 0 3px 0 rgba(0,0,0,.24); }
+
+@keyframes mq-star-land { 0% { transform: scale(.45) rotate(-16deg); } 65% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes mq-confetti { 0% { opacity: 0; transform: rotate(var(--burst)) translateY(-8px) scale(.4); } 35% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--burst)) translateY(-60px) scale(1); } }
+
 @media (prefers-reduced-motion: reduce) {
-  .mq-stepper button[aria-pressed="true"] span:first-child, .mq-answer-correct, .mq-answer-incorrect, .mq-feedback { animation: none; }
+  .mq-stepper button[aria-pressed="true"] span:first-child, .mq-answer-correct, .mq-answer-incorrect, .mq-feedback, .mq-star-earned, .mq-celebration-burst span { animation: none; }
   .mq-stepper button:hover span:first-child, .mq-key:hover:not(:disabled), .mq-theme-switch:hover svg { transform: none; }
 }
 

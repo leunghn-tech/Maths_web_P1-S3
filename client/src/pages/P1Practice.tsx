@@ -2,9 +2,10 @@
  * Maths Quest — P1「20 以內加減法」：像手帳上的一個學習站，提供低負荷、即時回饋的單題作答流程。
  */
 import { Link } from "wouter";
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RotateCcw, Sparkles, Sun, Trophy, X } from "lucide-react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RotateCcw, Sparkles, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 
 type Question = {
   first: number;
@@ -45,9 +46,20 @@ export default function P1Practice() {
   const [result, setResult] = useState<ResultState>("idle");
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const question = questions[currentIndex];
   const progress = Math.round(((currentIndex + (result === "correct" ? 1 : 0)) / questions.length) * 100);
+  const stars = score >= 5 ? 3 : score >= 3 ? 2 : score >= 1 ? 1 : 0;
+  const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+
+  useEffect(() => {
+    if (finished) return;
+    const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000);
+    return () => window.clearInterval(timer);
+  }, [finished]);
 
   const addDigit = (digit: string) => {
     if (result !== "idle" || answer.length >= 2) return;
@@ -59,14 +71,19 @@ export default function P1Practice() {
     if (Number(answer) === question.answer) {
       setResult("correct");
       setScore((previous) => previous + 1);
+      setStreak((previous) => previous + 1);
+      if (soundEnabled) playCorrectSound();
     } else {
       setResult("incorrect");
+      setStreak(0);
+      if (soundEnabled) playWrongSound();
     }
   };
 
   const nextQuestion = () => {
     if (currentIndex === questions.length - 1) {
       setFinished(true);
+      if (soundEnabled) playCelebrationSound();
       return;
     }
     setCurrentIndex((previous) => previous + 1);
@@ -80,6 +97,8 @@ export default function P1Practice() {
     setResult("idle");
     setScore(0);
     setFinished(false);
+    setSeconds(0);
+    setStreak(0);
   };
 
   return (
@@ -94,6 +113,9 @@ export default function P1Practice() {
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
             <span className="hidden font-mono text-[11px] font-bold tracking-[0.1em] text-[#617286] dark:text-[#b7c8ce] sm:block">20 以內加減法</span>
+            <button onClick={() => setSoundEnabled((enabled) => !enabled)} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={soundEnabled ? "關閉答題音效" : "開啟答題音效"} title={soundEnabled ? "答題音效：開啟" : "答題音效：關閉"}>
+              {soundEnabled ? <Volume2 className="size-[17px]" /> : <VolumeX className="size-[17px]" />}
+            </button>
             <button onClick={toggleTheme} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={theme === "light" ? "切換至深色模式" : "切換至淺色模式"}>
               {theme === "light" ? <Moon className="size-[17px]" /> : <Sun className="size-[18px]" />}
             </button>
@@ -103,6 +125,7 @@ export default function P1Practice() {
       </header>
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
+        <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P1.01</span><i /><span>解題站</span></div>
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]"><span className="size-2 rounded-full bg-[#f05a3c]" /> P1 · 學習站 01</div>
@@ -111,7 +134,7 @@ export default function P1Practice() {
           </div>
           <div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]">
             <span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">今日學習路徑</span>
-            <p className="mt-1 font-extrabold">已完成 {Math.min(currentIndex + (result === "correct" ? 1 : 0), questions.length)} / {questions.length} 題</p>
+            <p className="mt-1 font-extrabold">已完成 {Math.min(currentIndex + (result === "correct" ? 1 : 0), questions.length)} / {questions.length} 題 <span className="mx-1 text-[#f05a3c]">·</span> {timeLabel}</p>
           </div>
         </div>
 
@@ -126,6 +149,10 @@ export default function P1Practice() {
               </div>
               <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${progress}%` }} /></div>
               <div className="mt-3 flex justify-between font-mono text-[10px] font-bold text-white/65"><span>PROGRESS</span><span>{progress}%</span></div>
+              <div className="mq-stars mt-5" aria-label={`本次已獲得 ${stars} 顆星`}>
+                {[1, 2, 3].map((star) => <Star key={star} className={`size-5 ${star <= stars ? "mq-star-earned fill-[#f6be5d] text-[#f6be5d]" : "text-white/20"}`} />)}
+                <span className="ml-2 text-xs font-extrabold text-white/75">連續答對 {streak} 題</span>
+              </div>
             </div>
             <div className="mq-tip mt-5 rounded-2xl border border-[#172b3f]/10 bg-[#fff3e8] p-4 dark:border-white/10 dark:bg-[#3a2f2b]">
               <div className="flex items-center gap-2 text-[#f05a3c]"><Lightbulb className="size-4" /><span className="font-mono text-[10px] font-bold tracking-[0.12em]">小提示</span></div>
@@ -172,9 +199,11 @@ export default function P1Practice() {
             ) : (
               <div className="flex min-h-[500px] flex-col items-center justify-center text-center">
                 <span className="grid size-20 place-items-center rounded-[26px] bg-[#fff0e9] text-[#f05a3c] shadow-[0_10px_0_rgba(240,90,60,0.16)] dark:bg-[#3a2f2b]"><Trophy className="size-10" /></span>
-                <p className="mt-7 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]">STATION COMPLETE</p>
+                <div className="mq-celebration-burst" aria-hidden="true">{Array.from({ length: 12 }).map((_, index) => <span key={index} style={{ "--burst": `${index * 30}deg` } as CSSProperties} />)}</div>
+                <p className="mt-7 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]">完成學習站</p>
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">你完成了這段路徑！</h2>
-                <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {questions.length} 題。每一題都是更熟練的一步。</p>
+                <div className="mq-finish-stars mt-4">{[1, 2, 3].map((star) => <Star key={star} className={`size-7 ${star <= stars ? "fill-[#f6be5d] text-[#f6be5d]" : "text-[#e8e3d9] dark:text-[#2a4051]"}`} />)}</div>
+                <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {questions.length} 題，用時 {timeLabel}。每一題都是更熟練的一步。</p>
                 <div className="mt-7 flex flex-wrap justify-center gap-3"><button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/" className="inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">回到學習地圖 <ArrowRight className="size-4" /></Link></div>
               </div>
             )}
