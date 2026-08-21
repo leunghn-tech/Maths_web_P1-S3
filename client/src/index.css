@@ -213,6 +213,24 @@
 .mq-route-ruler i { width: 42px; border-top: 1px dashed rgba(23,43,63,.26); }
 .mq-route-ruler span:nth-of-type(2) { color: #f05a3c; }
 .mq-progress-label p { font-family: "DM Mono", monospace; font-size: 12px; letter-spacing: -.03em; }
+.mq-mode-switch { display: flex; width: fit-content; gap: .3rem; padding: .3rem; border: 1px solid rgba(23,43,63,.12); border-radius: 999px; background: rgba(255,255,255,.65); }
+.mq-mode-switch button { border-radius: 999px; padding: .48rem .8rem; color: #617286; font-size: .78rem; font-weight: 800; transition: background-color 180ms cubic-bezier(.23,1,.32,1), color 180ms cubic-bezier(.23,1,.32,1), transform 180ms cubic-bezier(.23,1,.32,1); }
+.mq-mode-switch button:hover { color: #172b3f; transform: translateY(-1px); }
+.mq-mode-switch button[aria-pressed="true"] { background: #172b3f; color: white; box-shadow: 0 3px 0 rgba(23,43,63,.18); }
+.mq-level-select { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
+.mq-level-select button { display: flex; align-items: center; gap: .55rem; min-height: 62px; padding: .65rem .8rem; border: 1px solid rgba(23,43,63,.12); border-radius: 1rem; background: rgba(255,255,255,.7); text-align: left; transition: transform 180ms cubic-bezier(.23,1,.32,1), border-color 180ms cubic-bezier(.23,1,.32,1), background-color 180ms cubic-bezier(.23,1,.32,1); }
+.mq-level-select button:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(79,110,174,.5); }
+.mq-level-select button[aria-pressed="true"] { border-color: #4f6eae; background: #eef1fb; box-shadow: 0 4px 0 rgba(79,110,174,.16); }
+.mq-level-select button > span:first-child { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: #4f6eae; color: white; font-size: 10px; font-weight: 700; }
+.mq-level-select button > span:nth-child(2) strong, .mq-level-select button > span:nth-child(2) small { display: block; }
+.mq-level-select button > span:nth-child(2) strong { font-size: .8rem; font-weight: 800; }
+.mq-level-select button > span:nth-child(2) small { margin-top: 2px; color: #617286; font-size: .68rem; font-weight: 700; }
+.mq-level-select .mq-level-locked { color: #8796a0; opacity: .6; }
+.mq-level-select .mq-level-locked > span:first-child { background: #b7c0c4; }
+.mq-operation-lane { display: flex; align-items: center; gap: .55rem; color: #4f6eae; font-family: "DM Mono", monospace; font-size: 14px; font-weight: 700; }
+.mq-operation-lane i { width: 26px; border-top: 1px dashed rgba(79,110,174,.32); }
+.mq-p3-card::before { content: "P3.01 · 四則混合"; }
+.mq-p3-card::after { border-color: rgba(79,110,174,.3); }
 .mq-practice-card { position: relative; background-image: linear-gradient(rgba(23,43,63,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.035) 1px, transparent 1px); background-size: 25px 25px; }
 .mq-practice-card > * { position: relative; z-index: 1; }
 .mq-practice-card::before { content: "P1.01 · 20 內加減"; position: absolute; right: 28px; bottom: 24px; color: rgba(23,43,63,.16); font-family: "DM Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: .16em; transform: rotate(-90deg); transform-origin: bottom right; }
@@ -256,6 +274,15 @@
 .dark .mq-practice { background-image: radial-gradient(circle at 92% 10%, rgba(255,118,91,.1), transparent 22rem); }
 .dark .mq-route-ruler { color: #8da4ae; }
 .dark .mq-route-ruler i { border-color: rgba(232,243,242,.24); }
+.dark .mq-mode-switch { border-color: rgba(232,243,242,.16); background: rgba(23,39,55,.78); }
+.dark .mq-mode-switch button { color: #b7c8ce; }
+.dark .mq-mode-switch button:hover { color: white; }
+.dark .mq-mode-switch button[aria-pressed="true"] { background: #f05a3c; color: white; }
+.dark .mq-level-select button { border-color: rgba(232,243,242,.14); background: rgba(23,39,55,.78); }
+.dark .mq-level-select button[aria-pressed="true"] { border-color: #8097d0; background: #27324d; }
+.dark .mq-level-select button > span:nth-child(2) small { color: #b7c8ce; }
+.dark .mq-operation-lane { color: #9aace1; }
+.dark .mq-operation-lane i { border-color: rgba(154,172,225,.35); }
 .dark .mq-practice-card { background-image: linear-gradient(rgba(232,243,242,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.035) 1px, transparent 1px); }
 .dark .mq-practice-card::before { color: rgba(232,243,242,.16); }
 .dark .mq-question-head::after { border-color: rgba(232,243,242,.18); }
@@ -277,10 +304,22 @@
 .mq-multiply-group span { width: 17px; height: 17px; border: 2px solid rgba(23,43,63,.15); border-radius: 50%; box-shadow: 0 3px 0 rgba(23,43,63,.12); }
 .mq-choice:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(200,129,30,.55); box-shadow: 0 5px 0 rgba(23,43,63,.09); }
 .mq-choice:active:not(:disabled) { transform: translateY(2px) scale(.98); box-shadow: none; }
+.mq-choice { position: relative; overflow: hidden; }
+.mq-choice::before { content: "ANS " attr(data-answer); position: absolute; left: .6rem; top: .45rem; color: rgba(23,43,63,.32); font-family: "DM Mono", monospace; font-size: 8px; font-weight: 700; letter-spacing: .09em; }
+.mq-choice::after { content: ""; position: absolute; right: .65rem; top: .58rem; width: 22px; border-top: 1px dashed rgba(23,43,63,.18); }
+.mq-level-select button { position: relative; overflow: hidden; }
+.mq-level-select button::before { content: "STATION"; position: absolute; right: .75rem; top: .35rem; color: rgba(23,43,63,.22); font-family: "DM Mono", monospace; font-size: 7px; font-weight: 700; letter-spacing: .1em; }
+.mq-practice-grid { position: relative; }
+.mq-practice-grid::before { content: ""; position: absolute; top: -1.5rem; left: 115px; height: calc(100% + 3rem); border-left: 1px dashed rgba(240,90,60,.35); }
+.mq-practice-grid::after { content: "CHECKPOINT"; position: absolute; left: 98px; top: -2.15rem; color: #f05a3c; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 700; letter-spacing: .1em; }
+.mq-practice-grid > * { position: relative; z-index: 1; }
 .mq-p2-card::before { content: "P2.01 · 九九乘法表"; }
 .mq-p2-card::after { border-color: rgba(200,129,30,.32); }
 .dark .mq-multiply-group { border-color: rgba(246,190,93,.32); background: rgba(58,51,37,.6); }
 .dark .mq-multiply-group span { border-color: rgba(232,243,242,.17); box-shadow: 0 3px 0 rgba(0,0,0,.24); }
+.dark .mq-choice::before, .dark .mq-level-select button::before { color: rgba(232,243,242,.3); }
+.dark .mq-choice::after { border-color: rgba(232,243,242,.2); }
+.dark .mq-practice-grid::before { border-color: rgba(255,118,91,.4); }
 
 @keyframes mq-star-land { 0% { transform: scale(.45) rotate(-16deg); } 65% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
 @keyframes mq-confetti { 0% { opacity: 0; transform: rotate(var(--burst)) translateY(-8px) scale(.4); } 35% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--burst)) translateY(-60px) scale(1); } }

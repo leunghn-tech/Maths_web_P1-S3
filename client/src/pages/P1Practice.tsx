@@ -138,7 +138,7 @@ export default function P1Practice() {
           </div>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
+        <div className="mq-practice-grid grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
           <aside className="mq-practice-sidebar order-2 lg:order-1">
             <div className="rounded-[24px] border border-[#172b3f]/10 bg-[#172b3f] p-5 text-white shadow-[0_10px_0_#0e1d2a] dark:border-white/10 dark:bg-[#1b3042] dark:shadow-[0_10px_0_#0b131d]">
               <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">本次任務</p>
