@@ -6,6 +6,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RotateCcw, Sparkles, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
+import { markPracticeCompleted } from "@/lib/practiceCompletion";
 
 type Question = {
   first: number;
@@ -83,6 +84,7 @@ export default function P1Practice() {
   const nextQuestion = () => {
     if (currentIndex === questions.length - 1) {
       setFinished(true);
+      markPracticeCompleted("p1-add-subtract");
       if (soundEnabled) playCelebrationSound();
       return;
     }
@@ -119,7 +121,7 @@ export default function P1Practice() {
             <button onClick={toggleTheme} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={theme === "light" ? "切換至深色模式" : "切換至淺色模式"}>
               {theme === "light" ? <Moon className="size-[17px]" /> : <Sun className="size-[18px]" />}
             </button>
-            <Link href="/" className="hidden items-center gap-2 text-sm font-extrabold transition-colors hover:text-[#f05a3c] sm:inline-flex"><ArrowLeft className="size-4" /> 返回地圖</Link>
+            <Link href="/#path" className="mq-library-link inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-3 py-2 text-sm font-extrabold transition-colors hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15"><ArrowLeft className="size-4" /><span>返回題目庫</span></Link>
           </div>
         </div>
       </header>
@@ -204,7 +206,7 @@ export default function P1Practice() {
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">你完成了這段路徑！</h2>
                 <div className="mq-finish-stars mt-4">{[1, 2, 3].map((star) => <Star key={star} className={`size-7 ${star <= stars ? "fill-[#f6be5d] text-[#f6be5d]" : "text-[#e8e3d9] dark:text-[#2a4051]"}`} />)}</div>
                 <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {questions.length} 題，用時 {timeLabel}。每一題都是更熟練的一步。</p>
-                <div className="mt-7 flex flex-wrap justify-center gap-3"><button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/" className="inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">回到學習地圖 <ArrowRight className="size-4" /></Link></div>
+                <div className="mt-7 flex flex-wrap justify-center gap-3"><button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/#path" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">返回題目庫 <ArrowRight className="size-4" /></Link></div>
               </div>
             )}
           </section>

@@ -1,7 +1,7 @@
 /**
  * Maths Quest —「數學探險手帳」：以非對稱學習軌跡、暖白紙張與解題橘紅引導學生選擇下一個練習站。
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import {
@@ -23,6 +23,7 @@ import {
   X,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { getCompletedPractices, PRACTICE_COMPLETION_EVENT } from "@/lib/practiceCompletion";
 
 type Stage = "primary" | "secondary";
 
@@ -169,7 +170,15 @@ export default function Home() {
   const [activeStage, setActiveStage] = useState<Stage>("primary");
   const [selectedGrade, setSelectedGrade] = useState("P1");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [completedPractices, setCompletedPractices] = useState<string[]>([]);
   const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    const syncCompletion = () => setCompletedPractices(getCompletedPractices());
+    syncCompletion();
+    window.addEventListener(PRACTICE_COMPLETION_EVENT, syncCompletion);
+    return () => window.removeEventListener(PRACTICE_COMPLETION_EVENT, syncCompletion);
+  }, []);
 
   const visibleCourses = useMemo(
     () => courses.filter((course) => course.stage === activeStage),
@@ -177,6 +186,14 @@ export default function Home() {
   );
   const course = courses.find((item) => item.grade === selectedGrade) ?? courses[0];
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
+  const isGradeCompleted = (grade: string) => {
+    if (grade === "P1") return completedPractices.includes("p1-add-subtract");
+    if (grade === "P2") return ["p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
+    if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
+    return false;
+  };
+  const courseCompleted = isGradeCompleted(course.grade);
+  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : "練習已完成";
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
@@ -317,11 +334,12 @@ export default function Home() {
                     <div className="absolute left-8 right-8 top-5 h-px bg-[#172b3f]/12" />
                     {visibleCourses.map((item, index) => {
                       const selected = item.grade === selectedGrade;
+                      const completed = isGradeCompleted(item.grade);
                       return (
                         <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative z-10 flex min-w-[98px] flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
                           <span className={`grid size-10 place-items-center rounded-full border-4 text-xs font-black transition ${selected ? "border-white text-white shadow-[0_5px_0_rgba(0,0,0,0.14)]" : "border-[#f8f5ed] bg-[#e8e3d9] text-[#617286]"}`} style={selected ? { backgroundColor: item.accent } : undefined}>{index + 1}</span>
                           <span className="text-xs font-extrabold leading-none">{item.shortLabel}</span>
-                          <span className="font-mono text-[10px] font-bold opacity-65">{item.grade}</span>
+                          <span className="font-mono text-[10px] font-bold opacity-65">{completed ? "已完成" : item.grade}</span>
                         </button>
                       );
                     })}
@@ -338,6 +356,7 @@ export default function Home() {
                     <p className="font-mono text-[11px] font-bold tracking-[0.16em]" style={{ color: course.accent }}>{course.shortLabel.toUpperCase()} LEARNING MAP</p>
                     <h3 className="mt-1 text-2xl font-black tracking-[-0.045em]">{course.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-[#617286]">共 {topicCount} 個課程焦點 · 從最常用的核心概念開始整理。</p>
+                    {courseCompleted && <span className="mq-completion-badge mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-bold"><Check className="size-3" /> {courseCompletionLabel}</span>}
                   </div>
                 </div>
                 {course.grade === "P1" ? (
@@ -371,7 +390,7 @@ export default function Home() {
               </div>
               <div className="mq-checkpoint mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
                 <p className="text-sm font-bold text-[#744230]"><span className="font-mono text-xs text-[#f05a3c]">CHECKPOINT →</span> 建議先挑戰：{course.checkpoint}</p>
-                <button onClick={() => notifyComingSoon(course.checkpoint)} className="inline-flex items-center gap-1 text-sm font-extrabold text-[#f05a3c] hover:underline">查看題型 <ArrowRight className="size-4" /></button>
+                {courseCompleted ? <span className="inline-flex items-center gap-1 text-sm font-extrabold text-[#0e8b87]"><Check className="size-4" /> 已完成練習</span> : <button onClick={() => notifyComingSoon(course.checkpoint)} className="inline-flex items-center gap-1 text-sm font-extrabold text-[#f05a3c] hover:underline">查看題型 <ArrowRight className="size-4" /></button>}
               </div>
             </div>
             </div>
