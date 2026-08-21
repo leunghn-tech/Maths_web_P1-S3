@@ -244,6 +244,28 @@
 .mq-fraction-model span:last-child { border-right: none; }
 .mq-p4-card::before { content: "P4.01 · 分數與小數"; }
 .mq-p4-card::after { border-color: rgba(177,89,121,.3); }
+.mq-difficulty-switch { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; }
+.mq-difficulty-switch > button:not(.mq-randomize) { display: grid; grid-template-columns: 28px auto; grid-template-rows: auto auto; column-gap: .45rem; min-width: 126px; padding: .55rem .7rem; border: 1px solid rgba(23,43,63,.13); border-radius: .9rem; background: rgba(255,255,255,.72); text-align: left; transition: transform 180ms cubic-bezier(.23,1,.32,1), border-color 180ms cubic-bezier(.23,1,.32,1); }
+.mq-difficulty-switch > button:not(.mq-randomize):hover { transform: translateY(-2px); border-color: #f05a3c; }
+.mq-difficulty-switch > button[aria-pressed="true"] { border-color: #f05a3c; background: #fff0e9; box-shadow: 0 3px 0 rgba(240,90,60,.16); }
+.mq-difficulty-switch > button > span { grid-row: span 2; display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: #172b3f; color: white; font-family: "DM Mono", monospace; font-size: .7rem; font-weight: 800; }
+.mq-difficulty-switch strong { font-size: .78rem; font-weight: 900; }
+.mq-difficulty-switch small { color: #617286; font-size: .65rem; font-weight: 700; }
+.mq-randomize { display: inline-flex; align-items: center; gap: .45rem; margin-left: auto; border: 1px dashed rgba(240,90,60,.5); border-radius: 999px; padding: .65rem .9rem; color: #f05a3c; font-size: .78rem; font-weight: 800; transition: background-color 180ms cubic-bezier(.23,1,.32,1), transform 180ms cubic-bezier(.23,1,.32,1); }
+.mq-randomize:hover { background: #fff0e9; transform: rotate(-1deg); }
+.mq-shape-diagram { display: grid; width: min(100%, 380px); place-items: center; margin-top: 1.4rem; }
+.mq-rectangle { display: grid; width: min(100%, 300px); place-items: center; min-height: 95px; border: 3px solid; border-radius: .7rem; background-image: linear-gradient(rgba(23,43,63,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.06) 1px, transparent 1px); background-size: 18px 18px; }
+.mq-rectangle span { padding: .4rem .6rem; border-radius: .5rem; background: rgba(255,253,248,.92); font-family: "DM Mono", monospace; font-size: .72rem; font-weight: 800; }
+.mq-random-card::before { content: "P4 · RANDOM QUEST"; }
+.mq-random-card::after { border-color: rgba(240,90,60,.3); }
+.mq-practice-grid { position: relative; }
+.mq-practice-grid::before { content: ""; position: absolute; left: 114px; top: 56px; bottom: 42px; z-index: 0; border-left: 1px dashed rgba(240,90,60,.32); pointer-events: none; }
+.mq-practice-grid > * { position: relative; z-index: 1; }
+.mq-random-card { background-image: linear-gradient(rgba(23,43,63,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.035) 1px, transparent 1px), radial-gradient(circle at 10% 92%, rgba(79,110,174,.11) 0 2px, transparent 3px), radial-gradient(circle at 14% 92%, rgba(79,110,174,.11) 0 2px, transparent 3px); background-size: 25px 25px, 25px 25px, 14px 14px, 14px 14px; }
+.mq-random-card .mq-question-head::before { content: "PATH →"; position: absolute; left: 0; bottom: -18px; color: rgba(240,90,60,.7); font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; letter-spacing: .16em; }
+.mq-difficulty-switch > button:not(.mq-randomize)::after { content: "LEVEL"; grid-row: 1 / span 2; justify-self: end; align-self: center; color: rgba(23,43,63,.34); font-family: "DM Mono", monospace; font-size: 7px; font-weight: 800; letter-spacing: .08em; writing-mode: vertical-rl; }
+.mq-practice-header .group strong { letter-spacing: -.055em; }
+.mq-practice-header .group small { letter-spacing: .18em; }
 .mq-practice-card { position: relative; background-image: linear-gradient(rgba(23,43,63,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.035) 1px, transparent 1px); background-size: 25px 25px; }
 .mq-practice-card > * { position: relative; z-index: 1; }
 .mq-practice-card::before { content: "P1.01 · 20 內加減"; position: absolute; right: 28px; bottom: 24px; color: rgba(23,43,63,.16); font-family: "DM Mono", monospace; font-size: 9px; font-weight: 700; letter-spacing: .16em; transform: rotate(-90deg); transform-origin: bottom right; }
@@ -305,6 +327,15 @@
 .dark .mq-operation-lane i { border-color: rgba(154,172,225,.35); }
 .dark .mq-fraction-model { border-color: rgba(225,150,179,.38); background: rgba(60,41,53,.75); }
 .dark .mq-fraction-model span { border-color: rgba(225,150,179,.28); }
+.dark .mq-difficulty-switch > button:not(.mq-randomize) { border-color: rgba(232,243,242,.15); background: rgba(23,39,55,.78); }
+.dark .mq-difficulty-switch > button[aria-pressed="true"] { border-color: #ff765b; background: #3a2f2b; }
+.dark .mq-difficulty-switch small { color: #b7c8ce; }
+.dark .mq-randomize:hover { background: #3a2f2b; }
+.dark .mq-rectangle { background-image: linear-gradient(rgba(232,243,242,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.06) 1px, transparent 1px); }
+.dark .mq-rectangle span { background: #172737; }
+.dark .mq-random-card { background-image: linear-gradient(rgba(232,243,242,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.035) 1px, transparent 1px), radial-gradient(circle at 10% 92%, rgba(154,172,225,.12) 0 2px, transparent 3px), radial-gradient(circle at 14% 92%, rgba(154,172,225,.12) 0 2px, transparent 3px); }
+
+@media (max-width: 1023px) { .mq-practice-grid::before { display: none; } }
 .dark .mq-practice-card { background-image: linear-gradient(rgba(232,243,242,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.035) 1px, transparent 1px); }
 .dark .mq-practice-card::before { color: rgba(232,243,242,.16); }
 .dark .mq-question-head::after { border-color: rgba(232,243,242,.18); }
