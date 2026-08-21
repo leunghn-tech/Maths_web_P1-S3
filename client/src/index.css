@@ -57,6 +57,26 @@
   --ring: #f05a3c;
 }
 
+.dark {
+  --background: #101b27;
+  --foreground: #f4f7f4;
+  --card: #172737;
+  --card-foreground: #f4f7f4;
+  --popover: #172737;
+  --popover-foreground: #f4f7f4;
+  --primary: #ff765b;
+  --primary-foreground: #101b27;
+  --secondary: #203446;
+  --secondary-foreground: #f4f7f4;
+  --muted: #203446;
+  --muted-foreground: #aac0ca;
+  --accent: #283b49;
+  --accent-foreground: #f8d8bf;
+  --border: rgba(232, 243, 242, 0.15);
+  --input: rgba(232, 243, 242, 0.18);
+  --ring: #ff765b;
+}
+
 @layer base {
   * { @apply border-border outline-ring/50; }
   html { scroll-behavior: smooth; }
@@ -77,6 +97,81 @@
     mask-image: linear-gradient(to right, black, transparent 88%);
   }
 }
+
+/* 深色模式維持「數學探險手帳」的深墨藍結構與橘紅行動訊號，並覆寫紙張卡片的閱讀對比。 */
+.dark .mq-app { background: #101b27; color: #f4f7f4; }
+.dark .mq-hero { border-color: rgba(232,243,242,.13); }
+.dark .mq-hero p { color: #b7c8ce; }
+.dark .mq-hero h1 { color: #f4f7f4; }
+.dark .mq-hero h1 span { color: #ff765b; }
+.dark .mq-stepper, .dark .mq-course { background: #172737; border-color: rgba(232,243,242,.14); }
+.dark .mq-stepper p, .dark .mq-course p, .dark .mq-course h3, .dark .mq-course h4, .dark .mq-course li { color: #edf5f2; }
+.dark .mq-stepper .bg-\[\#e8e3d9\] { background: #2a4051; color: #bed0d6; }
+.dark .mq-stepper .border-\[\#f8f5ed\] { border-color: #172737; }
+.dark .mq-card { background: #1c3041; border-color: rgba(232,243,242,.12); }
+.dark .mq-card p, .dark .mq-card li { color: #bfd0d5; }
+.dark .mq-checkpoint { background: #3a2f2b; }
+.dark .mq-checkpoint p { color: #ffe6d6; }
+.dark .mq-app .bg-\[\#ece6d9\] { background: #152535; }
+.dark .mq-app .bg-\[\#f8f5ed\] { background: #101b27; }
+.dark .mq-app .bg-white\/70 { background: rgba(23,39,55,.78); }
+.dark .mq-app .text-\[\#172b3f\] { color: #f4f7f4; }
+.dark .mq-app .text-\[\#53677d\], .dark .mq-app .text-\[\#617286\], .dark .mq-app .text-\[\#728195\], .dark .mq-app .text-\[\#8390a0\] { color: #b7c8ce; }
+.dark .mq-app .border-\[\#172b3f\]\/10, .dark .mq-app .border-\[\#172b3f\]\/15, .dark .mq-app .border-\[\#172b3f\]\/20 { border-color: rgba(232,243,242,.14); }
+.dark .mq-app .bg-\[\#fff3e8\] { background: #3a2f2b; }
+
+/* 跨區年級軌跡與手帳站點標記，令年級與主題卡都成為同一張數學地圖的節點。 */
+.mq-rail::after {
+  content: "P1 → S3";
+  display: block;
+  margin-top: .7rem;
+  color: #8a99a6;
+  font-family: "DM Mono", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-align: center;
+}
+.mq-card::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 53px;
+  right: 52px;
+  border-top: 1px dashed rgba(23,43,63,.13);
+}
+.mq-card::after {
+  content: attr(data-station);
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  color: rgba(23,43,63,.28);
+  font-family: "DM Mono", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+.mq-next-station {
+  background-image: linear-gradient(90deg, rgba(240,90,60,.17) 1px, transparent 1px), linear-gradient(rgba(240,90,60,.17) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.mq-next-station::after {
+  content: "NEXT STATION";
+  position: absolute;
+  right: 5.5rem;
+  top: 1.35rem;
+  color: rgba(255,255,255,.28);
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+.dark .mq-rail > div { background: #172737; border-color: rgba(232,243,242,.14); }
+.dark .mq-rail .bg-\[\#fff0e9\] { background: #3a2f2b; }
+.dark .mq-rail .border-\[\#fffdf8\] { border-color: #172737; }
+.dark .mq-card::before { border-color: rgba(232,243,242,.14); }
+.dark .mq-card::after { color: rgba(232,243,242,.32); }
+.dark .mq-next-station { background-color: #172737; }
 
 @media (prefers-reduced-motion: no-preference) {
   article, button, a { transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1); }

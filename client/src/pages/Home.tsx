@@ -13,12 +13,15 @@ import {
   Dices,
   LineChart,
   Menu,
+  Moon,
   Play,
   Search,
   Sparkles,
+  Sun,
   Target,
   X,
 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type Stage = "primary" | "secondary";
 
@@ -165,6 +168,7 @@ export default function Home() {
   const [activeStage, setActiveStage] = useState<Stage>("primary");
   const [selectedGrade, setSelectedGrade] = useState("P1");
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const visibleCourses = useMemo(
     () => courses.filter((course) => course.stage === activeStage),
@@ -185,8 +189,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[#f8f5ed] text-[#172b3f]">
-      <header className="sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl">
+    <div className="mq-app min-h-screen overflow-x-clip bg-[#f8f5ed] text-[#172b3f]">
+      <header className="mq-header sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl dark:border-white/10 dark:bg-[#111c28]/92">
           <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
           <a href="#top" className="group flex items-center gap-3" aria-label="Maths Quest 首頁">
             <span className="grid size-11 place-items-center rounded-[15px] bg-[#f05a3c] shadow-[0_7px_0_#c84932] transition-transform duration-200 group-hover:-translate-y-0.5">
@@ -205,8 +209,11 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => notifyComingSoon("登入功能")} className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] sm:block">登入</button>
-            <button onClick={() => notifyComingSoon("開始練習")} className="hidden items-center gap-2 rounded-full bg-[#172b3f] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_0_#0e1d2a] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none sm:flex">
+            <button onClick={toggleTheme} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={theme === "light" ? "切換至深色模式" : "切換至淺色模式"} title={theme === "light" ? "深色模式" : "淺色模式"}>
+              {theme === "light" ? <Moon className="size-[17px]" /> : <Sun className="size-[18px]" />}
+            </button>
+            <button onClick={() => notifyComingSoon("登入功能")} className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block">登入</button>
+            <button onClick={() => notifyComingSoon("開始練習")} className="mq-start hidden items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none sm:flex">
               開始練習 <ArrowRight className="size-4" />
             </button>
             <button onClick={() => setMenuOpen((open) => !open)} className="grid size-10 place-items-center rounded-full border border-[#172b3f]/15 lg:hidden" aria-label="開啟選單" aria-expanded={menuOpen}>
@@ -226,7 +233,7 @@ export default function Home() {
       </header>
 
       <main id="top">
-        <section className="relative border-b border-[#172b3f]/10">
+        <section className="mq-hero relative border-b border-[#172b3f]/10">
           <div className="hero-grid pointer-events-none absolute inset-0 opacity-80" />
           <div className="relative mx-auto grid min-h-[560px] max-w-[1280px] items-center gap-8 px-5 py-14 lg:grid-cols-[0.94fr_1.06fr] lg:px-8 lg:py-16">
             <div className="relative z-10 max-w-[650px]">
@@ -276,31 +283,53 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="relative overflow-hidden rounded-[28px] bg-[#172b3f] px-5 py-7 text-white shadow-[0_12px_0_#0e1d2a]">
-              <div className="absolute -right-14 top-4 size-52 rounded-full border border-white/10" />
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#f6be5d]">GRADE TRAIL</span>
-                  <span className="rounded-full bg-white/10 px-2.5 py-1 font-mono text-[10px] font-bold">{activeStage === "primary" ? "P1–P6" : "S1–S3"}</span>
-                </div>
-                <p className="mt-4 max-w-[205px] text-lg font-extrabold leading-6">點選年級，查看它的數學站點。</p>
-                <div className="relative mt-8 space-y-1 before:absolute before:bottom-5 before:left-[17px] before:top-5 before:w-px before:bg-white/20">
-                  {visibleCourses.map((item, index) => {
+          <div className="grid items-start gap-5 lg:grid-cols-[126px_minmax(0,1fr)]">
+            <aside className="mq-rail hidden lg:block">
+              <div className="sticky top-24 rounded-2xl border border-[#172b3f]/10 bg-[#fffdf8] px-3 py-4 shadow-[0_8px_22px_rgba(23,43,63,0.05)]">
+                <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#f05a3c]">LEARNING<br />TRAIL</p>
+                <div className="relative mt-4 space-y-1 before:absolute before:bottom-3 before:left-[14px] before:top-3 before:w-px before:bg-[#172b3f]/15">
+                  {courses.map((item, index) => {
                     const selected = item.grade === selectedGrade;
                     return (
-                      <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition ${selected ? "bg-white text-[#172b3f] shadow-[0_5px_0_rgba(0,0,0,0.12)]" : "text-white/75 hover:bg-white/10 hover:text-white"}`}>
-                        <span className={`grid size-7 shrink-0 place-items-center rounded-full font-mono text-[11px] font-bold ${selected ? "bg-[#f05a3c] text-white" : "border border-white/25 bg-[#172b3f]"}`}>{index + 1}</span>
-                        <span className="font-extrabold">{item.shortLabel}</span>
-                        <span className="ml-auto font-mono text-[10px] opacity-55">{item.grade}</span>
+                      <button key={item.grade} onClick={() => { setActiveStage(item.stage); setSelectedGrade(item.grade); }} className={`relative flex w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left transition ${selected ? "bg-[#fff0e9] text-[#172b3f]" : "text-[#617286] hover:bg-[#f8f5ed] hover:text-[#172b3f]"}`}>
+                        <span className={`grid size-7 shrink-0 place-items-center rounded-full border-2 border-[#fffdf8] text-[9px] font-black text-white ${selected ? "shadow-[0_3px_0_rgba(0,0,0,0.12)]" : "opacity-60"}`} style={{ backgroundColor: item.accent }}>{index + 1}</span>
+                        <span className="min-w-0"><strong className="block text-[10px] leading-none">{item.grade}</strong><small className="mt-0.5 block text-[9px] leading-none">{item.shortLabel}</small></span>
                       </button>
                     );
                   })}
                 </div>
               </div>
             </aside>
+            <div className="space-y-5">
+            <div className="mq-stepper relative overflow-hidden rounded-[25px] border border-[#172b3f]/10 bg-white px-5 py-5 shadow-[0_10px_25px_rgba(23,43,63,0.05)] md:px-6">
+              <div className="absolute -right-10 -top-14 size-40 rounded-full border-[18px] border-[#f05a3c]/10" />
+              <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="shrink-0">
+                  <div className="flex items-center gap-3">
+                    <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#f05a3c]">GRADE TRAIL</p>
+                    <span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">{activeStage === "primary" ? "P1–P6" : "S1–S3"}</span>
+                  </div>
+                  <p className="mt-1 text-sm font-extrabold">點選一個年級，即時查看它的學習站點。</p>
+                </div>
+                <div className="-mx-1 overflow-x-auto pb-2 lg:pb-0">
+                  <div className="relative flex min-w-max items-start gap-2 px-1 lg:gap-1">
+                    <div className="absolute left-8 right-8 top-5 h-px bg-[#172b3f]/12" />
+                    {visibleCourses.map((item, index) => {
+                      const selected = item.grade === selectedGrade;
+                      return (
+                        <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative z-10 flex min-w-[98px] flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
+                          <span className={`grid size-10 place-items-center rounded-full border-4 text-xs font-black transition ${selected ? "border-white text-white shadow-[0_5px_0_rgba(0,0,0,0.14)]" : "border-[#f8f5ed] bg-[#e8e3d9] text-[#617286]"}`} style={selected ? { backgroundColor: item.accent } : undefined}>{index + 1}</span>
+                          <span className="text-xs font-extrabold leading-none">{item.shortLabel}</span>
+                          <span className="font-mono text-[10px] font-bold opacity-65">{item.grade}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <div className="rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_12px_30px_rgba(23,43,63,0.06)] md:p-7">
+            <div className="mq-course rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_12px_30px_rgba(23,43,63,0.06)] md:p-7">
               <div className="flex flex-col gap-5 border-b border-[#172b3f]/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-start gap-4">
                   <div className="grid size-14 place-items-center rounded-2xl text-xl font-black text-white shadow-[0_5px_0_rgba(0,0,0,0.15)]" style={{ backgroundColor: course.accent }}>{course.grade}</div>
@@ -310,7 +339,7 @@ export default function Home() {
                     <p className="mt-2 text-sm leading-6 text-[#617286]">共 {topicCount} 個課程焦點 · 從最常用的核心概念開始整理。</p>
                   </div>
                 </div>
-                <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#172b3f] px-5 py-3 text-sm font-extrabold text-white transition hover:-translate-y-0.5 active:translate-y-0">
+                <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
                   <Play className="size-4 fill-current" /> 開始 {course.grade} 練習
                 </button>
               </div>
@@ -319,7 +348,7 @@ export default function Home() {
                 {course.categories.map((category, index) => {
                   const Icon = categoryIcons[index] ?? BookOpen;
                   return (
-                    <article key={category.name} className="group relative h-full overflow-hidden rounded-2xl border border-[#172b3f]/10 bg-[#fcfbf7] p-5 transition duration-200 hover:-translate-y-1 hover:border-[#172b3f]/25 hover:shadow-[0_12px_25px_rgba(23,43,63,0.08)]">
+                    <article key={category.name} data-station={`0${index + 1}`} className="mq-card group relative h-full overflow-hidden rounded-2xl border border-[#172b3f]/10 bg-[#fcfbf7] p-5 transition duration-200 hover:-translate-y-1 hover:border-[#172b3f]/25 hover:shadow-[0_12px_25px_rgba(23,43,63,0.08)]">
                       <div className="flex items-center justify-between">
                         <span className="grid size-9 place-items-center rounded-xl text-white" style={{ backgroundColor: course.accent }}><Icon className="size-4" /></span>
                         <span className="font-mono text-[10px] font-bold tracking-widest text-[#8390a0]">{String(index + 1).padStart(2, "0")}</span>
@@ -333,10 +362,11 @@ export default function Home() {
                   );
                 })}
               </div>
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
+              <div className="mq-checkpoint mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
                 <p className="text-sm font-bold text-[#744230]"><span className="font-mono text-xs text-[#f05a3c]">CHECKPOINT →</span> 建議先挑戰：{course.checkpoint}</p>
                 <button onClick={() => notifyComingSoon(course.checkpoint)} className="inline-flex items-center gap-1 text-sm font-extrabold text-[#f05a3c] hover:underline">查看題型 <ArrowRight className="size-4" /></button>
               </div>
+            </div>
             </div>
           </div>
         </section>
@@ -355,7 +385,7 @@ export default function Home() {
               </div>
               <div className="space-y-3">
                 {courses.map((item) => (
-                  <details key={item.grade} className="group rounded-2xl border border-[#172b3f]/10 bg-white transition-shadow open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
+                  <details key={item.grade} className="mq-accordion group rounded-2xl border border-[#172b3f]/10 bg-white transition-shadow open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
                     <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none">
                       <span className="grid size-10 place-items-center rounded-xl font-mono text-xs font-bold text-white" style={{ backgroundColor: item.accent }}>{item.grade}</span>
                       <span className="min-w-0 flex-1"><strong className="block text-sm font-extrabold">{item.shortLabel} · {item.title}</strong><small className="mt-0.5 block text-xs text-[#728195]">{item.categories.length} 個範疇 · {item.categories.reduce((sum, category) => sum + category.topics.length, 0)} 個主題</small></span>
@@ -377,7 +407,7 @@ export default function Home() {
         </section>
 
         <section className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
-          <div className="relative overflow-hidden rounded-[30px] bg-[#0e8b87] px-6 py-10 text-white md:px-10 lg:px-14 lg:py-14">
+          <div className="mq-next-station relative overflow-hidden rounded-[30px] bg-[#172b3f] px-6 py-10 text-white md:px-10 lg:px-14 lg:py-14">
             <div className="absolute -right-20 -top-24 size-[360px] rounded-full border-[24px] border-white/10" />
             <div className="absolute bottom-[-90px] right-[22%] size-[220px] rounded-full border-[18px] border-[#f6be5d]/70" />
             <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -386,7 +416,7 @@ export default function Home() {
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">下一步，讓每一站都能真正練習。</h2>
                 <p className="mt-4 text-[15px] leading-7 text-white/80">請先預覽這個首頁。你確認導航、色彩和年級分類後，我會按你指定的優先順序，從題目、答案檢查與進度紀錄開始建造。</p>
               </div>
-              <a href="#path" className="inline-flex w-fit items-center gap-2 rounded-full bg-[#f8f5ed] px-5 py-3.5 text-sm font-extrabold text-[#172b3f] shadow-[0_4px_0_rgba(0,0,0,0.14)] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">回到學習路徑 <ArrowRight className="size-4" /></a>
+              <a href="#path" className="mq-start inline-flex w-fit items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">回到學習路徑 <ArrowRight className="size-4" /></a>
             </div>
           </div>
         </section>
