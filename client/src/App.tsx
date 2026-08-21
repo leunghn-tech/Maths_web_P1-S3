@@ -12,6 +12,7 @@ import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
 import P4FactorsPractice from "./pages/P4FactorsPractice";
 import P4MeasurePractice from "./pages/P4MeasurePractice";
+import P4PolygonAreaPractice from "./pages/P4PolygonAreaPractice";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
       <Route path="/practice/p4-perimeter-area" component={P4MeasurePractice} />
+      <Route path="/practice/p4-polygon-area" component={P4PolygonAreaPractice} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

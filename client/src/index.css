@@ -256,6 +256,12 @@
 .mq-shape-diagram { display: grid; width: min(100%, 380px); place-items: center; margin-top: 1.4rem; }
 .mq-rectangle { display: grid; width: min(100%, 300px); place-items: center; min-height: 95px; border: 3px solid; border-radius: .7rem; background-image: linear-gradient(rgba(23,43,63,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(23,43,63,.06) 1px, transparent 1px); background-size: 18px 18px; }
 .mq-rectangle span { padding: .4rem .6rem; border-radius: .5rem; background: rgba(255,253,248,.92); font-family: "DM Mono", monospace; font-size: .72rem; font-weight: 800; }
+.mq-shape-triangle { border: 0 !important; background: var(--shape-color); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.mq-shape-triangle span { clip-path: none; transform: translateY(12px); }
+.mq-shape-parallelogram { transform: skewX(-15deg); }
+.mq-shape-parallelogram span { transform: skewX(15deg); }
+.mq-shape-trapezoid { border: 0 !important; background: var(--shape-color); clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%); }
+.mq-shape-trapezoid span { transform: translateY(6px); }
 .mq-random-card::before { content: "P4 · RANDOM QUEST"; }
 .mq-random-card::after { border-color: rgba(240,90,60,.3); }
 .mq-practice-grid { position: relative; }
@@ -333,6 +339,7 @@
 .dark .mq-randomize:hover { background: #3a2f2b; }
 .dark .mq-rectangle { background-image: linear-gradient(rgba(232,243,242,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.06) 1px, transparent 1px); }
 .dark .mq-rectangle span { background: #172737; }
+.dark .mq-shape-triangle span, .dark .mq-shape-trapezoid span { background: rgba(23,39,55,.92); }
 .dark .mq-random-card { background-image: linear-gradient(rgba(232,243,242,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(232,243,242,.035) 1px, transparent 1px), radial-gradient(circle at 10% 92%, rgba(154,172,225,.12) 0 2px, transparent 3px), radial-gradient(circle at 14% 92%, rgba(154,172,225,.12) 0 2px, transparent 3px); }
 
 @media (max-width: 1023px) { .mq-practice-grid::before { display: none; } }

@@ -10,7 +10,7 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 
 export type Difficulty = "easy" | "standard" | "challenge";
-export type RandomProblem = { id: string; prompt: string; equation: string; answer: string; choices: string[]; hint: string; diagram?: { width: number; height: number; label: string } };
+export type RandomProblem = { id: string; prompt: string; equation: string; answer: string; choices: string[]; hint: string; diagram?: { width: number; height: number; label: string; shape?: "rectangle" | "triangle" | "parallelogram" | "trapezoid" } };
 
 type Props = { stationCode: string; title: string; subtitle: string; accent: string; practiceKey: string; generateProblem: (difficulty: Difficulty) => RandomProblem };
 
@@ -18,7 +18,8 @@ const labels: Record<Difficulty, string> = { easy: "輕鬆", standard: "標準",
 
 function ShapeDiagram({ diagram, accent }: { diagram?: RandomProblem["diagram"]; accent: string }) {
   if (!diagram) return null;
-  return <div className="mq-shape-diagram"><div className="mq-rectangle" style={{ aspectRatio: `${diagram.width} / ${diagram.height}`, borderColor: accent }}><span style={{ color: accent }}>{diagram.label}</span></div></div>;
+  const shape = diagram.shape ?? "rectangle";
+  return <div className="mq-shape-diagram"><div className={`mq-rectangle mq-shape-${shape}`} style={{ aspectRatio: `${diagram.width} / ${diagram.height}`, borderColor: accent, "--shape-color": accent } as React.CSSProperties}><span style={{ color: accent }}>{diagram.label}</span></div></div>;
 }
 
 export default function P4QuestionStation({ stationCode, title, subtitle, accent, practiceKey, generateProblem }: Props) {

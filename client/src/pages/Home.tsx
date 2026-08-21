@@ -201,11 +201,11 @@ export default function Home() {
     if (grade === "P1") return completedPractices.includes("p1-add-subtract");
     if (grade === "P2") return ["p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
     if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
-    if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure"].some((id) => completedPractices.includes(id));
+    if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
     return false;
   };
   const courseCompleted = isGradeCompleted(course.grade);
-  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure"].filter((id) => completedPractices.includes(id)).length}/5 題型完成` : "練習已完成";
+  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : "練習已完成";
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
@@ -399,7 +399,7 @@ export default function Home() {
                 ) : course.grade === "P3" ? (
                   <Link href="/practice/p3-mixed-operations" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 P3 練習</Link>
                 ) : course.grade === "P4" ? (
-                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p4-fractions-decimals" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數小數</Link><Link href="/practice/p4-factors-multiples" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">因數倍數</Link><Link href="/practice/p4-perimeter-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">周界面積</Link></div>
+                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p4-fractions-decimals" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數小數</Link><Link href="/practice/p4-factors-multiples" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">因數倍數</Link><Link href="/practice/p4-perimeter-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">周界面積</Link><Link href="/practice/p4-polygon-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">多邊形面積</Link></div>
                 ) : (
                   <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
                 )}

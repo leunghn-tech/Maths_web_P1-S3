@@ -10,6 +10,7 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 
 type OperationMode = "multiply" | "divide" | "mixed";
+type Difficulty = "easy" | "standard" | "challenge";
 type MultiplicationQuestion = { groups: number; each: number; expression: string; answer: number; choices: number[]; note: string; color: string };
 type ResultState = "idle" | "correct" | "incorrect";
 
@@ -36,6 +37,26 @@ const questionSets: Record<OperationMode, MultiplicationQuestion[]> = {
     { groups: 2, each: 5, expression: "2 × 5 + 5", answer: 15, choices: [10, 12, 15, 20], note: "先算 2 組 5，再加 5。", color: "#f05a3c" },
   ],
 };
+
+const difficultyLabels: Record<Difficulty, string> = { easy: "輕鬆", standard: "標準", challenge: "挑戰" };
+const uniqueNumbers = (values: number[]) => Array.from(new Set(values));
+const randomChoices = (answer: number) => uniqueNumbers([answer, answer + 1, Math.max(1, answer - 1), answer + 2]).sort(() => Math.random() - 0.5);
+
+function generateQuestions(mode: OperationMode, difficulty: Difficulty): MultiplicationQuestion[] {
+  const cap = difficulty === "easy" ? 5 : difficulty === "standard" ? 8 : 12;
+  const colors = ["#0e8b87", "#4f6eae", "#b15979", "#c8811e", "#f05a3c"];
+  return Array.from({ length: 5 }, (_, index) => {
+    const groups = 2 + Math.floor(Math.random() * Math.max(2, cap - 1));
+    const each = 2 + Math.floor(Math.random() * Math.max(2, cap - 1));
+    const total = groups * each;
+    if (mode === "multiply") return { groups, each, expression: `${groups} × ${each}`, answer: total, choices: randomChoices(total), note: `${groups} 組，每組有 ${each} 個。`, color: colors[index] };
+    if (mode === "divide") return { groups, each, expression: `${total} ÷ ${groups}`, answer: each, choices: randomChoices(each), note: `${total} 個平均分成 ${groups} 組。`, color: colors[index] };
+    const extra = difficulty === "easy" ? 1 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 6);
+    const add = Math.random() > 0.5;
+    const answer = add ? total + extra : total - Math.min(extra, total - 1);
+    return { groups, each, expression: `${groups} × ${each} ${add ? "+" : "−"} ${extra}`, answer, choices: randomChoices(answer), note: `先算 ${groups} × ${each}，再${add ? "加" : "減"} ${extra}。`, color: colors[index] };
+  });
+}
 
 function GroupBoard({ groups, each, color }: MultiplicationQuestion) {
   return (
@@ -69,8 +90,10 @@ export default function P2Practice() {
   const [wrongIndices, setWrongIndices] = useState<number[]>([]);
   const [reviewMode, setReviewMode] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
+  const [difficulty, setDifficulty] = useState<Difficulty>("standard");
+  const [questionSet, setQuestionSet] = useState<MultiplicationQuestion[]>(() => generateQuestions("multiply", "standard"));
 
-  const questions = questionSets[mode];
+  const questions = questionSet;
   const activeIndices = reviewMode ? wrongIndices : questions.map((_, index) => index);
   const question = questions[activeIndices[currentIndex]];
   const answer = question.answer;
@@ -115,7 +138,8 @@ export default function P2Practice() {
 
   const retry = () => { setResult("idle"); setSelected(null); };
   const restart = () => { setCurrentIndex(0); setResult("idle"); setSelected(null); setScore(0); setStreak(0); setSeconds(0); setFinished(false); setReviewMode(false); };
-  const changeMode = (nextMode: OperationMode) => { setMode(nextMode); setWrongIndices([]); restart(); };
+  const changeMode = (nextMode: OperationMode) => { setMode(nextMode); setQuestionSet(generateQuestions(nextMode, difficulty)); setWrongIndices([]); restart(); };
+  const startRandom = (nextDifficulty = difficulty) => { setDifficulty(nextDifficulty); setQuestionSet(generateQuestions(mode, nextDifficulty)); setWrongIndices([]); restart(); };
   const startWrongReview = () => { setCurrentIndex(0); setResult("idle"); setSelected(null); setScore(0); setStreak(0); setSeconds(0); setFinished(false); setReviewMode(true); };
   const modeLabel = mode === "multiply" ? "九九乘法表" : mode === "divide" ? "平均分組除法" : "乘除混合運算";
 
@@ -128,7 +152,7 @@ export default function P2Practice() {
             <span className="leading-none"><strong className="block text-[16px] font-extrabold tracking-[-0.04em]">Maths Quest</strong><small className="mt-1 block font-mono text-[9px] font-bold tracking-[0.14em] text-[#f05a3c]">P2 乘法站 · 01</small></span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <span className="hidden font-mono text-[11px] font-bold tracking-[0.1em] text-[#617286] dark:text-[#b7c8ce] sm:block">{modeLabel}</span>
+            <span className="hidden font-mono text-[11px] font-bold tracking-[0.1em] text-[#617286] dark:text-[#b7c8ce] sm:block">隨機出題 · {difficultyLabels[difficulty]}</span>
             <button onClick={() => setSoundEnabled((value) => !value)} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={soundEnabled ? "關閉答題音效" : "開啟答題音效"}>{soundEnabled ? <Volume2 className="size-[17px]" /> : <VolumeX className="size-[17px]" />}</button>
             <button onClick={toggleTheme} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={theme === "light" ? "切換至深色模式" : "切換至淺色模式"}>{theme === "light" ? <Moon className="size-[17px]" /> : <Sun className="size-[18px]" />}</button>
             <Link href="/#path" className="mq-library-link inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-3 py-2 text-sm font-extrabold transition-colors hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15"><ArrowLeft className="size-4" /><span>返回題目庫</span></Link>
@@ -143,6 +167,7 @@ export default function P2Practice() {
           <button onClick={() => changeMode("divide")} aria-pressed={mode === "divide"}>除法</button>
           <button onClick={() => changeMode("mixed")} aria-pressed={mode === "mixed"}>混合運算</button>
         </div>
+        <div className="mq-difficulty-switch mb-5" aria-label="選擇 P2 隨機題難度">{(["easy", "standard", "challenge"] as Difficulty[]).map((item) => <button key={item} onClick={() => startRandom(item)} aria-pressed={difficulty === item && !reviewMode}><span>{item === "easy" ? "1" : item === "standard" ? "2" : "3"}</span><strong>{difficultyLabels[item]}</strong><small>{item === "easy" ? "暖身" : item === "standard" ? "核心" : "進階"}</small></button>)}<button onClick={() => startRandom()} className="mq-randomize"><Lightbulb className="size-4" /> 換一組隨機題</button></div>
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#c8811e]"><span className="size-2 rounded-full bg-[#c8811e]" /> P2 · 練習站 01</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">{modeLabel}</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">{mode === "multiply" ? "看清每一組有多少，再把相同的數量乘起來。" : mode === "divide" ? "把物件平均分成幾組，找出每一組的數量。" : "先完成乘或除，再進行下一步運算。"}</p></div>
           <div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]"><span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">今日學習路徑</span><p className="mt-1 font-extrabold">{reviewMode ? "重溫" : "已完成"} {completed} / {activeIndices.length} 題 <span className="mx-1 text-[#f05a3c]">·</span> {timeLabel}</p></div>

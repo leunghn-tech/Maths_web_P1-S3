@@ -45,6 +45,22 @@ const levels: Record<Level, { title: string; description: string; badge: string;
   },
 };
 
+function choicesFor(answer: number) { return Array.from(new Set([answer, answer + 2, Math.max(1, answer - 2), answer + 4])).sort(() => Math.random() - 0.5); }
+function generateLevelQuestions(level: Level): Question[] {
+  const cap = level === 1 ? 6 : level === 2 ? 9 : 12;
+  return Array.from({ length: 3 }, (_, index) => {
+    const a = 2 + Math.floor(Math.random() * cap);
+    const b = 2 + Math.floor(Math.random() * Math.max(2, cap - 1));
+    const extra = 1 + Math.floor(Math.random() * Math.max(2, cap - 1));
+    if (level === 1) { const answer = a + b * 2; return { expression: `${a} + ${b} × 2`, answer, choices: choicesFor(answer), note: `先算 ${b} × 2，再加 ${a}。` }; }
+    if (level === 2) { const answer = a * b - extra; return { expression: `${a} × ${b} − ${extra}`, answer, choices: choicesFor(answer), note: `先算 ${a} × ${b}，再減 ${extra}。` }; }
+    const divisor = 2 + Math.floor(Math.random() * 5);
+    const quotient = 2 + Math.floor(Math.random() * 8);
+    const answer = quotient + a * 2;
+    return { expression: `${quotient * divisor} ÷ ${divisor} + ${a} × 2`, answer, choices: choicesFor(answer), note: "先完成除法和乘法，再把兩個結果相加。" };
+  });
+}
+
 type ResultState = "idle" | "correct" | "incorrect";
 
 export default function P3Practice() {
@@ -61,8 +77,9 @@ export default function P3Practice() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [wrongIndices, setWrongIndices] = useState<number[]>([]);
   const [reviewMode, setReviewMode] = useState(false);
+  const [session, setSession] = useState<Question[]>(() => generateLevelQuestions(1));
 
-  const level = levels[selectedLevel];
+  const level = { ...levels[selectedLevel], questions: session };
   const activeIndices = reviewMode ? wrongIndices : level.questions.map((_, index) => index);
   const question = level.questions[activeIndices[currentIndex]];
   const completed = currentIndex + (result === "correct" ? 1 : 0);
@@ -79,6 +96,7 @@ export default function P3Practice() {
 
   const resetLevel = (nextLevel: Level) => {
     setSelectedLevel(nextLevel);
+    setSession(generateLevelQuestions(nextLevel));
     setCurrentIndex(0);
     setResult("idle");
     setSelectedAnswer(null);
@@ -137,6 +155,7 @@ export default function P3Practice() {
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#4f6eae]"><span className="size-2 rounded-full bg-[#4f6eae]" /> P3 · 分級運算站</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">四則混合計算</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">完成每一級 3 題，答對至少 2 題即可解鎖下一條運算路徑。</p></div><div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]"><span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">目前關卡</span><p className="mt-1 font-extrabold">L{selectedLevel} · {timeLabel}</p></div></div>
 
         <div className="mq-level-select" aria-label="選擇 P3 難度關卡">{([1, 2, 3] as Level[]).map((item) => <button key={item} onClick={() => item <= unlockedLevel && resetLevel(item)} disabled={item > unlockedLevel} aria-pressed={item === selectedLevel} className={item > unlockedLevel ? "mq-level-locked" : ""}>{item > unlockedLevel ? <Lock className="size-4" /> : <span className="font-mono">0{item}</span>}<span><strong>Level {item}</strong><small>{item === 1 ? "基礎" : item === 2 ? "進階" : "挑戰"}</small></span>{item < 3 && <ChevronRight className="ml-auto size-4 opacity-40" />}</button>)}</div>
+        <button onClick={() => resetLevel(selectedLevel)} className="mq-randomize mt-4"><RotateCcw className="size-4" /> 換一組 Level {selectedLevel} 隨機題</button>
         {!reviewMode && wrongIndices.length > 0 && <button onClick={startWrongReview} className="mq-review mt-4 inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-4 py-2 text-sm font-extrabold text-[#f05a3c] transition"><RotateCcw className="size-4" /> 重溫本關 {wrongIndices.length} 題錯題</button>}
 
         <div className="mq-practice-grid mt-5 grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
