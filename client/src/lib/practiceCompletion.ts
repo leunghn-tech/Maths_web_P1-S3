@@ -1,4 +1,5 @@
 /** Maths Quest completion records are kept in local storage so the student can see progress when returning to the library. */
+import { resetDailyPractice } from "@/lib/dailyPractice";
 export const PRACTICE_COMPLETION_EVENT = "maths-quest:completion-updated";
 const STORAGE_KEY = "maths-quest:completed-practices";
 
@@ -23,5 +24,6 @@ export function markPracticeCompleted(practiceId: string) {
 export function resetPracticeProgress() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(STORAGE_KEY);
+  resetDailyPractice();
   window.dispatchEvent(new CustomEvent(PRACTICE_COMPLETION_EVENT));
 }

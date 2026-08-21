@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RotateCcw, Sparkles, Sta
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
+import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 
 type Question = {
   first: number;
@@ -52,6 +53,7 @@ export default function P1Practice() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [wrongIndices, setWrongIndices] = useState<number[]>([]);
   const [reviewMode, setReviewMode] = useState(false);
+  const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
 
   const activeIndices = reviewMode ? wrongIndices : questions.map((_, index) => index);
   const question = questions[activeIndices[currentIndex]];
@@ -88,7 +90,7 @@ export default function P1Practice() {
   const nextQuestion = () => {
     if (currentIndex === activeIndices.length - 1) {
       setFinished(true);
-      if (!reviewMode) markPracticeCompleted("p1-add-subtract");
+      if (!reviewMode) { markPracticeCompleted("p1-add-subtract"); setDailyProgress(recordDailyPractice("p1-add-subtract")); }
       if (soundEnabled) playCelebrationSound();
       return;
     }
@@ -222,6 +224,7 @@ export default function P1Practice() {
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">{reviewMode ? "你已重新走完錯題路徑！" : "你完成了這段路徑！"}</h2>
                 <div className="mq-finish-stars mt-4">{[1, 2, 3].map((star) => <Star key={star} className={`size-7 ${star <= stars ? "fill-[#f6be5d] text-[#f6be5d]" : "text-[#e8e3d9] dark:text-[#2a4051]"}`} />)}</div>
                 <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {activeIndices.length} 題，用時 {timeLabel}。每一題都是更熟練的一步。</p>
+                {!reviewMode && <p className="mq-daily-finish mt-3 font-bold">{dailyProgress.reachedGoal ? `今日目標完成！已連續打卡 ${dailyProgress.streak} 天。` : `今日目標：${dailyProgress.completed} / ${DAILY_TARGET} 個練習站`}</p>}
                 <div className="mt-7 flex flex-wrap justify-center gap-3">{!reviewMode && wrongIndices.length > 0 && <button onClick={startWrongReview} className="mq-review inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-5 py-3 text-sm font-extrabold text-[#f05a3c] transition"><Sparkles className="size-4" /> 重溫 {wrongIndices.length} 題錯題</button>}<button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/#path" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">返回題目庫 <ArrowRight className="size-4" /></Link></div>
               </div>
             )}

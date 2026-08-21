@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getCompletedPractices, PRACTICE_COMPLETION_EVENT, resetPracticeProgress } from "@/lib/practiceCompletion";
+import { DAILY_PROGRESS_EVENT, DAILY_TARGET, getDailyPracticeProgress, type DailyPracticeProgress } from "@/lib/dailyPractice";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 type Stage = "primary" | "secondary";
@@ -173,6 +174,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [completedPractices, setCompletedPractices] = useState<string[]>([]);
   const [resetOpen, setResetOpen] = useState(false);
+  const [dailyProgress, setDailyProgress] = useState<DailyPracticeProgress>(() => getDailyPracticeProgress());
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -180,6 +182,13 @@ export default function Home() {
     syncCompletion();
     window.addEventListener(PRACTICE_COMPLETION_EVENT, syncCompletion);
     return () => window.removeEventListener(PRACTICE_COMPLETION_EVENT, syncCompletion);
+  }, []);
+
+  useEffect(() => {
+    const syncDailyProgress = () => setDailyProgress(getDailyPracticeProgress());
+    syncDailyProgress();
+    window.addEventListener(DAILY_PROGRESS_EVENT, syncDailyProgress);
+    return () => window.removeEventListener(DAILY_PROGRESS_EVENT, syncDailyProgress);
   }, []);
 
   const visibleCourses = useMemo(
@@ -205,6 +214,7 @@ export default function Home() {
   const resetProgress = () => {
     resetPracticeProgress();
     setCompletedPractices([]);
+    setDailyProgress(getDailyPracticeProgress());
     setResetOpen(false);
     toast.success("學習進度已重設", { description: "你可以隨時重新挑戰每一個學習站。" });
   };
@@ -282,6 +292,11 @@ export default function Home() {
                 <span className="relative inline-block text-[#f05a3c]">解開下一題。</span>
               </h1>
               <p className="mt-7 max-w-[510px] text-[17px] leading-8 text-[#53677d]">由基礎數感到三角學，把你的年級、主題和下一個練習站連起來。每次練習，都是一次更清楚的理解。</p>
+              <div className="mq-daily-goal mt-6 max-w-[510px]" aria-live="polite">
+                <div className="flex items-start justify-between gap-4"><div><p className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#f05a3c]">DAILY QUEST</p><p className="mt-1 text-sm font-extrabold">{dailyProgress.reachedGoal ? "今日目標已完成，太好了！" : `今天完成 ${DAILY_TARGET} 個練習站`}</p></div><div className="mq-streak"><Sparkles className="size-4" /><span>{dailyProgress.streak}</span><small>天</small></div></div>
+                <div className="mt-4 flex items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-[#172b3f]/10"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyProgress.completed / dailyProgress.target) * 100)}%` }} /></div><span className="font-mono text-xs font-black text-[#f05a3c]">{dailyProgress.completed}/{dailyProgress.target}</span></div>
+                <p className="mt-3 text-xs font-bold text-[#617286]">{dailyProgress.streak > 0 ? `已連續打卡 ${dailyProgress.streak} 天${dailyProgress.reachedGoal ? " · 獲得今日探險印章" : " · 完成目標可獲今日印章"}` : "完成第一個練習站，即可開始你的打卡紀錄。"}</p>
+              </div>
               <div className="mt-9 flex flex-wrap gap-3">
                 <a href="#path" className="group inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-6 py-4 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
                   探索我的年級 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />

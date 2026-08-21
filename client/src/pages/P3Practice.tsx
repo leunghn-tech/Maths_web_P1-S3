@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, ChevronRight, Lightbulb, Lock, Moon, Rota
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
+import { recordDailyPractice } from "@/lib/dailyPractice";
 
 type Level = 1 | 2 | 3;
 type Question = { expression: string; answer: number; choices: number[]; note: string };
@@ -109,7 +110,7 @@ export default function P3Practice() {
     if (currentIndex === activeIndices.length - 1) {
       const justPassed = levelScore >= 2;
       if (!reviewMode && justPassed && selectedLevel < 3) setUnlockedLevel((value) => Math.max(value, (selectedLevel + 1) as Level) as Level);
-      if (!reviewMode && justPassed) markPracticeCompleted(`p3-level-${selectedLevel}`);
+      if (!reviewMode && justPassed) { markPracticeCompleted(`p3-level-${selectedLevel}`); recordDailyPractice(`p3-level-${selectedLevel}`); }
       setLevelFinished(true);
       if (soundEnabled) playCelebrationSound();
       return;
