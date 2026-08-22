@@ -390,6 +390,15 @@
 .dark .mq-choice::after { border-color: rgba(232,243,242,.2); }
 .dark .mq-practice-grid::before { border-color: rgba(255,118,91,.4); }
 
+/* 小學直式分數：分子在上、分母在下，保留題面算式的對齊與清晰度。 */
+.mq-fraction { display: inline-grid; min-width: 1.08em; margin: 0 .08em; vertical-align: middle; grid-template-rows: 1fr 1fr; line-height: .78; text-align: center; font-family: "DM Mono", "Noto Sans TC", monospace; font-size: .68em; letter-spacing: 0; }
+.mq-fraction sup, .mq-fraction sub { display: block; position: static; min-width: 100%; font-size: 1em; font-weight: inherit; line-height: 1; text-decoration: none; }
+.mq-fraction sup { padding: 0 .1em .08em; border-bottom: .075em solid currentColor; }
+.mq-fraction sub { padding: .08em .1em 0; }
+.mq-choice .mq-fraction { font-size: .82em; }
+.mq-answer-input .mq-fraction { font-size: .78em; }
+.mq-feedback .mq-fraction { font-size: .88em; }
+
 @keyframes mq-star-land { 0% { transform: scale(.45) rotate(-16deg); } 65% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
 @keyframes mq-confetti { 0% { opacity: 0; transform: rotate(var(--burst)) translateY(-8px) scale(.4); } 35% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--burst)) translateY(-60px) scale(1); } }
 

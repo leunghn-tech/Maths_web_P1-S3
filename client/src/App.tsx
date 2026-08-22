@@ -1,6 +1,7 @@
 /** Maths Quest global shell — maintains the light paper workspace selected in ideas.md. */
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import PrimaryFractionFormatter from "@/components/PrimaryFractionFormatter";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -50,6 +51,7 @@ export default function App() {
         <TooltipProvider>
           <Toaster richColors position="top-center" />
           <Router />
+          <PrimaryFractionFormatter />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
