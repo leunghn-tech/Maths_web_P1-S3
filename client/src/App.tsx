@@ -2,6 +2,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import PrimaryFractionFormatter from "@/components/PrimaryFractionFormatter";
+import PrimaryLearningCoach from "@/components/PrimaryLearningCoach";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -52,6 +53,7 @@ export default function App() {
           <Toaster richColors position="top-center" />
           <Router />
           <PrimaryFractionFormatter />
+          <PrimaryLearningCoach />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

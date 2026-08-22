@@ -199,7 +199,7 @@ export default function P1Practice() {
             <div className="rounded-[24px] border border-[#172b3f]/10 bg-[#172b3f] p-5 text-white shadow-[0_10px_0_#0e1d2a] dark:border-white/10 dark:bg-[#1b3042] dark:shadow-[0_10px_0_#0b131d]">
               <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">本次任務</p>
               <h2 className="mt-3 text-xl font-black leading-7">{reviewMode ? "逐題重溫錯題。" : "完成 5 個計算站。"}</h2>
-              <p className="mt-3 text-sm leading-6 text-white/75">{reviewMode ? "這次只會出現你剛才答錯的題目。" : "每題都可以慢慢想。答錯了也會看到提示，再試一次。"}</p>
+              <p className="mt-3 text-sm leading-6 text-white/75">{reviewMode ? "只做剛才的錯題。" : "看圖，再按數字。"}</p>
               <div className="mq-mission-steps mt-5" aria-label="五個題目的完成進度">
                 {activeIndices.map((_, index) => <span key={index} className={index < currentIndex + (result === "correct" ? 1 : 0) ? "mq-mission-step-done" : index === currentIndex ? "mq-mission-step-current" : ""}>{index + 1}</span>)}
               </div>
@@ -244,11 +244,11 @@ export default function P1Practice() {
                   <div className="mq-keypad grid grid-cols-5 gap-2" aria-label="數字鍵盤">
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => <button key={digit} onClick={() => addDigit(String(digit))} disabled={result !== "idle"} className="mq-key rounded-xl border border-[#172b3f]/10 bg-[#fcfbf7] py-3 text-lg font-black transition disabled:cursor-default disabled:opacity-45 dark:border-white/10 dark:bg-[#1c3041]">{digit}</button>)}
                     <button onClick={() => setAnswer("")} disabled={result !== "idle" || !answer} className="mq-key col-span-2 rounded-xl border border-[#172b3f]/10 bg-[#fcfbf7] py-3 text-sm font-extrabold transition disabled:cursor-default disabled:opacity-45 dark:border-white/10 dark:bg-[#1c3041]">清除</button>
-                    <button onClick={() => setAnswer((value) => value.slice(0, -1))} disabled={result !== "idle" || !answer} className="mq-key col-span-3 rounded-xl border border-[#172b3f]/10 bg-[#fcfbf7] py-3 text-sm font-extrabold transition disabled:cursor-default disabled:opacity-45 dark:border-white/10 dark:bg-[#1c3041]">刪除一個數字</button>
+                    <button onClick={() => setAnswer((value) => value.slice(0, -1))} disabled={result !== "idle" || !answer} className="mq-key col-span-3 rounded-xl border border-[#172b3f]/10 bg-[#fcfbf7] py-3 text-sm font-extrabold transition disabled:cursor-default disabled:opacity-45 dark:border-white/10 dark:bg-[#1c3041]">← 刪除</button>
                   </div>
                   <div className="flex flex-col justify-end gap-2">
-                    {result === "idle" ? <button onClick={checkAnswer} disabled={!answer} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">檢查答案</button> : result === "incorrect" ? <button onClick={() => { setAnswer(""); setResult("idle"); }} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition"><RotateCcw className="mr-1 inline size-4" /> 再試一次</button> : <button onClick={nextQuestion} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition">{currentIndex === activeIndices.length - 1 ? "查看結果" : "下一題"} <ArrowRight className="ml-1 inline size-4" /></button>}
-                    <p className="text-center font-mono text-[10px] font-bold tracking-[0.08em] text-[#8390a0] dark:text-[#9eb4bd]">按數字輸入答案</p>
+                    {result === "idle" ? <button onClick={checkAnswer} disabled={!answer} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none">檢查</button> : result === "incorrect" ? <button onClick={() => { setAnswer(""); setResult("idle"); }} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition"><RotateCcw className="mr-1 inline size-4" /> 再試一次</button> : <button onClick={nextQuestion} className="mq-start min-h-14 rounded-2xl bg-[#f05a3c] px-5 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition">{currentIndex === activeIndices.length - 1 ? "看結果" : "下一題"} <ArrowRight className="ml-1 inline size-4" /></button>}
+                    <p className="text-center font-mono text-[10px] font-bold tracking-[0.08em] text-[#8390a0] dark:text-[#9eb4bd]">按數字</p>
                   </div>
                 </div>
               </>

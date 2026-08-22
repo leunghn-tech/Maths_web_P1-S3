@@ -392,6 +392,12 @@ export default function Home() {
               </div>
             </div>
 
+            {activeStage === "primary" && <div className="mq-primary-start-grid grid gap-2 rounded-2xl border border-[#f05a3c]/20 bg-[#fff3e8] p-3 sm:grid-cols-3" aria-label="小學生三步開始">
+              <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2"><span className="grid size-6 place-items-center rounded-full bg-[#f05a3c] font-mono text-[10px] font-black text-white">1</span><strong className="text-sm">選年級</strong></div>
+              <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2"><span className="grid size-6 place-items-center rounded-full bg-[#172b3f] font-mono text-[10px] font-black text-white">2</span><strong className="text-sm">按紅色開始</strong></div>
+              <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2"><span className="grid size-6 place-items-center rounded-full bg-[#172b3f] font-mono text-[10px] font-black text-white">3</span><strong className="text-sm">做 5 題</strong></div>
+            </div>}
+
             <div className="mq-course rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_12px_30px_rgba(23,43,63,0.06)] md:p-7">
               <div className="flex flex-col gap-5 border-b border-[#172b3f]/10 pb-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-start gap-4">
@@ -399,7 +405,7 @@ export default function Home() {
                   <div>
                     <p className="font-mono text-[11px] font-bold tracking-[0.16em]" style={{ color: course.accent }}>{course.shortLabel.toUpperCase()} LEARNING MAP</p>
                     <h3 className="mt-1 text-2xl font-black tracking-[-0.045em]">{course.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#617286]">共 {topicCount} 個課程焦點 · 從最常用的核心概念開始整理。</p>
+                    <p className="mt-2 text-sm leading-6 text-[#617286]">{course.stage === "primary" ? "選好年級後，按紅色按鈕開始做題。" : `共 ${topicCount} 個課程焦點 · 從最常用的核心概念開始整理。`}</p>
                     {courseCompleted && <span className="mq-completion-badge mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-bold"><Check className="size-3" /> {courseCompletionLabel}</span>}
                   </div>
                 </div>

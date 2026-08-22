@@ -399,6 +399,29 @@
 .mq-answer-input .mq-fraction { font-size: .78em; }
 .mq-feedback .mq-fraction { font-size: .88em; }
 
+/* 小學生三步導引：只保留看題、選答、前進三個圖示化步驟。 */
+.mq-primary-coach { position: fixed; top: 5.4rem; right: 1.25rem; z-index: 45; display: flex; align-items: center; gap: .7rem; padding: .55rem .7rem .55rem .8rem; border: 1px solid rgba(23,43,63,.12); border-radius: 999px; background: rgba(255,253,248,.94); box-shadow: 0 10px 24px rgba(23,43,63,.13); backdrop-filter: blur(14px); color: #172b3f; }
+.mq-primary-coach-title { color: #f05a3c; font-family: "DM Mono", monospace; font-size: 9px; font-weight: 800; letter-spacing: .11em; }
+.mq-primary-coach ol { display: flex; align-items: center; gap: .18rem; margin: 0; padding: 0; list-style: none; }
+.mq-primary-coach li { display: inline-flex; align-items: center; gap: .24rem; padding: .3rem .48rem; border-radius: 999px; font-size: 11px; line-height: 1; }
+.mq-primary-coach li:first-child { background: #fff0e9; color: #c84932; }
+.mq-primary-coach li span { display: grid; width: 16px; height: 16px; place-items: center; border-radius: 50%; background: #172b3f; color: white; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; }
+.mq-primary-coach li svg { width: 14px; height: 14px; }
+.mq-primary-coach li strong { font-weight: 800; }
+.dark .mq-primary-coach { border-color: rgba(255,255,255,.16); background: rgba(23,39,55,.95); color: #f4f7f4; }
+.dark .mq-primary-coach li:first-child { background: #3a2f2b; color: #ffe2d8; }
+@media (max-width: 640px) { .mq-primary-coach { display: none; } }
+
+/* 每日第一站與數字鍵盤：提升起步動作，保留題目區的工作紙標記。 */
+.mq-daily-goal { position: relative; border-left: 4px solid #f05a3c; box-shadow: 0 9px 20px rgba(23,43,63,.07); }
+.mq-daily-goal::before { content: "先從這裡開始"; position: absolute; top: -.72rem; left: .85rem; padding: .17rem .46rem; border: 1px solid rgba(240,90,60,.25); border-radius: 999px; background: #fffdf8; color: #f05a3c; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+.mq-keypad { position: relative; padding-top: 1.15rem; border-top: 1px dashed rgba(240,90,60,.38); }
+.mq-keypad::before { content: "ANS PAD · 按數字"; position: absolute; top: .12rem; left: .1rem; color: #f05a3c; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
+.mq-keypad::after { content: ""; position: absolute; top: .47rem; right: .2rem; width: 34px; border-top: 1px dashed rgba(23,43,63,.22); }
+.dark .mq-daily-goal::before { background: #172737; border-color: rgba(255,118,91,.32); }
+.dark .mq-keypad { border-color: rgba(255,118,91,.4); }
+.dark .mq-keypad::after { border-color: rgba(232,243,242,.24); }
+
 @keyframes mq-star-land { 0% { transform: scale(.45) rotate(-16deg); } 65% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
 @keyframes mq-confetti { 0% { opacity: 0; transform: rotate(var(--burst)) translateY(-8px) scale(.4); } 35% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--burst)) translateY(-60px) scale(1); } }
 
