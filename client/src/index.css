@@ -262,7 +262,7 @@
 .mq-shape-parallelogram span { transform: skewX(15deg); }
 .mq-shape-trapezoid { border: 0 !important; background: var(--shape-color); clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%); }
 .mq-shape-trapezoid span { transform: translateY(6px); }
-.mq-random-card::before { content: "P4 · RANDOM QUEST"; }
+.mq-random-card::before { content: attr(data-stamp); }
 .mq-random-card::after { border-color: rgba(240,90,60,.3); }
 .mq-practice-grid { position: relative; }
 .mq-practice-grid::before { content: ""; position: absolute; left: 114px; top: 56px; bottom: 42px; z-index: 0; border-left: 1px dashed rgba(240,90,60,.32); pointer-events: none; }
