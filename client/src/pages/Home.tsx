@@ -175,6 +175,8 @@ const starPractices: StarPractice[] = [
   { key: "p1-subtract", grade: "P1", title: "減法", detail: "拿走", href: "/practice/p1-add-subtract?mode=subtract", accent: "#f05a3c" },
   { key: "p1-mixed", grade: "P1", title: "加減", detail: "一齊做", href: "/practice/p1-add-subtract?mode=mixed", accent: "#f05a3c" },
   { key: "p1-numbers", grade: "P1", title: "100 以內的數", detail: "十和一", href: "/practice/p1-numbers", accent: "#f05a3c" },
+  { key: "p1-time", grade: "P1", title: "時間與鐘面", detail: "撥指針", href: "/practice/p1-time", accent: "#f05a3c" },
+  { key: "p1-number-line", grade: "P1", title: "順數與倒數", detail: "青蛙跳", href: "/practice/p1-number-line", accent: "#f05a3c" },
   { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
   { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
   { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },
@@ -216,7 +218,7 @@ export default function Home() {
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
   const nextStarPractice = useMemo(() => starPractices.find((practice) => !completedPractices.includes(practice.key)) ?? null, [completedPractices]);
   const isGradeCompleted = (grade: string) => {
-    if (grade === "P1") return ["p1-add-subtract", "p1-numbers"].some((id) => completedPractices.includes(id));
+    if (grade === "P1") return ["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line"].some((id) => completedPractices.includes(id));
     if (grade === "P2") return ["p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
     if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
     if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
@@ -225,7 +227,7 @@ export default function Home() {
     return false;
   };
   const courseCompleted = isGradeCompleted(course.grade);
-  const courseCompletionLabel = course.grade === "P1" ? `${["p1-add-subtract", "p1-numbers"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P6" ? `${["p6-discount", "p6-profit"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
+  const courseCompletionLabel = course.grade === "P1" ? `${["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P6" ? `${["p6-discount", "p6-profit"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
@@ -428,7 +430,7 @@ export default function Home() {
                   </div>
                 </div>
                 {course.grade === "P1" ? (
-                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p1-add-subtract" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 20 以內加減</Link><Link href="/practice/p1-numbers" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">100 以內的數</Link></div>
+                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p1-add-subtract" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 20 以內加減</Link><Link href="/practice/p1-numbers" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">100 以內的數</Link><Link href="/practice/p1-time" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">時間鐘面</Link><Link href="/practice/p1-number-line" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">青蛙數線</Link></div>
                 ) : course.grade === "P2" ? (
                   <Link href="/practice/p2-multiplication" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 P2 練習</Link>
                 ) : course.grade === "P3" ? (
@@ -443,6 +445,16 @@ export default function Home() {
                   <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
                 )}
               </div>
+
+              {course.grade === "P1" && <section className="mq-p1-recommended mt-6 rounded-2xl border border-[#f05a3c]/20 bg-[#fff7ef] p-4" aria-label="P1 推薦學習次序">
+                <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-mono text-[10px] font-bold tracking-[.14em] text-[#f05a3c]">RECOMMENDED ROUTE</p><h4 className="mt-1 font-black">跟住這條路，一站一站學。</h4></div><span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">P1 · 4 站</span></div>
+                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{[
+                  { key: "p1-add-subtract", code: "01", icon: "＋", title: "20 以內加減", detail: "先練基本數感", href: "/practice/p1-add-subtract" },
+                  { key: "p1-numbers", code: "02", icon: "🔟", title: "100 以內的數", detail: "看十位和個位", href: "/practice/p1-numbers" },
+                  { key: "p1-time", code: "03", icon: "🕐", title: "時間與鐘面", detail: "拖動時針分針", href: "/practice/p1-time" },
+                  { key: "p1-number-line", code: "04", icon: "🐸", title: "順數與倒數", detail: "跟青蛙跳數線", href: "/practice/p1-number-line" },
+                ].map((station, stationIndex) => { const done = completedPractices.includes(station.key); const next = !done && ["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line"].slice(0, stationIndex).every((key) => completedPractices.includes(key)); return <Link key={station.key} href={station.href} className={`mq-p1-route-card ${next ? "is-next" : ""} ${done ? "is-done" : ""}`}><span className="mq-p1-route-code">{done ? <Check className="size-3" /> : station.code}</span><span className="text-lg leading-none">{station.icon}</span><strong>{station.title}</strong><small>{done ? "已收集星星" : next ? "下一站，按這裡" : station.detail}</small></Link>; })}</div>
+              </section>}
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {course.categories.map((category, index) => {
