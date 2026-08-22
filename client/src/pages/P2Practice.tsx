@@ -15,8 +15,13 @@ import AutoReadToggle from "@/components/AutoReadToggle";
 import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 import CorrectCelebration from "@/components/CorrectCelebration";
 import { useCompletedPractices } from "@/hooks/useCompletedPractices";
+import StreakBadge from "@/components/StreakBadge";
 
 type OperationMode = "multiply" | "divide" | "mixed";
+const initialMode = (): OperationMode => {
+  const mode = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("mode");
+  return mode === "multiply" || mode === "divide" || mode === "mixed" ? mode : "multiply";
+};
 type Difficulty = "easy" | "standard" | "challenge";
 type MultiplicationQuestion = { groups: number; each: number; expression: string; answer: number; choices: number[]; note: string; color: string };
 type ResultState = "idle" | "correct" | "incorrect";
@@ -85,7 +90,7 @@ function CelebrationBurst() {
 
 export default function P2Practice() {
   const { theme, toggleTheme } = useTheme();
-  const [mode, setMode] = useState<OperationMode>("multiply");
+  const [mode, setMode] = useState<OperationMode>(initialMode);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [result, setResult] = useState<ResultState>("idle");
   const [selected, setSelected] = useState<number | null>(null);
@@ -99,7 +104,7 @@ export default function P2Practice() {
   const [reviewMode, setReviewMode] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
-  const [questionSet, setQuestionSet] = useState<MultiplicationQuestion[]>(() => generateQuestions("multiply", "standard"));
+  const [questionSet, setQuestionSet] = useState<MultiplicationQuestion[]>(() => generateQuestions(initialMode(), "standard"));
   const completedPractices = useCompletedPractices();
 
   const questions = questionSet;
@@ -195,7 +200,7 @@ export default function P2Practice() {
             <div className="mq-tip mt-5 rounded-2xl border border-[#172b3f]/10 bg-[#fff3e8] p-4 dark:border-white/10 dark:bg-[#3a2f2b]"><div className="flex items-center gap-2 text-[#c8811e]"><Lightbulb className="size-4" /><span className="font-mono text-[10px] font-bold tracking-[0.12em]">小提示</span></div><p className="mt-2 text-sm font-bold leading-6 text-[#744230] dark:text-[#ffe6d6]">{mode === "multiply" ? "3 × 4 是 3 組 4，亦即 4 + 4 + 4。" : mode === "divide" ? "12 ÷ 3 是把 12 個平均分成 3 組。" : "混合運算要先做乘法和除法。"}</p></div>
           </aside>
 
-          <section className="mq-practice-card mq-p2-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}
+          <section className="mq-practice-card mq-p2-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}<StreakBadge streak={streak} />
             {!finished ? <>
               <div className="mq-question-head relative flex items-center justify-between border-b border-[#172b3f]/10 pb-5 dark:border-white/10"><div><p className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#c8811e]">第 {currentIndex + 1} 題 · {mode === "multiply" ? "乘法" : mode === "divide" ? "除法" : "混合運算"}站 {String(currentIndex + 1).padStart(2, "0")}</p><p className="mt-1 text-sm font-bold text-[#617286] dark:text-[#b7c8ce]">{mode === "mixed" ? "先看清運算次序，再選擇答案。" : "用圖示協助你一步一步思考。"}</p></div><span className="grid size-10 place-items-center rounded-full bg-[#fff7e9] font-mono text-xs font-black text-[#c8811e] dark:bg-[#3a3325]">{currentIndex + 1}</span></div>
               <div className="flex min-h-[245px] flex-col items-center justify-center py-7 text-center"><div className="mq-question-note"><span className="font-mono">{mode === "mixed" ? "運算提示" : "分組提示"}</span><span>{question.note}</span></div><SpeakButton text={`題目：${question.expression}等於幾多？${question.note}`} /><GroupBoard {...question} /><div className="mt-6 flex items-center justify-center gap-3 font-mono text-[clamp(3rem,7vw,5rem)] font-medium leading-none tracking-[-0.08em]"><span className="tracking-[-0.1em]">{question.expression}</span><span className="text-[#617286] dark:text-[#b7c8ce]">=</span><span className="mq-answer-input grid min-w-[88px] place-items-center rounded-2xl border-2 border-[#172b3f]/15 text-[#172b3f] dark:border-white/20 dark:text-white">{selected ?? "?"}</span></div></div>

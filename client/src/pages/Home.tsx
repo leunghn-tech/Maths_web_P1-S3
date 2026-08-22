@@ -1,7 +1,7 @@
 /**
  * Maths Quest —「數學探險手帳」：以非對稱學習軌跡、暖白紙張與解題橘紅引導學生選擇下一個練習站。
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import {
@@ -18,6 +18,7 @@ import {
   Play,
   Search,
   Sparkles,
+  Star,
   Sun,
   Target,
   X,
@@ -38,6 +39,8 @@ type Course = {
   accent: string;
   categories: Array<{ name: string; topics: string[] }>;
 };
+
+type StarPractice = { key: string; grade: string; title: string; detail: string; href: string; accent: string };
 
 const courses: Course[] = [
   {
@@ -167,6 +170,17 @@ const courses: Course[] = [
 ];
 
 const categoryIcons = [BookOpen, Compass, LineChart, Dices, CircleHelp];
+const starPractices: StarPractice[] = [
+  { key: "p1-add", grade: "P1", title: "加法", detail: "加多啲", href: "/practice/p1-add-subtract?mode=add", accent: "#f05a3c" },
+  { key: "p1-subtract", grade: "P1", title: "減法", detail: "拿走", href: "/practice/p1-add-subtract?mode=subtract", accent: "#f05a3c" },
+  { key: "p1-mixed", grade: "P1", title: "加減", detail: "一齊做", href: "/practice/p1-add-subtract?mode=mixed", accent: "#f05a3c" },
+  { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
+  { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
+  { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },
+  { key: "p3-level-1", grade: "P3", title: "第一關", detail: "先乘除", href: "/practice/p3-mixed-operations?level=1", accent: "#4f6eae" },
+  { key: "p3-level-2", grade: "P3", title: "第二關", detail: "兩步算", href: "/practice/p3-mixed-operations?level=2", accent: "#4f6eae" },
+  { key: "p3-level-3", grade: "P3", title: "第三關", detail: "過大關", href: "/practice/p3-mixed-operations?level=3", accent: "#4f6eae" },
+];
 
 export default function Home() {
   const [activeStage, setActiveStage] = useState<Stage>("primary");
@@ -199,6 +213,7 @@ export default function Home() {
   );
   const course = courses.find((item) => item.grade === selectedGrade) ?? courses[0];
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
+  const nextStarPractice = useMemo(() => starPractices.find((practice) => !completedPractices.includes(practice.key)) ?? null, [completedPractices]);
   const isGradeCompleted = (grade: string) => {
     if (grade === "P1") return completedPractices.includes("p1-add-subtract");
     if (grade === "P2") return ["p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
@@ -309,6 +324,8 @@ export default function Home() {
                 <div className="mt-4 flex items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-[#172b3f]/10"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyProgress.completed / dailyProgress.target) * 100)}%` }} /></div><span className="font-mono text-xs font-black text-[#f05a3c]">{dailyProgress.completed}/{dailyProgress.target}</span></div>
                 <p className="mt-3 text-xs font-bold text-[#617286]">{dailyProgress.streak > 0 ? `已連續打卡 ${dailyProgress.streak} 天${dailyProgress.reachedGoal ? " · 獲得今日探險印章" : " · 完成目標可獲今日印章"}` : "完成第一個練習站，即可開始你的打卡紀錄。"}</p>
               </div>
+              {nextStarPractice ? <Link href={nextStarPractice.href} className="mq-next-star mt-4 flex max-w-[510px] items-center gap-3 rounded-2xl p-3 transition hover:-translate-y-0.5" style={{ "--station-accent": nextStarPractice.accent } as CSSProperties}>
+                <span className="mq-next-star-mark"><Star className="size-5 fill-current" /></span><span className="min-w-0 flex-1"><span className="block font-mono text-[10px] font-bold tracking-[0.13em]">NEXT STAR</span><strong className="mt-0.5 block text-sm">下一顆星：{nextStarPractice.grade} {nextStarPractice.title}</strong><small>{nextStarPractice.detail} · 完成就有星星</small></span><ArrowRight className="size-5 shrink-0" /></Link> : <div className="mq-next-star mt-4 flex max-w-[510px] items-center gap-3 rounded-2xl p-3"><span className="mq-next-star-mark"><Star className="size-5 fill-current" /></span><span><strong className="block text-sm">全部星星已收集！</strong><small>再做一次，也能繼續變厲害。</small></span></div>}
               <div className="mt-9 flex flex-wrap gap-3">
                 <a href="#path" className="group inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-6 py-4 text-sm font-extrabold text-white shadow-[0_5px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">
                   探索我的年級 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />

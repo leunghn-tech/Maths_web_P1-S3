@@ -15,6 +15,7 @@ import AutoReadToggle from "@/components/AutoReadToggle";
 import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 import CorrectCelebration from "@/components/CorrectCelebration";
 import { useCompletedPractices } from "@/hooks/useCompletedPractices";
+import StreakBadge from "@/components/StreakBadge";
 
 type Question = {
   first: number;
@@ -27,6 +28,10 @@ type Question = {
 
 type Difficulty = "easy" | "standard" | "challenge";
 type OperationMode = "add" | "subtract" | "mixed";
+const initialOperation = (): OperationMode => {
+  const mode = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("mode");
+  return mode === "add" || mode === "subtract" || mode === "mixed" ? mode : "mixed";
+};
 const difficultyLabels: Record<Difficulty, string> = { easy: "輕鬆", standard: "標準", challenge: "挑戰" };
 
 const questions: Question[] = [
@@ -83,8 +88,8 @@ export default function P1Practice() {
   const [reviewMode, setReviewMode] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
-  const [operation, setOperation] = useState<OperationMode>("mixed");
-  const [questionSet, setQuestionSet] = useState<Question[]>(() => generateQuestions("standard", "mixed"));
+  const [operation, setOperation] = useState<OperationMode>(initialOperation);
+  const [questionSet, setQuestionSet] = useState<Question[]>(() => generateQuestions("standard", initialOperation()));
   const completedPractices = useCompletedPractices();
 
   const activeIndices = reviewMode ? wrongIndices : questionSet.map((_, index) => index);
@@ -236,7 +241,7 @@ export default function P1Practice() {
             </div>
           </aside>
 
-          <section className="mq-practice-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}
+          <section className="mq-practice-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}<StreakBadge streak={streak} />
             {!finished ? (
               <>
                 <div className="mq-question-head relative flex items-center justify-between border-b border-[#172b3f]/10 pb-5 dark:border-white/10">
