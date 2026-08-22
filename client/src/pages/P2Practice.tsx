@@ -13,6 +13,8 @@ import SpeakButton from "@/components/SpeakButton";
 import KidTopicPicker from "@/components/KidTopicPicker";
 import AutoReadToggle from "@/components/AutoReadToggle";
 import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
+import CorrectCelebration from "@/components/CorrectCelebration";
+import { useCompletedPractices } from "@/hooks/useCompletedPractices";
 
 type OperationMode = "multiply" | "divide" | "mixed";
 type Difficulty = "easy" | "standard" | "challenge";
@@ -98,6 +100,7 @@ export default function P2Practice() {
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
   const [questionSet, setQuestionSet] = useState<MultiplicationQuestion[]>(() => generateQuestions("multiply", "standard"));
+  const completedPractices = useCompletedPractices();
 
   const questions = questionSet;
   const activeIndices = reviewMode ? wrongIndices : questions.map((_, index) => index);
@@ -174,7 +177,7 @@ export default function P2Practice() {
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
         <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P2.01</span><i /><span>乘法站</span></div>
-        <KidTopicPicker value={mode} onChange={changeMode} items={[{ id: "multiply", label: "乘法", detail: "幾組幾個", Icon: Calculator }, { id: "divide", label: "除法", detail: "平均分", Icon: Divide }, { id: "mixed", label: "混合", detail: "先乘除", Icon: Shuffle }]} />
+        <KidTopicPicker value={mode} onChange={changeMode} items={[{ id: "multiply", label: "乘法", detail: "幾組幾個", Icon: Calculator, completed: completedPractices.includes("p2-multiply") }, { id: "divide", label: "除法", detail: "平均分", Icon: Divide, completed: completedPractices.includes("p2-divide") }, { id: "mixed", label: "混合", detail: "先乘除", Icon: Shuffle, completed: completedPractices.includes("p2-mixed") }]} />
         <div className="mb-4 flex flex-wrap items-center gap-3"><KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "細細組", standard: "常用表", challenge: "大數字" }} /><AutoReadToggle checked={autoRead} onCheckedChange={setAutoRead} /></div>
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#c8811e]"><span className="size-2 rounded-full bg-[#c8811e]" /> P2 · 練習站 01</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">{modeLabel}</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">{mode === "multiply" ? "看清每一組有多少，再把相同的數量乘起來。" : mode === "divide" ? "把物件平均分成幾組，找出每一組的數量。" : "先完成乘或除，再進行下一步運算。"}</p></div>
@@ -192,7 +195,7 @@ export default function P2Practice() {
             <div className="mq-tip mt-5 rounded-2xl border border-[#172b3f]/10 bg-[#fff3e8] p-4 dark:border-white/10 dark:bg-[#3a2f2b]"><div className="flex items-center gap-2 text-[#c8811e]"><Lightbulb className="size-4" /><span className="font-mono text-[10px] font-bold tracking-[0.12em]">小提示</span></div><p className="mt-2 text-sm font-bold leading-6 text-[#744230] dark:text-[#ffe6d6]">{mode === "multiply" ? "3 × 4 是 3 組 4，亦即 4 + 4 + 4。" : mode === "divide" ? "12 ÷ 3 是把 12 個平均分成 3 組。" : "混合運算要先做乘法和除法。"}</p></div>
           </aside>
 
-          <section className="mq-practice-card mq-p2-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">
+          <section className="mq-practice-card mq-p2-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}
             {!finished ? <>
               <div className="mq-question-head relative flex items-center justify-between border-b border-[#172b3f]/10 pb-5 dark:border-white/10"><div><p className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#c8811e]">第 {currentIndex + 1} 題 · {mode === "multiply" ? "乘法" : mode === "divide" ? "除法" : "混合運算"}站 {String(currentIndex + 1).padStart(2, "0")}</p><p className="mt-1 text-sm font-bold text-[#617286] dark:text-[#b7c8ce]">{mode === "mixed" ? "先看清運算次序，再選擇答案。" : "用圖示協助你一步一步思考。"}</p></div><span className="grid size-10 place-items-center rounded-full bg-[#fff7e9] font-mono text-xs font-black text-[#c8811e] dark:bg-[#3a3325]">{currentIndex + 1}</span></div>
               <div className="flex min-h-[245px] flex-col items-center justify-center py-7 text-center"><div className="mq-question-note"><span className="font-mono">{mode === "mixed" ? "運算提示" : "分組提示"}</span><span>{question.note}</span></div><SpeakButton text={`題目：${question.expression}等於幾多？${question.note}`} /><GroupBoard {...question} /><div className="mt-6 flex items-center justify-center gap-3 font-mono text-[clamp(3rem,7vw,5rem)] font-medium leading-none tracking-[-0.08em]"><span className="tracking-[-0.1em]">{question.expression}</span><span className="text-[#617286] dark:text-[#b7c8ce]">=</span><span className="mq-answer-input grid min-w-[88px] place-items-center rounded-2xl border-2 border-[#172b3f]/15 text-[#172b3f] dark:border-white/20 dark:text-white">{selected ?? "?"}</span></div></div>

@@ -456,6 +456,7 @@
 .mq-kid-topic-icon svg { width: 23px; height: 23px; }
 .mq-kid-topic strong { font-size: .98rem; font-weight: 900; }
 .mq-kid-topic small { color: #617286; font-size: .7rem; font-weight: 800; }
+.mq-kid-topic .mq-completion-stars { margin-top: -.05rem; }
 .mq-kid-topic, .mq-kid-difficulty { position: relative; }
 .mq-kid-topic::before, .mq-kid-difficulty::before { content: "STATION PICK"; position: absolute; top: -.8rem; left: .2rem; padding: .08rem .35rem; background: #f8f5ed; color: #8390a0; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
 .mq-kid-topic::after, .mq-kid-difficulty::after { content: ""; position: absolute; right: .3rem; bottom: -.42rem; width: 54px; border-top: 1px dashed rgba(23,43,63,.25); }
@@ -471,6 +472,18 @@
 .dark .mq-p2-practice .mq-kid-topic button[aria-pressed="true"], .dark .mq-p2-practice .mq-kid-difficulty button[aria-pressed="true"] { background: #3a3325; }
 .dark .mq-p3-practice .mq-kid-topic button[aria-pressed="true"], .dark .mq-p3-practice .mq-kid-difficulty button[aria-pressed="true"] { background: #27324d; }
 @media (max-width: 640px) { .mq-kid-topic { gap: .45rem; } .mq-kid-topic button { min-height: 96px; padding: .5rem .25rem; border-radius: 18px; } .mq-kid-topic-icon { width: 34px; height: 34px; border-radius: 12px; } .mq-kid-topic-icon svg { width: 19px; height: 19px; } .mq-kid-topic strong { font-size: .8rem; } .mq-kid-topic small { font-size: .62rem; } }
+
+/* 過關星星及答對撒花：短暫、可讀且不遮擋題目。 */
+.mq-completion-stars { display: inline-flex; align-items: center; gap: .06rem; min-height: 20px; color: #9aa7b0; font-size: .65rem; }
+.mq-completion-stars small { margin-left: .25rem; font-size: .62rem; font-weight: 800; }
+.mq-completion-stars.is-complete { color: #f6be5d; }
+.mq-completion-stars.is-complete svg { fill: currentColor; animation: mq-star-land 380ms cubic-bezier(.23,1,.32,1) both; }
+.mq-correct-celebration { position: absolute; top: 45%; left: 50%; z-index: 5; width: 150px; height: 90px; transform: translate(-50%, -50%); pointer-events: none; }
+.mq-correct-star, .mq-correct-spark { position: absolute; left: 50%; top: 50%; color: #f6be5d; filter: drop-shadow(0 2px 0 rgba(23,43,63,.16)); animation: mq-correct-burst 780ms cubic-bezier(.23,1,.32,1) both; }
+.mq-correct-star { width: 20px; height: 20px; transform: rotate(calc(var(--celebration-index) * 72deg)) translateY(-18px); animation-delay: calc(var(--celebration-index) * 45ms); }
+.mq-correct-spark { width: 28px; height: 28px; color: #f05a3c; animation-delay: 100ms; }
+@keyframes mq-correct-burst { 0% { opacity: 0; } 20% { opacity: 1; transform: rotate(calc(var(--celebration-index, 0) * 72deg)) translateY(-20px) scale(.8); } 100% { opacity: 0; transform: rotate(calc(var(--celebration-index, 0) * 72deg)) translateY(-78px) scale(1.22); } }
+@media (prefers-reduced-motion: reduce) { .mq-completion-stars.is-complete svg, .mq-correct-star, .mq-correct-spark { animation: none; } }
 
 /* 年級識別與題面路線：短句提示保留題目焦點，色彩只標記本站。 */
 .mq-p1-practice .mq-question-head, .mq-p2-practice .mq-question-head, .mq-p3-practice .mq-question-head { margin-left: -.72rem; padding-left: .72rem; border-left: 4px solid #f05a3c; }
