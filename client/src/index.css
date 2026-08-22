@@ -554,6 +554,16 @@
 .mq-solution-copy { min-width: 52px; font-size: .75rem; font-weight: 900; white-space: nowrap; }
 .mq-solution-method { display: inline-flex; min-width: 0; align-items: center; gap: .4rem; }
 .mq-solution-stage b { display: grid; min-width: 34px; min-height: 30px; place-items: center; border-radius: 9px; background: var(--review-accent); padding: .15rem .4rem; color: white; font-family: "DM Mono", monospace; }
+.mq-solution-equals { color: #8390a0; font-family: "DM Mono", monospace; font-size: 1.2rem; font-weight: 900; }
+.mq-puzzle-stage { min-height: 46px; }
+.mq-puzzle-piece, .mq-puzzle-target { display: inline-flex; min-height: 33px; align-items: center; justify-content: center; border: 1px dashed color-mix(in srgb, var(--review-accent) 48%, transparent); background: white; color: var(--review-accent); touch-action: manipulation; }
+.mq-puzzle-piece { min-width: 48px; cursor: grab; border-radius: 10px; padding: .35rem .45rem; box-shadow: 0 3px 0 color-mix(in srgb, var(--review-accent) 18%, transparent); transition: transform 160ms var(--ease-out, ease-out), box-shadow 160ms var(--ease-out, ease-out); }
+.mq-puzzle-piece:active { cursor: grabbing; transform: scale(.96); box-shadow: none; }
+.mq-puzzle-target { min-width: 84px; cursor: pointer; border-radius: 10px; padding: .35rem .55rem; font-size: .68rem; font-weight: 900; }
+.mq-puzzle-target span { display: inline-flex; align-items: center; gap: .25rem; }
+.mq-puzzle-stage.is-complete .mq-puzzle-target { border-style: solid; background: color-mix(in srgb, var(--review-accent) 14%, white); }
+.mq-puzzle-stage.is-complete .mq-puzzle-piece { opacity: .55; transform: scale(.9); }
+.mq-puzzle-order { border-radius: 8px; background: var(--review-accent); padding: .3rem .42rem; color: white; font-family: "DM Mono", monospace; font-size: .72rem; font-weight: 900; }
 .mq-solution-actions { display: flex; justify-content: center; margin-top: .55rem; }
 .mq-solution-actions button { display: inline-flex; align-items: center; gap: .32rem; border: 1px solid color-mix(in srgb, var(--review-accent) 42%, transparent); border-radius: 999px; background: white; padding: .34rem .62rem; color: var(--review-accent); font-size: .73rem; font-weight: 900; transition: transform 160ms var(--ease-out, ease-out), background-color 160ms var(--ease-out, ease-out); }
 .mq-solution-actions button:active { transform: scale(.97); }
@@ -570,8 +580,9 @@
 .dark .mq-review-chip { background: #1c3041; }
 .dark .mq-solution-stage.is-visible { color: #dbe8eb; }
 .dark .mq-solution-actions button { background: #1c3041; }
+.dark .mq-puzzle-piece, .dark .mq-puzzle-target { background: #1c3041; }
 @media (max-width: 640px) { .mq-review-steps { gap: .35rem; font-size: .72rem; } .mq-review-chip { padding: .28rem .4rem; } .mq-review-steps svg { width: 14px; } }
-@media (max-width: 640px) { .mq-solution-copy { min-width: 45px; font-size: .69rem; } .mq-solution-stage { gap: .32rem; padding: .32rem; } .mq-solution-stage .mq-review-chip { max-width: 116px; overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 640px) { .mq-solution-copy { min-width: 45px; font-size: .69rem; } .mq-solution-stage { gap: .32rem; padding: .32rem; } .mq-solution-stage .mq-review-chip { max-width: 116px; overflow: hidden; text-overflow: ellipsis; } .mq-puzzle-target { min-width: 70px; padding: .3rem .35rem; font-size: .62rem; } }
 @media (prefers-reduced-motion: reduce) { .mq-solution-stage { transition: none; } }
 
 /* 年級識別與題面路線：短句提示保留題目焦點，色彩只標記本站。 */
