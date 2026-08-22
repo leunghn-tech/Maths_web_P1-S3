@@ -546,6 +546,18 @@
 .mq-review-steps { display: flex; min-height: 42px; align-items: center; justify-content: center; gap: .55rem; margin-top: .65rem; color: #617286; font-size: .82rem; font-weight: 800; }
 .mq-review-steps b { display: grid; min-width: 38px; min-height: 34px; place-items: center; border-radius: 10px; background: var(--review-accent); padding: .25rem .5rem; color: white; font-family: "DM Mono", monospace; font-size: 1rem; }
 .mq-review-visual > p { margin: .55rem 0 0; color: #617286; font-size: .78rem; font-weight: 700; line-height: 1.45; text-align: center; }
+.mq-solution-player { overflow: hidden; }
+.mq-solution-count { margin-left: auto; color: #8390a0; font-size: .6rem; }
+.mq-solution-stage { display: flex; min-height: 38px; align-items: center; gap: .5rem; margin-top: .5rem; border-radius: 11px; background: transparent; padding: .35rem .45rem; color: #7c8c9a; opacity: .3; transform: translateX(-8px); transition: opacity .32s var(--ease-out, ease-out), transform .32s var(--ease-out, ease-out), background-color .32s var(--ease-out, ease-out); }
+.mq-solution-stage.is-visible { background: color-mix(in srgb, var(--review-accent) 9%, transparent); color: #405368; opacity: 1; transform: translateX(0); }
+.mq-solution-number { display: inline-flex; min-width: 25px; height: 25px; align-items: center; justify-content: center; gap: 2px; border-radius: 999px; background: var(--review-accent); color: white; font-family: "DM Mono", monospace; font-size: .65rem; font-weight: 900; }
+.mq-solution-copy { min-width: 52px; font-size: .75rem; font-weight: 900; white-space: nowrap; }
+.mq-solution-method { display: inline-flex; min-width: 0; align-items: center; gap: .4rem; }
+.mq-solution-stage b { display: grid; min-width: 34px; min-height: 30px; place-items: center; border-radius: 9px; background: var(--review-accent); padding: .15rem .4rem; color: white; font-family: "DM Mono", monospace; }
+.mq-solution-actions { display: flex; justify-content: center; margin-top: .55rem; }
+.mq-solution-actions button { display: inline-flex; align-items: center; gap: .32rem; border: 1px solid color-mix(in srgb, var(--review-accent) 42%, transparent); border-radius: 999px; background: white; padding: .34rem .62rem; color: var(--review-accent); font-size: .73rem; font-weight: 900; transition: transform 160ms var(--ease-out, ease-out), background-color 160ms var(--ease-out, ease-out); }
+.mq-solution-actions button:active { transform: scale(.97); }
+.mq-solution-actions button:hover { background: color-mix(in srgb, var(--review-accent) 8%, white); }
 .mq-review-dots { display: inline-flex; max-width: 104px; flex-wrap: wrap; justify-content: center; gap: 4px; }
 .mq-review-dots i { display: block; width: 9px; height: 9px; border-radius: 999px; }
 .mq-review-chip { border: 1px solid color-mix(in srgb, var(--review-accent) 32%, #d8e0e5); border-radius: 999px; background: white; padding: .32rem .55rem; white-space: nowrap; }
@@ -556,7 +568,11 @@
 .dark .mq-review-visual { background: color-mix(in srgb, var(--review-accent) 14%, #172737); color: #dbe8eb; }
 .dark .mq-review-visual-head strong, .dark .mq-review-visual > p { color: #c8d8de; }
 .dark .mq-review-chip { background: #1c3041; }
+.dark .mq-solution-stage.is-visible { color: #dbe8eb; }
+.dark .mq-solution-actions button { background: #1c3041; }
 @media (max-width: 640px) { .mq-review-steps { gap: .35rem; font-size: .72rem; } .mq-review-chip { padding: .28rem .4rem; } .mq-review-steps svg { width: 14px; } }
+@media (max-width: 640px) { .mq-solution-copy { min-width: 45px; font-size: .69rem; } .mq-solution-stage { gap: .32rem; padding: .32rem; } .mq-solution-stage .mq-review-chip { max-width: 116px; overflow: hidden; text-overflow: ellipsis; } }
+@media (prefers-reduced-motion: reduce) { .mq-solution-stage { transition: none; } }
 
 /* 年級識別與題面路線：短句提示保留題目焦點，色彩只標記本站。 */
 .mq-p1-practice .mq-question-head, .mq-p2-practice .mq-question-head, .mq-p3-practice .mq-question-head { margin-left: -.72rem; padding-left: .72rem; border-left: 4px solid #f05a3c; }
