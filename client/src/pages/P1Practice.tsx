@@ -16,6 +16,9 @@ import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/
 import CorrectCelebration from "@/components/CorrectCelebration";
 import { useCompletedPractices } from "@/hooks/useCompletedPractices";
 import StreakBadge from "@/components/StreakBadge";
+import MidpointBreak from "@/components/MidpointBreak";
+import WrongReviewVoiceButton from "@/components/WrongReviewVoiceButton";
+import PerfectTrophy from "@/components/PerfectTrophy";
 
 type Question = {
   first: number;
@@ -91,12 +94,15 @@ export default function P1Practice() {
   const [operation, setOperation] = useState<OperationMode>(initialOperation);
   const [questionSet, setQuestionSet] = useState<Question[]>(() => generateQuestions("standard", initialOperation()));
   const completedPractices = useCompletedPractices();
+  const [midpointOpen, setMidpointOpen] = useState(false);
+  const [midpointSeen, setMidpointSeen] = useState(false);
 
   const activeIndices = reviewMode ? wrongIndices : questionSet.map((_, index) => index);
   const question = questionSet[activeIndices[currentIndex]];
   const progress = Math.round(((currentIndex + (result === "correct" ? 1 : 0)) / activeIndices.length) * 100);
   const stars = score >= activeIndices.length ? 3 : score >= Math.ceil(activeIndices.length * 0.6) ? 2 : score >= 1 ? 1 : 0;
   const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  const voiceReviewItems = wrongIndices.map((itemIndex) => { const item = questionSet[itemIndex]; return { prompt: `${item.first}${item.operator}${item.second}等於幾多`, answer: String(item.answer), hint: item.story }; });
 
   useEffect(() => {
     if (finished) return;
@@ -137,6 +143,7 @@ export default function P1Practice() {
       if (soundEnabled) playCelebrationSound();
       return;
     }
+    if (!reviewMode && activeIndices.length === 8 && currentIndex === 3 && !midpointSeen) { setMidpointSeen(true); setMidpointOpen(true); return; }
     setCurrentIndex((previous) => previous + 1);
     setAnswer("");
     setResult("idle");
@@ -151,6 +158,8 @@ export default function P1Practice() {
     setSeconds(0);
     setStreak(0);
     setReviewMode(false);
+    setMidpointOpen(false);
+    setMidpointSeen(false);
   };
 
   const startWrongReview = () => {
@@ -176,12 +185,14 @@ export default function P1Practice() {
     setSeconds(0);
     setStreak(0);
     setReviewMode(false);
+    setMidpointOpen(false);
+    setMidpointSeen(false);
   };
 
   const changeOperation = (nextOperation: OperationMode) => { setOperation(nextOperation); startRandom(difficulty, nextOperation); };
 
   return (
-    <div className="mq-practice mq-p1-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
+    <div className="mq-practice mq-p1-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]"><MidpointBreak open={midpointOpen} onContinue={() => { setMidpointOpen(false); setCurrentIndex((value) => value + 1); setAnswer(""); setResult("idle"); }} />
       <header className="mq-practice-header sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl dark:border-white/10 dark:bg-[#111c28]/92">
         <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
           <Link href="/" className="group flex items-center gap-3" aria-label="返回 Maths Quest 首頁">
@@ -283,10 +294,11 @@ export default function P1Practice() {
                 <div className="mq-celebration-burst" aria-hidden="true">{Array.from({ length: 12 }).map((_, index) => <span key={index} style={{ "--burst": `${index * 30}deg` } as CSSProperties} />)}</div>
                 <p className="mt-7 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]">{reviewMode ? "錯題重溫完成" : "完成學習站"}</p>
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.05em]">{reviewMode ? "你已重新走完錯題路徑！" : "你完成了這段路徑！"}</h2>
+                <PerfectTrophy show={!reviewMode && activeIndices.length === 8 && score === 8} />
                 <div className="mq-finish-stars mt-4">{[1, 2, 3].map((star) => <Star key={star} className={`size-7 ${star <= stars ? "fill-[#f6be5d] text-[#f6be5d]" : "text-[#e8e3d9] dark:text-[#2a4051]"}`} />)}</div>
                 <p className="mt-3 max-w-sm text-[15px] leading-7 text-[#617286] dark:text-[#b7c8ce]">這次答對了 {score} / {activeIndices.length} 題，用時 {timeLabel}。每一題都是更熟練的一步。</p>
                 {!reviewMode && <p className="mq-daily-finish mt-3 font-bold">{dailyProgress.reachedGoal ? `今日目標完成！已連續打卡 ${dailyProgress.streak} 天。` : `今日目標：${dailyProgress.completed} / ${DAILY_TARGET} 個練習站`}</p>}
-                <div className="mt-7 flex flex-wrap justify-center gap-3">{!reviewMode && wrongIndices.length > 0 && <button onClick={startWrongReview} className="mq-review inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-5 py-3 text-sm font-extrabold text-[#f05a3c] transition"><Sparkles className="size-4" /> 重溫 {wrongIndices.length} 題錯題</button>}<button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/#path" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">返回題目庫 <ArrowRight className="size-4" /></Link></div>
+                <div className="mt-7 flex flex-wrap justify-center gap-3">{!reviewMode && wrongIndices.length > 0 && <><WrongReviewVoiceButton items={voiceReviewItems} /><button onClick={startWrongReview} className="mq-review inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-5 py-3 text-sm font-extrabold text-[#f05a3c] transition"><Sparkles className="size-4" /> 重溫 {wrongIndices.length} 題錯題</button></>}<button onClick={restart} className="mq-start inline-flex items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><RotateCcw className="size-4" /> 再做一次</button><Link href="/#path" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-5 py-3 text-sm font-extrabold dark:border-white/15">返回題目庫 <ArrowRight className="size-4" /></Link></div>
               </div>
             )}
           </section>

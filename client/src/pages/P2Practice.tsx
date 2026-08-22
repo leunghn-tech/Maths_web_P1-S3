@@ -16,6 +16,9 @@ import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/
 import CorrectCelebration from "@/components/CorrectCelebration";
 import { useCompletedPractices } from "@/hooks/useCompletedPractices";
 import StreakBadge from "@/components/StreakBadge";
+import MidpointBreak from "@/components/MidpointBreak";
+import WrongReviewVoiceButton from "@/components/WrongReviewVoiceButton";
+import PerfectTrophy from "@/components/PerfectTrophy";
 
 type OperationMode = "multiply" | "divide" | "mixed";
 const initialMode = (): OperationMode => {
@@ -106,6 +109,8 @@ export default function P2Practice() {
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
   const [questionSet, setQuestionSet] = useState<MultiplicationQuestion[]>(() => generateQuestions(initialMode(), "standard"));
   const completedPractices = useCompletedPractices();
+  const [midpointOpen, setMidpointOpen] = useState(false);
+  const [midpointSeen, setMidpointSeen] = useState(false);
 
   const questions = questionSet;
   const activeIndices = reviewMode ? wrongIndices : questions.map((_, index) => index);
@@ -115,6 +120,7 @@ export default function P2Practice() {
   const progress = Math.round((completed / activeIndices.length) * 100);
   const stars = score >= activeIndices.length ? 3 : score >= Math.ceil(activeIndices.length * 0.6) ? 2 : score >= 1 ? 1 : 0;
   const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  const voiceReviewItems = wrongIndices.map((itemIndex) => { const item = questions[itemIndex]; return { prompt: `${item.expression}等於幾多`, answer: String(item.answer), hint: item.note }; });
 
   useEffect(() => {
     if (finished) return;
@@ -151,20 +157,21 @@ export default function P2Practice() {
       if (soundEnabled) playCelebrationSound();
       return;
     }
+    if (!reviewMode && activeIndices.length === 8 && currentIndex === 3 && !midpointSeen) { setMidpointSeen(true); setMidpointOpen(true); return; }
     setCurrentIndex((value) => value + 1);
     setResult("idle");
     setSelected(null);
   };
 
   const retry = () => { setResult("idle"); setSelected(null); };
-  const restart = () => { setCurrentIndex(0); setResult("idle"); setSelected(null); setScore(0); setStreak(0); setSeconds(0); setFinished(false); setReviewMode(false); };
+  const restart = () => { setCurrentIndex(0); setResult("idle"); setSelected(null); setScore(0); setStreak(0); setSeconds(0); setFinished(false); setReviewMode(false); setMidpointOpen(false); setMidpointSeen(false); };
   const changeMode = (nextMode: OperationMode) => { setMode(nextMode); setQuestionSet(generateQuestions(nextMode, difficulty)); setWrongIndices([]); restart(); };
   const startRandom = (nextDifficulty = difficulty) => { setDifficulty(nextDifficulty); setQuestionSet(generateQuestions(mode, nextDifficulty)); setWrongIndices([]); restart(); };
   const startWrongReview = () => { setCurrentIndex(0); setResult("idle"); setSelected(null); setScore(0); setStreak(0); setSeconds(0); setFinished(false); setReviewMode(true); };
   const modeLabel = mode === "multiply" ? "九九乘法表" : mode === "divide" ? "平均分組除法" : "乘除混合運算";
 
   return (
-    <div className="mq-practice mq-p2-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
+    <div className="mq-practice mq-p2-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]"><MidpointBreak open={midpointOpen} onContinue={() => { setMidpointOpen(false); setCurrentIndex((value) => value + 1); setSelected(null); setResult("idle"); }} />
       <header className="mq-practice-header sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl dark:border-white/10 dark:bg-[#111c28]/92">
         <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
           <Link href="/" className="group flex items-center gap-3" aria-label="返回 Maths Quest 首頁">
@@ -200,7 +207,7 @@ export default function P2Practice() {
             <div className="mq-tip mt-5 rounded-2xl border border-[#172b3f]/10 bg-[#fff3e8] p-4 dark:border-white/10 dark:bg-[#3a2f2b]"><div className="flex items-center gap-2 text-[#c8811e]"><Lightbulb className="size-4" /><span className="font-mono text-[10px] font-bold tracking-[0.12em]">小提示</span></div><p className="mt-2 text-sm font-bold leading-6 text-[#744230] dark:text-[#ffe6d6]">{mode === "multiply" ? "3 × 4 是 3 組 4，亦即 4 + 4 + 4。" : mode === "divide" ? "12 ÷ 3 是把 12 個平均分成 3 組。" : "混合運算要先做乘法和除法。"}</p></div>
           </aside>
 
-          <section className="mq-practice-card mq-p2-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}<StreakBadge streak={streak} />
+          <section className="mq-practice-card mq-p2-card order-1 min-h-[540px] overflow-hidden rounded-[28px] border border-[#172b3f]/10 bg-white p-5 shadow-[0_16px_35px_rgba(23,43,63,0.07)] dark:border-white/10 dark:bg-[#172737] md:p-8 lg:order-2">{result === "correct" && <CorrectCelebration />}<StreakBadge streak={streak} />{finished && !reviewMode && score === 8 && <PerfectTrophy show />} {finished && !reviewMode && voiceReviewItems.length > 0 && <div className="flex justify-center pt-2"><WrongReviewVoiceButton items={voiceReviewItems} /></div>}
             {!finished ? <>
               <div className="mq-question-head relative flex items-center justify-between border-b border-[#172b3f]/10 pb-5 dark:border-white/10"><div><p className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#c8811e]">第 {currentIndex + 1} 題 · {mode === "multiply" ? "乘法" : mode === "divide" ? "除法" : "混合運算"}站 {String(currentIndex + 1).padStart(2, "0")}</p><p className="mt-1 text-sm font-bold text-[#617286] dark:text-[#b7c8ce]">{mode === "mixed" ? "先看清運算次序，再選擇答案。" : "用圖示協助你一步一步思考。"}</p></div><span className="grid size-10 place-items-center rounded-full bg-[#fff7e9] font-mono text-xs font-black text-[#c8811e] dark:bg-[#3a3325]">{currentIndex + 1}</span></div>
               <div className="flex min-h-[245px] flex-col items-center justify-center py-7 text-center"><div className="mq-question-note"><span className="font-mono">{mode === "mixed" ? "運算提示" : "分組提示"}</span><span>{question.note}</span></div><SpeakButton text={`題目：${question.expression}等於幾多？${question.note}`} /><GroupBoard {...question} /><div className="mt-6 flex items-center justify-center gap-3 font-mono text-[clamp(3rem,7vw,5rem)] font-medium leading-none tracking-[-0.08em]"><span className="tracking-[-0.1em]">{question.expression}</span><span className="text-[#617286] dark:text-[#b7c8ce]">=</span><span className="mq-answer-input grid min-w-[88px] place-items-center rounded-2xl border-2 border-[#172b3f]/15 text-[#172b3f] dark:border-white/20 dark:text-white">{selected ?? "?"}</span></div></div>

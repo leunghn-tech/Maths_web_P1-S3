@@ -507,6 +507,36 @@
 @media (max-width: 640px) { .mq-streak-badge { top: 68px; right: 14px; transform: scale(.88); transform-origin: top right; } }
 @media (prefers-reduced-motion: reduce) { .mq-streak-badge, .mq-streak-spark { animation: none; } }
 
+.mq-midpoint-break { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 20px; background: rgba(23,43,63,.38); backdrop-filter: blur(4px); }
+.mq-midpoint-card { width: min(100%, 360px); border: 2px solid rgba(240,90,60,.42); border-radius: 28px; background: #fffaf0; padding: 28px 24px; text-align: center; color: #172b3f; box-shadow: 0 18px 0 rgba(23,43,63,.17); animation: mq-midpoint-enter 420ms cubic-bezier(.23,1,.32,1) both; }
+.mq-midpoint-icon { position: relative; display: grid; width: 62px; height: 62px; margin: 0 auto 14px; place-items: center; border-radius: 22px; background: #f05a3c; color: white; box-shadow: 0 7px 0 #c84932; }
+.mq-midpoint-spark { position: absolute; right: -8px; top: -8px; color: #f6be5d; }
+.mq-midpoint-card h2 { margin: .45rem 0; font-size: 1.65rem; font-weight: 900; letter-spacing: -.05em; }
+.mq-midpoint-card > p:not(.font-mono) { color: #617286; font-size: .95rem; font-weight: 700; }
+.mq-midpoint-card button { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1.25rem; border-radius: 999px; background: #f05a3c; padding: .82rem 1.15rem; color: #fff; font-size: .9rem; font-weight: 900; box-shadow: 0 4px 0 #c84932; transition: transform 160ms cubic-bezier(.23,1,.32,1); }
+.mq-midpoint-card button:active { transform: translateY(3px); box-shadow: none; }
+.mq-voice-review { border: 1px solid rgba(79,110,174,.38); background: #eef1fb; color: #405a98; }
+.mq-perfect-trophy { position: relative; display: inline-flex; flex-direction: column; align-items: center; margin: 1rem auto .15rem; color: #b86b09; animation: mq-perfect-pop 600ms cubic-bezier(.23,1,.32,1) both; }
+.mq-perfect-trophy > span { display: grid; width: 74px; height: 74px; place-items: center; border: 2px solid #f6be5d; border-radius: 28px; background: #fff4ce; box-shadow: 0 8px 0 rgba(246,190,93,.45); }
+.mq-perfect-trophy strong { margin-top: .75rem; font-size: 1.15rem; font-weight: 900; }
+.mq-perfect-trophy small { margin-top: .1rem; font-size: .72rem; font-weight: 800; }
+.mq-perfect-crown { position: absolute; top: -14px; z-index: 1; color: #f05a3c; }
+.mq-perfect-spark { position: absolute; color: #f6be5d; }
+.mq-perfect-spark-one { left: -14px; top: 25px; animation: mq-perfect-spark 900ms ease-in-out infinite alternate; }
+.mq-perfect-spark-two { right: -14px; top: 42px; animation: mq-perfect-spark 1.1s ease-in-out .15s infinite alternate; }
+.dark .mq-midpoint-card { border-color: rgba(240,90,60,.55); background: #203548; color: #f4f7f4; }
+.dark .mq-midpoint-card > p:not(.font-mono) { color: #b7c8ce; }
+.dark .mq-voice-review { border-color: rgba(133,158,220,.36); background: #27324d; color: #dce5ff; }
+.dark .mq-perfect-trophy > span { background: #3a3325; }
+.mq-finish-achievement-overlay { position: fixed; right: 18px; bottom: 18px; z-index: 70; display: flex; max-width: min(300px, calc(100vw - 36px)); flex-direction: column; align-items: center; gap: .65rem; border-radius: 24px; background: rgba(255,253,248,.96); padding: .7rem .9rem; box-shadow: 0 12px 32px rgba(23,43,63,.18); backdrop-filter: blur(10px); }
+.mq-finish-achievement-overlay .mq-perfect-trophy { margin: 0; transform: scale(.82); transform-origin: bottom center; }
+.dark .mq-finish-achievement-overlay { background: rgba(28,48,65,.96); }
+@media (max-width: 640px) { .mq-finish-achievement-overlay { right: 12px; bottom: 12px; } .mq-finish-achievement-overlay .mq-perfect-trophy { transform: scale(.72); margin-top: -.5rem; margin-bottom: -.5rem; } }
+@keyframes mq-midpoint-enter { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes mq-perfect-pop { from { opacity: 0; transform: translateY(18px) scale(.78); } 70% { opacity: 1; transform: translateY(-5px) scale(1.06); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes mq-perfect-spark { from { transform: scale(.75) rotate(-12deg); } to { transform: scale(1.18) rotate(12deg); } }
+@media (prefers-reduced-motion: reduce) { .mq-midpoint-card, .mq-perfect-trophy, .mq-perfect-spark { animation: none; } }
+
 /* 年級識別與題面路線：短句提示保留題目焦點，色彩只標記本站。 */
 .mq-p1-practice .mq-question-head, .mq-p2-practice .mq-question-head, .mq-p3-practice .mq-question-head { margin-left: -.72rem; padding-left: .72rem; border-left: 4px solid #f05a3c; }
 .mq-p2-practice .mq-question-head { border-left-color: #c8811e; }

@@ -15,6 +15,9 @@ import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/
 import CorrectCelebration from "@/components/CorrectCelebration";
 import { useCompletedPractices } from "@/hooks/useCompletedPractices";
 import StreakBadge from "@/components/StreakBadge";
+import MidpointBreak from "@/components/MidpointBreak";
+import WrongReviewVoiceButton from "@/components/WrongReviewVoiceButton";
+import PerfectTrophy from "@/components/PerfectTrophy";
 
 type Level = 1 | 2 | 3;
 const getUnlockedLevel = (): Level => {
@@ -96,6 +99,8 @@ export default function P3Practice() {
   const [reviewMode, setReviewMode] = useState(false);
   const [session, setSession] = useState<Question[]>(() => generateLevelQuestions(initialLevel()));
   const completedPractices = useCompletedPractices();
+  const [midpointOpen, setMidpointOpen] = useState(false);
+  const [midpointSeen, setMidpointSeen] = useState(false);
 
   const level = { ...levels[selectedLevel], questions: session };
   const activeIndices = reviewMode ? wrongIndices : level.questions.map((_, index) => index);
@@ -105,6 +110,7 @@ export default function P3Practice() {
   const stars = levelScore >= activeIndices.length ? 3 : levelScore >= Math.ceil(activeIndices.length * 0.67) ? 2 : levelScore >= 1 ? 1 : 0;
   const passed = levelScore >= 5;
   const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  const voiceReviewItems = wrongIndices.map((itemIndex) => { const item = level.questions[itemIndex]; return { prompt: `${item.expression}等於幾多`, answer: String(item.answer), hint: item.note }; });
 
   useEffect(() => {
     if (levelFinished) return;
@@ -130,6 +136,8 @@ export default function P3Practice() {
     setLevelFinished(false);
     setWrongIndices([]);
     setReviewMode(false);
+    setMidpointOpen(false);
+    setMidpointSeen(false);
   };
 
   const choose = (choice: number) => {
@@ -157,6 +165,7 @@ export default function P3Practice() {
       if (soundEnabled) playCelebrationSound();
       return;
     }
+    if (!reviewMode && activeIndices.length === 8 && currentIndex === 3 && !midpointSeen) { setMidpointSeen(true); setMidpointOpen(true); return; }
     setCurrentIndex((value) => value + 1);
     setResult("idle");
     setSelectedAnswer(null);
@@ -166,7 +175,7 @@ export default function P3Practice() {
   const startWrongReview = () => { setCurrentIndex(0); setResult("idle"); setSelectedAnswer(null); setLevelScore(0); setStreak(0); setSeconds(0); setLevelFinished(false); setReviewMode(true); };
 
   return (
-    <div className="mq-practice mq-p3-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
+    <div className="mq-practice mq-p3-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]"><MidpointBreak open={midpointOpen} onContinue={() => { setMidpointOpen(false); setCurrentIndex((value) => value + 1); setSelectedAnswer(null); setResult("idle"); }} />
       <header className="mq-practice-header sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl dark:border-white/10 dark:bg-[#111c28]/92">
         <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
           <Link href="/" className="group flex items-center gap-3" aria-label="返回 Maths Quest 首頁"><span className="grid size-10 place-items-center rounded-[14px] bg-[#f05a3c] shadow-[0_6px_0_#c84932] transition-transform duration-200 group-hover:-translate-y-0.5"><img src="/manus-storage/maths-quest-logo_cf7e4a6a.png" alt="" className="size-6 brightness-0 invert" /></span><span className="leading-none"><strong className="block text-[16px] font-extrabold tracking-[-0.04em]">Maths Quest</strong><small className="mt-1 block font-mono text-[9px] font-bold tracking-[0.14em] text-[#f05a3c]">P3 運算站 · 01</small></span></Link>
@@ -175,7 +184,7 @@ export default function P3Practice() {
       </header>
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
-        <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P3.0{selectedLevel}</span><i /><span>過關站</span></div>
+        <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P3.0{selectedLevel}</span><i /><span>過關站</span></div>{levelFinished && !reviewMode && levelScore === 8 && <PerfectTrophy show />}{levelFinished && !reviewMode && voiceReviewItems.length > 0 && <div className="mb-3 flex justify-center"><WrongReviewVoiceButton items={voiceReviewItems} /></div>}
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#4f6eae]"><span className="size-2 rounded-full bg-[#4f6eae]" /> P3 · 分級運算站</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">四則混合計算</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">完成每一級 8 題，答對至少 5 題即可解鎖下一條運算路徑。</p></div><div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]"><span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">目前關卡</span><p className="mt-1 font-extrabold">L{selectedLevel} · {timeLabel}</p></div></div>
 
         <KidTopicPicker value={selectedLevel} onChange={resetLevel} disabled={{ 2: unlockedLevel < 2, 3: unlockedLevel < 3 }} items={[{ id: 1, label: "第一關", detail: "先乘除", Icon: Calculator, completed: completedPractices.includes("p3-level-1") }, { id: 2, label: "第二關", detail: "兩步算", Icon: Sparkles, completed: completedPractices.includes("p3-level-2") }, { id: 3, label: "第三關", detail: "過大關", Icon: Trophy, completed: completedPractices.includes("p3-level-3") }]} />
