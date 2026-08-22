@@ -8,6 +8,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
+import KidDifficultyPicker from "@/components/KidDifficultyPicker";
+import SpeakButton from "@/components/SpeakButton";
 
 type Question = {
   first: number;
@@ -157,7 +159,7 @@ export default function P1Practice() {
   };
 
   return (
-    <div className="mq-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
+    <div className="mq-practice mq-p1-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
       <header className="mq-practice-header sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl dark:border-white/10 dark:bg-[#111c28]/92">
         <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-5 lg:px-8">
           <Link href="/" className="group flex items-center gap-3" aria-label="返回 Maths Quest 首頁">
@@ -181,7 +183,7 @@ export default function P1Practice() {
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
         <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P1.01</span><i /><span>解題站</span></div>
-        <div className="mq-difficulty-switch mb-5" aria-label="選擇 P1 隨機題難度">{(["easy", "standard", "challenge"] as Difficulty[]).map((item) => <button key={item} onClick={() => startRandom(item)} aria-pressed={difficulty === item && !reviewMode}><span>{item === "easy" ? "1" : item === "standard" ? "2" : "3"}</span><strong>{difficultyLabels[item]}</strong><small>{item === "easy" ? "10 以內" : item === "standard" ? "15 以內" : "20 以內"}</small></button>)}<button onClick={() => startRandom()} className="mq-randomize"><Sparkles className="size-4" /> 換一組隨機題</button></div>
+        <KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "10 以內", standard: "15 以內", challenge: "20 以內" }} />
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]"><span className="size-2 rounded-full bg-[#f05a3c]" /> P1 · 學習站 01</div>
@@ -225,7 +227,7 @@ export default function P1Practice() {
                 </div>
 
                 <div className="flex min-h-[220px] flex-col items-center justify-center py-8 text-center">
-                  <div className="mq-question-note"><span className="font-mono">算式提示</span><span>{question.story}</span></div>
+                  <div className="mq-question-note"><span className="font-mono">算式提示</span><span>{question.story}</span></div><SpeakButton text={`題目：${question.first}${question.operator}${question.second}等於幾多？${question.story}`} />
                   <CountTokens question={question} />
                   <div className="mt-7 flex items-center justify-center gap-3 font-mono text-[clamp(3.5rem,8vw,5.5rem)] font-medium leading-none tracking-[-0.08em]">
                     <span>{question.first}</span><span className="text-[#f05a3c]">{question.operator}</span><span>{question.second}</span><span className="text-[#617286] dark:text-[#b7c8ce]">=</span>

@@ -422,6 +422,39 @@
 .dark .mq-keypad { border-color: rgba(255,118,91,.4); }
 .dark .mq-keypad::after { border-color: rgba(232,243,242,.24); }
 
+/* 低年級圖像難度與朗讀：大圖示、短標籤，讓學生先看再按。 */
+.mq-kid-difficulty { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; max-width: 620px; margin-bottom: 1.25rem; }
+.mq-kid-difficulty button { display: grid; min-height: 106px; place-items: center; gap: .22rem; padding: .75rem; border: 1px solid rgba(23,43,63,.12); border-radius: 20px; background: rgba(255,255,255,.78); color: #172b3f; box-shadow: 0 4px 0 rgba(23,43,63,.08); transition: transform 160ms cubic-bezier(.23,1,.32,1), border-color 160ms cubic-bezier(.23,1,.32,1), background 160ms cubic-bezier(.23,1,.32,1); }
+.mq-kid-difficulty button:hover { transform: translateY(-2px); border-color: rgba(240,90,60,.5); }
+.mq-kid-difficulty button[aria-pressed="true"] { border-color: #f05a3c; background: #fff0e9; box-shadow: 0 5px 0 #f05a3c; transform: translateY(-2px); }
+.mq-kid-difficulty button:disabled { cursor: not-allowed; opacity: .48; filter: saturate(.3); }
+.mq-kid-difficulty-icon { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; background: #172b3f; color: #fff; }
+.mq-kid-difficulty button[aria-pressed="true"] .mq-kid-difficulty-icon { background: #f05a3c; }
+.mq-kid-difficulty-icon svg { width: 20px; height: 20px; }
+.mq-kid-difficulty strong { font-size: .92rem; font-weight: 900; }
+.mq-kid-difficulty small { color: #617286; font-size: .72rem; font-weight: 800; }
+.mq-speak-button { display: inline-flex; align-items: center; justify-content: center; gap: .32rem; min-height: 34px; padding: .42rem .65rem; border: 1px dashed rgba(240,90,60,.46); border-radius: 999px; background: #fff8f2; color: #c84932; font-size: .75rem; font-weight: 900; transition: transform 160ms cubic-bezier(.23,1,.32,1), background 160ms cubic-bezier(.23,1,.32,1); }
+.mq-speak-button:hover { transform: translateY(-1px); background: #fff0e9; }
+.mq-speak-button:active { transform: scale(.97); }
+.dark .mq-kid-difficulty button { border-color: rgba(255,255,255,.14); background: #1c3041; color: #f4f7f4; box-shadow: 0 4px 0 rgba(0,0,0,.24); }
+.dark .mq-kid-difficulty button[aria-pressed="true"] { border-color: #ff765b; background: #3a2f2b; box-shadow: 0 5px 0 #c84932; }
+.dark .mq-kid-difficulty small { color: #b7c8ce; }
+.dark .mq-speak-button { border-color: rgba(255,118,91,.48); background: #3a2f2b; color: #ffe2d8; }
+@media (max-width: 640px) { .mq-kid-difficulty { gap: .45rem; margin-bottom: 1rem; } .mq-kid-difficulty button { min-height: 92px; padding: .55rem .32rem; border-radius: 17px; } .mq-kid-difficulty-icon { width: 31px; height: 31px; } .mq-kid-difficulty strong { font-size: .8rem; } .mq-kid-difficulty small { font-size: .64rem; } .mq-speak-button span { display: none; } .mq-speak-button { min-width: 34px; padding: .42rem; } }
+
+/* 年級識別與題面路線：短句提示保留題目焦點，色彩只標記本站。 */
+.mq-p1-practice .mq-question-head, .mq-p2-practice .mq-question-head, .mq-p3-practice .mq-question-head { margin-left: -.72rem; padding-left: .72rem; border-left: 4px solid #f05a3c; }
+.mq-p2-practice .mq-question-head { border-left-color: #c8811e; }
+.mq-p3-practice .mq-question-head { border-left-color: #4f6eae; }
+.mq-p1-practice .mq-question-head > div > p:last-child, .mq-p2-practice .mq-question-head > div > p:last-child, .mq-p3-practice .mq-question-head > div > p:last-child { font-size: 0; }
+.mq-p1-practice .mq-question-head > div > p:last-child::after, .mq-p2-practice .mq-question-head > div > p:last-child::after, .mq-p3-practice .mq-question-head > div > p:last-child::after { content: "按喇叭，聽題目"; color: #617286; font-size: .78rem; font-weight: 800; }
+.mq-p1-practice .mq-practice-card::after { border-color: rgba(240,90,60,.34); }
+.mq-p2-practice .mq-practice-card::after { border-color: rgba(200,129,30,.32); }
+.mq-p3-practice .mq-practice-card::after { border-color: rgba(79,110,174,.32); }
+.mq-p1-practice .mq-question-head::before, .mq-p2-practice .mq-question-head::before, .mq-p3-practice .mq-question-head::before { content: "ROUTE / NOW"; position: absolute; right: .15rem; bottom: -.95rem; padding: .12rem .38rem; background: #fffdf8; color: #f05a3c; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; letter-spacing: .1em; }
+.dark .mq-p1-practice .mq-question-head > div > p:last-child::after, .dark .mq-p2-practice .mq-question-head > div > p:last-child::after, .dark .mq-p3-practice .mq-question-head > div > p:last-child::after { color: #b7c8ce; }
+.dark .mq-p1-practice .mq-question-head::before, .dark .mq-p2-practice .mq-question-head::before, .dark .mq-p3-practice .mq-question-head::before { background: #172737; }
+
 @keyframes mq-star-land { 0% { transform: scale(.45) rotate(-16deg); } 65% { transform: scale(1.25) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
 @keyframes mq-confetti { 0% { opacity: 0; transform: rotate(var(--burst)) translateY(-8px) scale(.4); } 35% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--burst)) translateY(-60px) scale(1); } }
 
