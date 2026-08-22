@@ -205,10 +205,11 @@ export default function Home() {
     if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
     if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
     if (grade === "P5") return ["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].some((id) => completedPractices.includes(id));
+    if (grade === "P6") return ["p6-discount", "p6-profit"].some((id) => completedPractices.includes(id));
     return false;
   };
   const courseCompleted = isGradeCompleted(course.grade);
-  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : "練習已完成";
+  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P6" ? `${["p6-discount", "p6-profit"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
@@ -412,6 +413,8 @@ export default function Home() {
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p4-fractions-decimals" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數小數</Link><Link href="/practice/p4-factors-multiples" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">因數倍數</Link><Link href="/practice/p4-perimeter-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">周界面積</Link><Link href="/practice/p4-polygon-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">多邊形面積</Link></div>
                 ) : course.grade === "P5" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p5-fractions" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數乘除</Link><Link href="/practice/p5-decimals" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">小數四則</Link><Link href="/practice/p5-unlike-fractions" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">異分母加減</Link><Link href="/practice/p5-volume" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">體積計算</Link></div>
+                ) : course.grade === "P6" ? (
+                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p6-discount" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 百分折扣</Link><Link href="/practice/p6-profit" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">利潤應用</Link></div>
                 ) : (
                   <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
                 )}
@@ -450,25 +453,25 @@ export default function Home() {
               <div>
                 <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">FULL CURRICULUM — 03</p>
                 <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">所有年級，<br />都在同一張地圖。</h2>
-                <p className="mt-5 max-w-[360px] text-[15px] leading-7 text-[#53677d]">先確認我們是否完整收錄你的課程內容。下一階段將把每個主題變成可選難度、即時回饋的練習題。</p>
+                <p className="mt-5 max-w-[360px] text-[15px] leading-7 text-[#53677d]">沿著年級路徑查看每個主題；完成一站後，再選擇下一個想解開的數學挑戰。</p>
                 <div className="mt-8 rounded-2xl border border-[#172b3f]/10 bg-white/70 p-4">
-                  <div className="flex items-center gap-3"><Sparkles className="size-5 text-[#f05a3c]" /><p className="text-sm font-extrabold">UI 首版已完成</p></div>
-                  <p className="mt-2 text-sm leading-6 text-[#617286]">現時可瀏覽年級與主題；練習、登入和進度按鈕會在題目引擎完成後啟用。</p>
+                  <div className="flex items-center gap-3"><Sparkles className="size-5 text-[#f05a3c]" /><p className="text-sm font-extrabold">你的探險地圖</p></div>
+                  <p className="mt-2 text-sm leading-6 text-[#617286]">每一站標示年級、範疇和主題。從已開放的練習站開始，逐步收集你的完成印記。</p>
                 </div>
               </div>
               <div className="space-y-3">
-                {courses.map((item) => (
-                  <details key={item.grade} className="mq-accordion group rounded-2xl border border-[#172b3f]/10 bg-white transition-shadow open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
+                {courses.map((item, index) => (
+                  <details key={item.grade} className="mq-accordion group relative rounded-2xl border border-[#172b3f]/10 bg-white transition-shadow open:shadow-[0_10px_25px_rgba(23,43,63,0.06)]">
                     <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 marker:content-none">
                       <span className="grid size-10 place-items-center rounded-xl font-mono text-xs font-bold text-white" style={{ backgroundColor: item.accent }}>{item.grade}</span>
-                      <span className="min-w-0 flex-1"><strong className="block text-sm font-extrabold">{item.shortLabel} · {item.title}</strong><small className="mt-0.5 block text-xs text-[#728195]">{item.categories.length} 個範疇 · {item.categories.reduce((sum, category) => sum + category.topics.length, 0)} 個主題</small></span>
+                      <span className="min-w-0 flex-1"><small className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#f05a3c]">Q PATH · STATION {String(index + 1).padStart(2, "0")}</small><strong className="mt-0.5 block text-sm font-extrabold">{item.shortLabel} · {item.title}</strong><small className="mt-0.5 block text-xs text-[#728195]">{item.categories.length} 個範疇 · {item.categories.reduce((sum, category) => sum + category.topics.length, 0)} 個主題</small></span>
                       <ChevronDown className="size-5 text-[#617286] transition-transform group-open:rotate-180" />
                     </summary>
                     <div className="grid gap-4 border-t border-[#172b3f]/10 px-5 py-5 md:grid-cols-2">
                       {item.categories.map((category) => (
-                        <div key={category.name}>
+                        <div key={category.name} className="border-l-2 pl-3" style={{ borderColor: `${item.accent}66` }}>
                           <h3 className="font-mono text-[11px] font-bold tracking-[0.12em]" style={{ color: item.accent }}>{category.name.toUpperCase()}</h3>
-                          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-[#53677d]">{category.topics.map((topic) => <li key={topic}>· {topic}</li>)}</ul>
+                          <ul className="mt-2 space-y-1.5 text-sm leading-6 text-[#53677d]">{category.topics.map((topic) => <li key={topic} className="flex gap-2"><span className="mt-2 size-1.5 shrink-0 rounded-full" style={{ backgroundColor: item.accent }} />{topic}</li>)}</ul>
                         </div>
                       ))}
                     </div>
@@ -485,9 +488,9 @@ export default function Home() {
             <div className="absolute bottom-[-90px] right-[22%] size-[220px] rounded-full border-[18px] border-[#f6be5d]/70" />
             <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
               <div className="max-w-[690px]">
-                <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#ffe4a0]">NEXT BUILD — 04</p>
-                <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">下一步，讓每一站都能真正練習。</h2>
-                <p className="mt-4 text-[15px] leading-7 text-white/80">請先預覽這個首頁。你確認導航、色彩和年級分類後，我會按你指定的優先順序，從題目、答案檢查與進度紀錄開始建造。</p>
+                <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#ffe4a0]">NEXT STATION — 04</p>
+                <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">已準備好，向下一個挑戰前進。</h2>
+                <p className="mt-4 text-[15px] leading-7 text-white/80">選擇你的年級，從最想練習的主題開始。答對後記下方法；遇到難題時，回看提示再試一次。</p>
               </div>
               <a href="#path" className="mq-start inline-flex w-fit items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none">回到學習路徑 <ArrowRight className="size-4" /></a>
             </div>

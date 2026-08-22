@@ -17,6 +17,8 @@ import P5DecimalPractice from "./pages/P5DecimalPractice";
 import P5FractionPractice from "./pages/P5FractionPractice";
 import P5UnlikeFractionsPractice from "./pages/P5UnlikeFractionsPractice";
 import P5VolumePractice from "./pages/P5VolumePractice";
+import P6DiscountPractice from "./pages/P6DiscountPractice";
+import P6ProfitPractice from "./pages/P6ProfitPractice";
 
 function Router() {
   return (
@@ -33,6 +35,8 @@ function Router() {
       <Route path="/practice/p5-decimals" component={P5DecimalPractice} />
       <Route path="/practice/p5-unlike-fractions" component={P5UnlikeFractionsPractice} />
       <Route path="/practice/p5-volume" component={P5VolumePractice} />
+      <Route path="/practice/p6-discount" component={P6DiscountPractice} />
+      <Route path="/practice/p6-profit" component={P6ProfitPractice} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

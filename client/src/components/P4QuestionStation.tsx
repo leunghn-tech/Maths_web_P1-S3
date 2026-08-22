@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RefreshCw, RotateCcw, Sp
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
-import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
+import { getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 
 export type Difficulty = "easy" | "standard" | "challenge";
 export type RandomProblem = { id: string; prompt: string; equation: string; answer: string; choices: string[]; hint: string; diagram?: { width: number; height: number; label: string; shape?: "rectangle" | "triangle" | "parallelogram" | "trapezoid" | "cuboid" } };
@@ -38,6 +38,7 @@ export default function P4QuestionStation({ stationCode, title, subtitle, accent
   const [finished, setFinished] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
+  const DAILY_TARGET = dailyProgress.target;
   const activeProblems = reviewMode ? wrongProblems : session;
   const problem = activeProblems[index];
   const completed = index + (result === "correct" ? 1 : 0);
