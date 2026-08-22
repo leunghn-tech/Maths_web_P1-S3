@@ -2,6 +2,7 @@
 export const DAILY_TARGET = 3;
 export const DAILY_PROGRESS_EVENT = "maths-quest:daily-progress-updated";
 const STORAGE_KEY = "maths-quest:daily-practice";
+const TARGET_STORAGE_KEY = "maths-quest:daily-target";
 
 type DailyHistory = Record<string, string[]>;
 
@@ -35,6 +36,20 @@ function getHistory(): DailyHistory {
   }
 }
 
+export function getDailyPracticeTarget() {
+  if (typeof window === "undefined") return DAILY_TARGET;
+  const stored = Number(window.localStorage.getItem(TARGET_STORAGE_KEY));
+  return Number.isInteger(stored) && stored >= 1 && stored <= 6 ? stored : DAILY_TARGET;
+}
+
+export function setDailyPracticeTarget(target: number) {
+  if (typeof window === "undefined") return getDailyPracticeProgress();
+  const safeTarget = Math.min(6, Math.max(1, Math.round(target)));
+  window.localStorage.setItem(TARGET_STORAGE_KEY, String(safeTarget));
+  window.dispatchEvent(new CustomEvent(DAILY_PROGRESS_EVENT));
+  return getDailyPracticeProgress();
+}
+
 function getStreak(history: DailyHistory, today: string) {
   let cursor = history[today]?.length ? today : dateOffset(today, -1);
   let streak = 0;
@@ -49,7 +64,8 @@ export function getDailyPracticeProgress(): DailyPracticeProgress {
   const history = getHistory();
   const today = getDateKey();
   const completed = history[today]?.length ?? 0;
-  return { completed, target: DAILY_TARGET, streak: getStreak(history, today), reachedGoal: completed >= DAILY_TARGET };
+  const target = getDailyPracticeTarget();
+  return { completed, target, streak: getStreak(history, today), reachedGoal: completed >= target };
 }
 
 export function recordDailyPractice(practiceId: string) {

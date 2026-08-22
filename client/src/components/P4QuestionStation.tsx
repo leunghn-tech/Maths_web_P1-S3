@@ -10,7 +10,7 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 
 export type Difficulty = "easy" | "standard" | "challenge";
-export type RandomProblem = { id: string; prompt: string; equation: string; answer: string; choices: string[]; hint: string; diagram?: { width: number; height: number; label: string; shape?: "rectangle" | "triangle" | "parallelogram" | "trapezoid" } };
+export type RandomProblem = { id: string; prompt: string; equation: string; answer: string; choices: string[]; hint: string; diagram?: { width: number; height: number; label: string; shape?: "rectangle" | "triangle" | "parallelogram" | "trapezoid" | "cuboid" } };
 
 type Props = { stationCode: string; title: string; subtitle: string; accent: string; practiceKey: string; generateProblem: (difficulty: Difficulty) => RandomProblem; gradeLabel?: string };
 

@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { getCompletedPractices, PRACTICE_COMPLETION_EVENT, resetPracticeProgress } from "@/lib/practiceCompletion";
-import { DAILY_PROGRESS_EVENT, DAILY_TARGET, getDailyPracticeProgress, type DailyPracticeProgress } from "@/lib/dailyPractice";
+import { DAILY_PROGRESS_EVENT, getDailyPracticeProgress, setDailyPracticeTarget, type DailyPracticeProgress } from "@/lib/dailyPractice";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 type Stage = "primary" | "secondary";
@@ -175,6 +175,8 @@ export default function Home() {
   const [completedPractices, setCompletedPractices] = useState<string[]>([]);
   const [resetOpen, setResetOpen] = useState(false);
   const [dailyProgress, setDailyProgress] = useState<DailyPracticeProgress>(() => getDailyPracticeProgress());
+  const [targetOpen, setTargetOpen] = useState(false);
+  const [pendingTarget, setPendingTarget] = useState(() => getDailyPracticeProgress().target);
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -202,11 +204,11 @@ export default function Home() {
     if (grade === "P2") return ["p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
     if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
     if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
-    if (grade === "P5") return ["p5-fraction-multiply-divide", "p5-decimal-operations"].some((id) => completedPractices.includes(id));
+    if (grade === "P5") return ["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].some((id) => completedPractices.includes(id));
     return false;
   };
   const courseCompleted = isGradeCompleted(course.grade);
-  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
+  const courseCompletionLabel = course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : "練習已完成";
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
@@ -219,6 +221,13 @@ export default function Home() {
     setDailyProgress(getDailyPracticeProgress());
     setResetOpen(false);
     toast.success("學習進度已重設", { description: "你可以隨時重新挑戰每一個學習站。" });
+  };
+
+  const saveDailyTarget = () => {
+    const updated = setDailyPracticeTarget(pendingTarget);
+    setDailyProgress(updated);
+    setTargetOpen(false);
+    toast.success("每日目標已更新", { description: `今天完成 ${updated.target} 個練習站，即可獲得打卡印章。` });
   };
 
   const notifyComingSoon = (label: string) => {
@@ -295,7 +304,7 @@ export default function Home() {
               </h1>
               <p className="mt-7 max-w-[510px] text-[17px] leading-8 text-[#53677d]">由基礎數感到三角學，把你的年級、主題和下一個練習站連起來。每次練習，都是一次更清楚的理解。</p>
               <div className="mq-daily-goal mt-6 max-w-[510px]" aria-live="polite">
-                <div className="flex items-start justify-between gap-4"><div><p className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#f05a3c]">DAILY QUEST</p><p className="mt-1 text-sm font-extrabold">{dailyProgress.reachedGoal ? "今日目標已完成，太好了！" : `今天完成 ${DAILY_TARGET} 個練習站`}</p></div><div className="mq-streak"><Sparkles className="size-4" /><span>{dailyProgress.streak}</span><small>天</small></div></div>
+                <div className="flex items-start justify-between gap-4"><div><p className="font-mono text-[10px] font-bold tracking-[0.14em] text-[#f05a3c]">DAILY QUEST</p><p className="mt-1 text-sm font-extrabold">{dailyProgress.reachedGoal ? "今日目標已完成，太好了！" : `今天完成 ${dailyProgress.target} 個練習站`}</p></div><div className="flex items-center gap-2"><AlertDialog open={targetOpen} onOpenChange={setTargetOpen}><AlertDialogTrigger asChild><button onClick={() => setPendingTarget(dailyProgress.target)} className="mq-target-edit inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 font-mono text-[10px] font-bold" aria-label="設定每日練習目標"><Target className="size-3" /> 設定</button></AlertDialogTrigger><AlertDialogContent className="border-[#172b3f]/15 bg-[#fffdf8] text-[#172b3f] dark:border-white/15 dark:bg-[#172737] dark:text-white"><AlertDialogHeader><AlertDialogTitle className="font-black">設定每日練習目標</AlertDialogTitle><AlertDialogDescription className="leading-6 dark:text-[#b7c8ce]">選擇每天想完成的練習站數量。設定只保存在這部裝置，可隨時再調整。</AlertDialogDescription></AlertDialogHeader><div className="grid grid-cols-3 gap-3 py-2">{[1, 2, 3, 4, 5, 6].map((value) => <button key={value} onClick={() => setPendingTarget(value)} className={`mq-target-choice rounded-xl border px-3 py-3 text-left ${pendingTarget === value ? "border-[#f05a3c] bg-[#fff0e9] text-[#f05a3c] dark:bg-[#3a2f2b]" : "border-[#172b3f]/12 dark:border-white/15"}`}><strong className="block text-lg font-black">{value}</strong><small className="font-bold">個練習站</small></button>)}</div><AlertDialogFooter><AlertDialogCancel>暫不更改</AlertDialogCancel><AlertDialogAction onClick={saveDailyTarget} className="bg-[#f05a3c] text-white hover:bg-[#d84a34]">儲存目標</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog><div className="mq-streak"><Sparkles className="size-4" /><span>{dailyProgress.streak}</span><small>天</small></div></div></div>
                 <div className="mt-4 flex items-center gap-3"><div className="h-2 flex-1 overflow-hidden rounded-full bg-[#172b3f]/10"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${Math.min(100, (dailyProgress.completed / dailyProgress.target) * 100)}%` }} /></div><span className="font-mono text-xs font-black text-[#f05a3c]">{dailyProgress.completed}/{dailyProgress.target}</span></div>
                 <p className="mt-3 text-xs font-bold text-[#617286]">{dailyProgress.streak > 0 ? `已連續打卡 ${dailyProgress.streak} 天${dailyProgress.reachedGoal ? " · 獲得今日探險印章" : " · 完成目標可獲今日印章"}` : "完成第一個練習站，即可開始你的打卡紀錄。"}</p>
               </div>
@@ -402,7 +411,7 @@ export default function Home() {
                 ) : course.grade === "P4" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p4-fractions-decimals" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數小數</Link><Link href="/practice/p4-factors-multiples" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">因數倍數</Link><Link href="/practice/p4-perimeter-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">周界面積</Link><Link href="/practice/p4-polygon-area" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">多邊形面積</Link></div>
                 ) : course.grade === "P5" ? (
-                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p5-fractions" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數乘除</Link><Link href="/practice/p5-decimals" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">小數四則</Link></div>
+                  <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p5-fractions" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數乘除</Link><Link href="/practice/p5-decimals" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">小數四則</Link><Link href="/practice/p5-unlike-fractions" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">異分母加減</Link><Link href="/practice/p5-volume" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">體積計算</Link></div>
                 ) : (
                   <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
                 )}
