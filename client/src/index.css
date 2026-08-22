@@ -581,6 +581,16 @@
 .dark .mq-solution-stage.is-visible { color: #dbe8eb; }
 .dark .mq-solution-actions button { background: #1c3041; }
 .dark .mq-puzzle-piece, .dark .mq-puzzle-target { background: #1c3041; }
+.mq-number-mode-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; align-items: stretch; }
+.mq-number-mode-grid > button:not(.mq-auto-read) { display: grid; min-height: 90px; place-items: center; align-content: center; gap: .15rem; border: 1px solid rgba(23,43,63,.12); border-radius: 18px; background: #fffdf8; color: #172b3f; box-shadow: 0 4px 0 rgba(23,43,63,.06); transition: transform 160ms var(--ease-out, ease-out), border-color 160ms var(--ease-out, ease-out); }
+.mq-number-mode-grid > button:not(.mq-auto-read).is-active { border-color: #f05a3c; background: #fff0e9; color: #f05a3c; transform: translateY(-2px); }
+.mq-number-mode-grid > button span { font-size: 1.35rem; } .mq-number-mode-grid > button strong { font-size: .9rem; font-weight: 900; } .mq-number-mode-grid > button small { color: #617286; font-size: .68rem; font-weight: 800; }
+.mq-number-model { display: flex; max-width: 360px; flex-wrap: wrap; align-items: center; justify-content: center; gap: .7rem; margin-top: 1.2rem; }
+.mq-tens-bars { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 220px; } .mq-tens-bars i { display: block; width: 12px; height: 50px; border-radius: 5px; box-shadow: inset 0 -8px 0 rgba(0,0,0,.08); }
+.mq-ones-dots { display: flex; max-width: 88px; flex-wrap: wrap; gap: 5px; } .mq-ones-dots i { display: block; width: 13px; height: 13px; border-radius: 999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.08); }
+.mq-compare-model { display: flex; align-items: center; justify-content: center; gap: 1.2rem; margin-top: .75rem; } .mq-compare-model > div { display: grid; place-items: center; } .mq-compare-model strong { font-family: "DM Mono", monospace; font-size: 1.5rem; } .mq-compare-model > span { color: #f05a3c; font-size: 2rem; font-weight: 900; } .mq-compare-model .mq-number-model { transform: scale(.72); margin: 0; }
+.mq-sequence-model { display: flex; align-items: center; gap: .55rem; margin-top: 1.3rem; color: #172b3f; font-family: "DM Mono", monospace; font-size: 1.5rem; font-weight: 900; } .mq-sequence-model b { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 12px; background: #fff0e9; color: #f05a3c; }
+@media (max-width: 640px) { .mq-number-mode-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mq-number-mode-grid > .mq-auto-read { grid-column: span 2; justify-content: center; } .mq-tens-bars i { width: 10px; height: 43px; } .mq-number-model { gap: .5rem; } }
 @media (max-width: 640px) { .mq-review-steps { gap: .35rem; font-size: .72rem; } .mq-review-chip { padding: .28rem .4rem; } .mq-review-steps svg { width: 14px; } }
 @media (max-width: 640px) { .mq-solution-copy { min-width: 45px; font-size: .69rem; } .mq-solution-stage { gap: .32rem; padding: .32rem; } .mq-solution-stage .mq-review-chip { max-width: 116px; overflow: hidden; text-overflow: ellipsis; } .mq-puzzle-target { min-width: 70px; padding: .3rem .35rem; font-size: .62rem; } }
 @media (prefers-reduced-motion: reduce) { .mq-solution-stage { transition: none; } }
