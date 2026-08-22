@@ -3,13 +3,16 @@
  */
 import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RotateCcw, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calculator, Check, Divide, Lightbulb, Moon, RotateCcw, Shuffle, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 import KidDifficultyPicker from "@/components/KidDifficultyPicker";
 import SpeakButton from "@/components/SpeakButton";
+import KidTopicPicker from "@/components/KidTopicPicker";
+import AutoReadToggle from "@/components/AutoReadToggle";
+import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 
 type OperationMode = "multiply" | "divide" | "mixed";
 type Difficulty = "easy" | "standard" | "challenge";
@@ -89,6 +92,7 @@ export default function P2Practice() {
   const [seconds, setSeconds] = useState(0);
   const [finished, setFinished] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [autoRead, setAutoRead] = useState(false);
   const [wrongIndices, setWrongIndices] = useState<number[]>([]);
   const [reviewMode, setReviewMode] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
@@ -110,6 +114,12 @@ export default function P2Practice() {
     return () => window.clearInterval(timer);
   }, [finished]);
 
+  useEffect(() => {
+    if (!autoRead || finished || result !== "idle") return;
+    const timer = window.setTimeout(() => speakCantonese(`題目：${question.expression}等於幾多？${question.note}`), 300);
+    return () => window.clearTimeout(timer);
+  }, [autoRead, finished, question, result]);
+
   const choose = (choice: number) => {
     if (result !== "idle") return;
     setSelected(choice);
@@ -117,13 +127,13 @@ export default function P2Practice() {
       setResult("correct");
       setScore((value) => value + 1);
       setStreak((value) => value + 1);
-      if (soundEnabled) playCorrectSound();
+      if (soundEnabled) { playCorrectSound(); speakCorrectEncouragement(); }
       return;
     }
     setResult("incorrect");
     setStreak(0);
     setWrongIndices((indices) => indices.includes(activeIndices[currentIndex]) ? indices : [...indices, activeIndices[currentIndex]]);
-    if (soundEnabled) playWrongSound();
+    if (soundEnabled) { playWrongSound(); speakTryAgain(); }
   };
 
   const nextQuestion = () => {
@@ -164,12 +174,8 @@ export default function P2Practice() {
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
         <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P2.01</span><i /><span>乘法站</span></div>
-        <div className="mq-mode-switch mb-5" aria-label="選擇 P2 練習題型">
-          <button onClick={() => changeMode("multiply")} aria-pressed={mode === "multiply"}>乘法表</button>
-          <button onClick={() => changeMode("divide")} aria-pressed={mode === "divide"}>除法</button>
-          <button onClick={() => changeMode("mixed")} aria-pressed={mode === "mixed"}>混合運算</button>
-        </div>
-        <KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "細細組", standard: "常用表", challenge: "大數字" }} />
+        <KidTopicPicker value={mode} onChange={changeMode} items={[{ id: "multiply", label: "乘法", detail: "幾組幾個", Icon: Calculator }, { id: "divide", label: "除法", detail: "平均分", Icon: Divide }, { id: "mixed", label: "混合", detail: "先乘除", Icon: Shuffle }]} />
+        <div className="mb-4 flex flex-wrap items-center gap-3"><KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "細細組", standard: "常用表", challenge: "大數字" }} /><AutoReadToggle checked={autoRead} onCheckedChange={setAutoRead} /></div>
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#c8811e]"><span className="size-2 rounded-full bg-[#c8811e]" /> P2 · 練習站 01</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">{modeLabel}</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">{mode === "multiply" ? "看清每一組有多少，再把相同的數量乘起來。" : mode === "divide" ? "把物件平均分成幾組，找出每一組的數量。" : "先完成乘或除，再進行下一步運算。"}</p></div>
           <div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]"><span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">今日學習路徑</span><p className="mt-1 font-extrabold">{reviewMode ? "重溫" : "已完成"} {completed} / {activeIndices.length} 題 <span className="mx-1 text-[#f05a3c]">·</span> {timeLabel}</p></div>

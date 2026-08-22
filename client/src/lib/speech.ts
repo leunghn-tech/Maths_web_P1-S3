@@ -11,3 +11,12 @@ export function speakCantonese(text: string) {
   window.speechSynthesis.speak(utterance);
   return true;
 }
+
+export function speakCorrectEncouragement() {
+  const messages = ["好棒！答對了。", "做得好！繼續加油。", "太好了！你找對答案。"];
+  return speakCantonese(messages[Math.floor(Math.random() * messages.length)]);
+}
+
+export function speakTryAgain() {
+  return speakCantonese("再試一次。慢慢看題目。");
+}

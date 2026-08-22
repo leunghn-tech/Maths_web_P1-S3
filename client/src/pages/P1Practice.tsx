@@ -3,13 +3,16 @@
  */
 import { Link } from "wouter";
 import { useEffect, useState, type CSSProperties } from "react";
-import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RotateCcw, Sparkles, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Lightbulb, Minus, Moon, Plus, RotateCcw, Shuffle, Sparkles, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { DAILY_TARGET, getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 import KidDifficultyPicker from "@/components/KidDifficultyPicker";
 import SpeakButton from "@/components/SpeakButton";
+import KidTopicPicker from "@/components/KidTopicPicker";
+import AutoReadToggle from "@/components/AutoReadToggle";
+import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 
 type Question = {
   first: number;
@@ -21,6 +24,7 @@ type Question = {
 };
 
 type Difficulty = "easy" | "standard" | "challenge";
+type OperationMode = "add" | "subtract" | "mixed";
 const difficultyLabels: Record<Difficulty, string> = { easy: "輕鬆", standard: "標準", challenge: "挑戰" };
 
 const questions: Question[] = [
@@ -31,11 +35,11 @@ const questions: Question[] = [
   { first: 9, operator: "+", second: 9, answer: 18, story: "9 朵花，再種 9 朵。", color: "#b15979" },
 ];
 
-function generateQuestions(difficulty: Difficulty) {
+function generateQuestions(difficulty: Difficulty, mode: OperationMode) {
   const ceiling = difficulty === "easy" ? 10 : difficulty === "standard" ? 15 : 20;
   const colors = ["#f05a3c", "#0e8b87", "#4f6eae", "#b15979", "#c8811e"];
   return Array.from({ length: 5 }, (_, index) => {
-    const operator: Question["operator"] = Math.random() > 0.48 ? "+" : "−";
+    const operator: Question["operator"] = mode === "add" ? "+" : mode === "subtract" ? "−" : Math.random() > 0.48 ? "+" : "−";
     if (operator === "+") {
       const first = 1 + Math.floor(Math.random() * Math.max(2, ceiling - 2));
       const second = 1 + Math.floor(Math.random() * Math.max(1, ceiling - first));
@@ -72,11 +76,13 @@ export default function P1Practice() {
   const [seconds, setSeconds] = useState(0);
   const [streak, setStreak] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [autoRead, setAutoRead] = useState(false);
   const [wrongIndices, setWrongIndices] = useState<number[]>([]);
   const [reviewMode, setReviewMode] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyPracticeProgress());
   const [difficulty, setDifficulty] = useState<Difficulty>("standard");
-  const [questionSet, setQuestionSet] = useState<Question[]>(() => generateQuestions("standard"));
+  const [operation, setOperation] = useState<OperationMode>("mixed");
+  const [questionSet, setQuestionSet] = useState<Question[]>(() => generateQuestions("standard", "mixed"));
 
   const activeIndices = reviewMode ? wrongIndices : questionSet.map((_, index) => index);
   const question = questionSet[activeIndices[currentIndex]];
@@ -90,6 +96,12 @@ export default function P1Practice() {
     return () => window.clearInterval(timer);
   }, [finished]);
 
+  useEffect(() => {
+    if (!autoRead || finished || result !== "idle") return;
+    const timer = window.setTimeout(() => speakCantonese(`題目：${question.first}${question.operator}${question.second}等於幾多？${question.story}`), 300);
+    return () => window.clearTimeout(timer);
+  }, [autoRead, finished, question, result]);
+
   const addDigit = (digit: string) => {
     if (result !== "idle" || answer.length >= 2) return;
     setAnswer((previous) => `${previous}${digit}`);
@@ -101,12 +113,12 @@ export default function P1Practice() {
       setResult("correct");
       setScore((previous) => previous + 1);
       setStreak((previous) => previous + 1);
-      if (soundEnabled) playCorrectSound();
+      if (soundEnabled) { playCorrectSound(); speakCorrectEncouragement(); }
     } else {
       setResult("incorrect");
       setStreak(0);
       setWrongIndices((indices) => indices.includes(activeIndices[currentIndex]) ? indices : [...indices, activeIndices[currentIndex]]);
-      if (soundEnabled) playWrongSound();
+    if (soundEnabled) { playWrongSound(); speakTryAgain(); }
     }
   };
 
@@ -144,9 +156,9 @@ export default function P1Practice() {
     setReviewMode(true);
   };
 
-  const startRandom = (nextDifficulty = difficulty) => {
+  const startRandom = (nextDifficulty = difficulty, nextOperation = operation) => {
     setDifficulty(nextDifficulty);
-    setQuestionSet(generateQuestions(nextDifficulty));
+    setQuestionSet(generateQuestions(nextDifficulty, nextOperation));
     setWrongIndices([]);
     setCurrentIndex(0);
     setAnswer("");
@@ -157,6 +169,8 @@ export default function P1Practice() {
     setStreak(0);
     setReviewMode(false);
   };
+
+  const changeOperation = (nextOperation: OperationMode) => { setOperation(nextOperation); startRandom(difficulty, nextOperation); };
 
   return (
     <div className="mq-practice mq-p1-practice min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]">
@@ -183,7 +197,8 @@ export default function P1Practice() {
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
         <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P1.01</span><i /><span>解題站</span></div>
-        <KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "10 以內", standard: "15 以內", challenge: "20 以內" }} />
+        <KidTopicPicker value={operation} onChange={changeOperation} items={[{ id: "add", label: "加法", detail: "加多啲", Icon: Plus }, { id: "subtract", label: "減法", detail: "拿走", Icon: Minus }, { id: "mixed", label: "加減", detail: "一齊做", Icon: Shuffle }]} />
+        <div className="mb-4 flex flex-wrap items-center gap-3"><KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "10 以內", standard: "15 以內", challenge: "20 以內" }} /><AutoReadToggle checked={autoRead} onCheckedChange={setAutoRead} /></div>
         <div className="mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]"><span className="size-2 rounded-full bg-[#f05a3c]" /> P1 · 學習站 01</div>

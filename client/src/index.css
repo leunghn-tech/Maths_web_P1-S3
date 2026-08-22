@@ -442,6 +442,36 @@
 .dark .mq-speak-button { border-color: rgba(255,118,91,.48); background: #3a2f2b; color: #ffe2d8; }
 @media (max-width: 640px) { .mq-kid-difficulty { gap: .45rem; margin-bottom: 1rem; } .mq-kid-difficulty button { min-height: 92px; padding: .55rem .32rem; border-radius: 17px; } .mq-kid-difficulty-icon { width: 31px; height: 31px; } .mq-kid-difficulty strong { font-size: .8rem; } .mq-kid-difficulty small { font-size: .64rem; } .mq-speak-button span { display: none; } .mq-speak-button { min-width: 34px; padding: .42rem; } }
 
+.mq-auto-read { display: inline-flex; align-items: center; gap: .45rem; width: fit-content; min-height: 38px; padding: .4rem .65rem; border: 1px solid rgba(23,43,63,.12); border-radius: 999px; background: rgba(255,255,255,.72); color: #41566e; font-size: .78rem; font-weight: 900; }
+.mq-auto-read svg { color: #f05a3c; }
+.mq-auto-read button { transform: scale(.88); }
+.dark .mq-auto-read { border-color: rgba(255,255,255,.15); background: #1c3041; color: #d6e5e7; }
+
+.mq-kid-topic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; max-width: 620px; margin-bottom: 1rem; }
+.mq-kid-topic button { display: grid; min-height: 112px; place-items: center; gap: .22rem; padding: .7rem; border: 1px solid rgba(23,43,63,.13); border-radius: 22px; background: #fffdf8; color: #172b3f; box-shadow: 0 5px 0 rgba(23,43,63,.09); transition: transform 160ms cubic-bezier(.23,1,.32,1), border-color 160ms cubic-bezier(.23,1,.32,1), background 160ms cubic-bezier(.23,1,.32,1); }
+.mq-kid-topic button:hover { transform: translateY(-2px); border-color: rgba(240,90,60,.48); }
+.mq-kid-topic button[aria-pressed="true"] { transform: translateY(-2px); border-color: #f05a3c; background: #fff0e9; box-shadow: 0 6px 0 #f05a3c; }
+.mq-kid-topic-icon { display: grid; width: 42px; height: 42px; place-items: center; border: 2px solid rgba(23,43,63,.12); border-radius: 15px; color: #172b3f; }
+.mq-kid-topic button[aria-pressed="true"] .mq-kid-topic-icon { border-color: transparent; background: #f05a3c; color: white; }
+.mq-kid-topic-icon svg { width: 23px; height: 23px; }
+.mq-kid-topic strong { font-size: .98rem; font-weight: 900; }
+.mq-kid-topic small { color: #617286; font-size: .7rem; font-weight: 800; }
+.mq-kid-topic, .mq-kid-difficulty { position: relative; }
+.mq-kid-topic::before, .mq-kid-difficulty::before { content: "STATION PICK"; position: absolute; top: -.8rem; left: .2rem; padding: .08rem .35rem; background: #f8f5ed; color: #8390a0; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 800; letter-spacing: .12em; }
+.mq-kid-topic::after, .mq-kid-difficulty::after { content: ""; position: absolute; right: .3rem; bottom: -.42rem; width: 54px; border-top: 1px dashed rgba(23,43,63,.25); }
+.mq-p2-practice .mq-kid-topic button[aria-pressed="true"], .mq-p2-practice .mq-kid-difficulty button[aria-pressed="true"] { border-color: #c8811e; background: #fff7e9; box-shadow: 0 6px 0 #c8811e; }
+.mq-p2-practice .mq-kid-topic button[aria-pressed="true"] .mq-kid-topic-icon, .mq-p2-practice .mq-kid-difficulty button[aria-pressed="true"] .mq-kid-difficulty-icon { background: #c8811e; }
+.mq-p3-practice .mq-kid-topic button[aria-pressed="true"], .mq-p3-practice .mq-kid-difficulty button[aria-pressed="true"] { border-color: #4f6eae; background: #eef1fb; box-shadow: 0 6px 0 #4f6eae; }
+.mq-p3-practice .mq-kid-topic button[aria-pressed="true"] .mq-kid-topic-icon, .mq-p3-practice .mq-kid-difficulty button[aria-pressed="true"] .mq-kid-difficulty-icon { background: #4f6eae; }
+.dark .mq-kid-topic button { border-color: rgba(255,255,255,.14); background: #1c3041; color: #f4f7f4; box-shadow: 0 5px 0 rgba(0,0,0,.22); }
+.dark .mq-kid-topic button[aria-pressed="true"] { border-color: #ff765b; background: #3a2f2b; box-shadow: 0 6px 0 #c84932; }
+.dark .mq-kid-topic-icon { border-color: rgba(255,255,255,.18); color: #f4f7f4; }
+.dark .mq-kid-topic small { color: #b7c8ce; }
+.dark .mq-kid-topic::before, .dark .mq-kid-difficulty::before { background: #101b27; color: #9eb4bd; }
+.dark .mq-p2-practice .mq-kid-topic button[aria-pressed="true"], .dark .mq-p2-practice .mq-kid-difficulty button[aria-pressed="true"] { background: #3a3325; }
+.dark .mq-p3-practice .mq-kid-topic button[aria-pressed="true"], .dark .mq-p3-practice .mq-kid-difficulty button[aria-pressed="true"] { background: #27324d; }
+@media (max-width: 640px) { .mq-kid-topic { gap: .45rem; } .mq-kid-topic button { min-height: 96px; padding: .5rem .25rem; border-radius: 18px; } .mq-kid-topic-icon { width: 34px; height: 34px; border-radius: 12px; } .mq-kid-topic-icon svg { width: 19px; height: 19px; } .mq-kid-topic strong { font-size: .8rem; } .mq-kid-topic small { font-size: .62rem; } }
+
 /* 年級識別與題面路線：短句提示保留題目焦點，色彩只標記本站。 */
 .mq-p1-practice .mq-question-head, .mq-p2-practice .mq-question-head, .mq-p3-practice .mq-question-head { margin-left: -.72rem; padding-left: .72rem; border-left: 4px solid #f05a3c; }
 .mq-p2-practice .mq-question-head { border-left-color: #c8811e; }

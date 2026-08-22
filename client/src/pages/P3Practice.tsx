@@ -3,13 +3,15 @@
  */
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
-import { ArrowLeft, ArrowRight, Check, ChevronRight, Lightbulb, Lock, Moon, RotateCcw, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calculator, Check, ChevronRight, Lightbulb, Lock, Moon, RotateCcw, Sparkles, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { recordDailyPractice } from "@/lib/dailyPractice";
-import KidDifficultyPicker from "@/components/KidDifficultyPicker";
 import SpeakButton from "@/components/SpeakButton";
+import KidTopicPicker from "@/components/KidTopicPicker";
+import AutoReadToggle from "@/components/AutoReadToggle";
+import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 
 type Level = 1 | 2 | 3;
 type Question = { expression: string; answer: number; choices: number[]; note: string };
@@ -77,6 +79,7 @@ export default function P3Practice() {
   const [seconds, setSeconds] = useState(0);
   const [levelFinished, setLevelFinished] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [autoRead, setAutoRead] = useState(false);
   const [wrongIndices, setWrongIndices] = useState<number[]>([]);
   const [reviewMode, setReviewMode] = useState(false);
   const [session, setSession] = useState<Question[]>(() => generateLevelQuestions(1));
@@ -95,6 +98,12 @@ export default function P3Practice() {
     const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000);
     return () => window.clearInterval(timer);
   }, [levelFinished, selectedLevel]);
+
+  useEffect(() => {
+    if (!autoRead || levelFinished || result !== "idle") return;
+    const timer = window.setTimeout(() => speakCantonese(`題目：${question.expression}等於幾多？${question.note}`), 300);
+    return () => window.clearTimeout(timer);
+  }, [autoRead, levelFinished, question, result]);
 
   const resetLevel = (nextLevel: Level) => {
     setSelectedLevel(nextLevel);
@@ -117,13 +126,13 @@ export default function P3Practice() {
       setResult("correct");
       setLevelScore((value) => value + 1);
       setStreak((value) => value + 1);
-      if (soundEnabled) playCorrectSound();
+      if (soundEnabled) { playCorrectSound(); speakCorrectEncouragement(); }
       return;
     }
     setResult("incorrect");
     setStreak(0);
     setWrongIndices((indices) => indices.includes(activeIndices[currentIndex]) ? indices : [...indices, activeIndices[currentIndex]]);
-    if (soundEnabled) playWrongSound();
+    if (soundEnabled) { playWrongSound(); speakTryAgain(); }
   };
 
   const nextQuestion = () => {
@@ -156,8 +165,8 @@ export default function P3Practice() {
         <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P3.0{selectedLevel}</span><i /><span>過關站</span></div>
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"><div><div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#4f6eae]"><span className="size-2 rounded-full bg-[#4f6eae]" /> P3 · 分級運算站</div><h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">四則混合計算</h1><p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">完成每一級 3 題，答對至少 2 題即可解鎖下一條運算路徑。</p></div><div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]"><span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">目前關卡</span><p className="mt-1 font-extrabold">L{selectedLevel} · {timeLabel}</p></div></div>
 
-        <KidDifficultyPicker value={selectedLevel === 1 ? "easy" : selectedLevel === 2 ? "standard" : "challenge"} onChange={(value) => resetLevel(value === "easy" ? 1 : value === "standard" ? 2 : 3)} details={{ easy: "第 1 關", standard: "第 2 關", challenge: "第 3 關" }} disabled={{ standard: unlockedLevel < 2, challenge: unlockedLevel < 3 }} />
-        <button onClick={() => resetLevel(selectedLevel)} className="mq-randomize mt-4"><RotateCcw className="size-4" /> 換一組 Level {selectedLevel} 隨機題</button>
+        <KidTopicPicker value={selectedLevel} onChange={resetLevel} disabled={{ 2: unlockedLevel < 2, 3: unlockedLevel < 3 }} items={[{ id: 1, label: "第一關", detail: "先乘除", Icon: Calculator }, { id: 2, label: "第二關", detail: "兩步算", Icon: Sparkles }, { id: 3, label: "第三關", detail: "過大關", Icon: Trophy }]} />
+        <div className="flex flex-wrap items-center gap-3"><button onClick={() => resetLevel(selectedLevel)} className="mq-randomize"><RotateCcw className="size-4" /> 換一組</button><AutoReadToggle checked={autoRead} onCheckedChange={setAutoRead} /></div>
         {!reviewMode && wrongIndices.length > 0 && <button onClick={startWrongReview} className="mq-review mt-4 inline-flex items-center gap-2 rounded-full border border-[#f05a3c]/40 px-4 py-2 text-sm font-extrabold text-[#f05a3c] transition"><RotateCcw className="size-4" /> 重溫本關 {wrongIndices.length} 題錯題</button>}
 
         <div className="mq-practice-grid mt-5 grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
