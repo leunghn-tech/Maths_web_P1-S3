@@ -19,6 +19,7 @@ import StreakBadge from "@/components/StreakBadge";
 import MidpointBreak from "@/components/MidpointBreak";
 import WrongReviewVoiceButton from "@/components/WrongReviewVoiceButton";
 import PerfectTrophy from "@/components/PerfectTrophy";
+import VisualReviewHint from "@/components/VisualReviewHint";
 
 type Question = {
   first: number;
@@ -262,6 +263,7 @@ export default function P1Practice() {
 
                 <div className="flex min-h-[220px] flex-col items-center justify-center py-8 text-center">
                   <div className="mq-question-note"><span className="font-mono">算式提示</span><span>{question.story}</span></div><SpeakButton text={`題目：${question.first}${question.operator}${question.second}等於幾多？${question.story}`} />
+                  {reviewMode && <VisualReviewHint kind="count" expression={`${question.first}${question.operator}${question.second}`} answer={String(question.answer)} hint={question.story} accent={question.color} />}
                   <CountTokens question={question} />
                   <div className="mt-7 flex items-center justify-center gap-3 font-mono text-[clamp(3.5rem,8vw,5.5rem)] font-medium leading-none tracking-[-0.08em]">
                     <span>{question.first}</span><span className="text-[#f05a3c]">{question.operator}</span><span>{question.second}</span><span className="text-[#617286] dark:text-[#b7c8ce]">=</span>
