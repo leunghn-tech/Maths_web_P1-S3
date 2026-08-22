@@ -57,7 +57,7 @@ const randomChoices = (answer: number) => uniqueNumbers([answer, answer + 1, Mat
 function generateQuestions(mode: OperationMode, difficulty: Difficulty): MultiplicationQuestion[] {
   const cap = difficulty === "easy" ? 5 : difficulty === "standard" ? 8 : 12;
   const colors = ["#0e8b87", "#4f6eae", "#b15979", "#c8811e", "#f05a3c"];
-  return Array.from({ length: 5 }, (_, index) => {
+  return Array.from({ length: 8 }, (_, index) => {
     const groups = 2 + Math.floor(Math.random() * Math.max(2, cap - 1));
     const each = 2 + Math.floor(Math.random() * Math.max(2, cap - 1));
     const total = groups * each;
@@ -192,7 +192,7 @@ export default function P2Practice() {
         <div className="mq-practice-grid grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
           <aside className="mq-practice-sidebar order-2 lg:order-1">
             <div className="rounded-[24px] border border-[#172b3f]/10 bg-[#172b3f] p-5 text-white shadow-[0_10px_0_#0e1d2a] dark:border-white/10 dark:bg-[#1b3042]">
-              <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">本次任務</p><h2 className="mt-3 text-xl font-black leading-7">{reviewMode ? "逐題重溫錯題。" : `完成 5 個 ${mode === "multiply" ? "乘法" : mode === "divide" ? "除法" : "混合運算"}站。`}</h2><p className="mt-3 text-sm leading-6 text-white/75">{reviewMode ? "現在只顯示本題型中你剛才答錯的題目。" : mode === "mixed" ? "記得先做乘法或除法，再完成加減。" : "先數清楚圖示，再選出正確的答案。"}</p>
+              <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">本次任務</p><h2 className="mt-3 text-xl font-black leading-7">{reviewMode ? "逐題重溫錯題。" : `完成 8 個 ${mode === "multiply" ? "乘法" : mode === "divide" ? "除法" : "混合運算"}站。`}</h2><p className="mt-3 text-sm leading-6 text-white/75">{reviewMode ? "現在只顯示本題型中你剛才答錯的題目。" : mode === "mixed" ? "記得先做乘法或除法，再完成加減。" : "先數清楚圖示，再選出正確的答案。"}</p>
               <div className="mq-mission-steps mt-5">{activeIndices.map((_, index) => <span key={index} className={index < completed ? "mq-mission-step-done" : index === currentIndex ? "mq-mission-step-current" : ""}>{index + 1}</span>)}</div>
               <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-[#f05a3c] transition-[width] duration-500" style={{ width: `${progress}%` }} /></div>
               <div className="mq-stars mt-5" aria-label={`本次已獲得 ${stars} 顆星`}>{[1, 2, 3].map((star) => <Star key={star} className={`size-5 ${star <= stars ? "mq-star-earned fill-[#f6be5d] text-[#f6be5d]" : "text-white/20"}`} />)}<span className="ml-2 text-xs font-extrabold text-white/75">連續答對 {streak} 題</span></div>

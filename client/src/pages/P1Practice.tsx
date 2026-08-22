@@ -45,7 +45,7 @@ const questions: Question[] = [
 function generateQuestions(difficulty: Difficulty, mode: OperationMode) {
   const ceiling = difficulty === "easy" ? 10 : difficulty === "standard" ? 15 : 20;
   const colors = ["#f05a3c", "#0e8b87", "#4f6eae", "#b15979", "#c8811e"];
-  return Array.from({ length: 5 }, (_, index) => {
+  return Array.from({ length: 8 }, (_, index) => {
     const operator: Question["operator"] = mode === "add" ? "+" : mode === "subtract" ? "−" : Math.random() > 0.48 ? "+" : "−";
     if (operator === "+") {
       const first = 1 + Math.floor(Math.random() * Math.max(2, ceiling - 2));
@@ -223,7 +223,7 @@ export default function P1Practice() {
           <aside className="mq-practice-sidebar order-2 lg:order-1">
             <div className="rounded-[24px] border border-[#172b3f]/10 bg-[#172b3f] p-5 text-white shadow-[0_10px_0_#0e1d2a] dark:border-white/10 dark:bg-[#1b3042] dark:shadow-[0_10px_0_#0b131d]">
               <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-[#f6be5d]">本次任務</p>
-              <h2 className="mt-3 text-xl font-black leading-7">{reviewMode ? "逐題重溫錯題。" : "完成 5 個計算站。"}</h2>
+              <h2 className="mt-3 text-xl font-black leading-7">{reviewMode ? "逐題重溫錯題。" : "完成 8 個計算站。"}</h2>
               <p className="mt-3 text-sm leading-6 text-white/75">{reviewMode ? "只做剛才的錯題。" : "看圖，再按數字。"}</p>
               <div className="mq-mission-steps mt-5" aria-label="五個題目的完成進度">
                 {activeIndices.map((_, index) => <span key={index} className={index < currentIndex + (result === "correct" ? 1 : 0) ? "mq-mission-step-done" : index === currentIndex ? "mq-mission-step-current" : ""}>{index + 1}</span>)}
