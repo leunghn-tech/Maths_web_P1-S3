@@ -17,6 +17,7 @@ import P1ShapesPractice from "./pages/P1ShapesPractice";
 import P1LengthComparePractice from "./pages/P1LengthComparePractice";
 import P1SpatialPractice from "./pages/P1SpatialPractice";
 import P1FoundationsPractice from "./pages/P1FoundationsPractice";
+import P2NumbersPractice from "./pages/P2NumbersPractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -44,10 +45,12 @@ function Router() {
       <Route path="/practice/p1-solids" component={P1SpatialPractice} />
       <Route path="/practice/p1-shape-rotation" component={P1SpatialPractice} />
       <Route path="/practice/p1-length-sort" component={P1SpatialPractice} />
+      <Route path="/practice/p1-counting" component={P1FoundationsPractice} />
       <Route path="/practice/p1-calendar" component={P1FoundationsPractice} />
       <Route path="/practice/p1-lines" component={P1FoundationsPractice} />
       <Route path="/practice/p1-pictograph" component={P1FoundationsPractice} />
       <Route path="/practice/p2-multiplication" component={P2Practice} />
+      <Route path="/practice/p2-numbers" component={P2NumbersPractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
