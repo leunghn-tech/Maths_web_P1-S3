@@ -23,6 +23,7 @@ import P2TimePractice from "./pages/P2TimePractice";
 import P2NumberLinePractice from "./pages/P2NumberLinePractice";
 import P2ConceptPractice from "./pages/P2ConceptPractice";
 import P2AdvancedPractice from "./pages/P2AdvancedPractice";
+import P2AppliedPractice from "./pages/P2AppliedPractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -65,6 +66,9 @@ function Router() {
       <Route path="/practice/p2-division" component={P2AdvancedPractice} />
       <Route path="/practice/p2-direction-route" component={P2AdvancedPractice} />
       <Route path="/practice/p2-array-builder" component={P2AdvancedPractice} />
+      <Route path="/practice/p2-measure" component={P2AppliedPractice} />
+      <Route path="/practice/p2-angles" component={P2AppliedPractice} />
+      <Route path="/practice/p2-division-remainder" component={P2AppliedPractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
