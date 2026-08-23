@@ -180,6 +180,9 @@ const starPractices: StarPractice[] = [
   { key: "p1-measure", grade: "P1", title: "長度與距離", detail: "拖尺子", href: "/practice/p1-measure", accent: "#f05a3c" },
   { key: "p1-length-compare", grade: "P1", title: "較長與較短", detail: "比長短", href: "/practice/p1-length-compare", accent: "#f05a3c" },
   { key: "p1-shapes", grade: "P1", title: "平面圖形", detail: "拖圖形", href: "/practice/p1-shapes", accent: "#f05a3c" },
+  { key: "p1-solids", grade: "P1", title: "立體圖形", detail: "分類物件", href: "/practice/p1-solids", accent: "#f05a3c" },
+  { key: "p1-shape-rotation", grade: "P1", title: "旋轉圖形", detail: "轉一轉", href: "/practice/p1-shape-rotation", accent: "#f05a3c" },
+  { key: "p1-length-sort", grade: "P1", title: "長度排序", detail: "由短到長", href: "/practice/p1-length-sort", accent: "#f05a3c" },
   { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
   { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
   { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },
@@ -221,7 +224,7 @@ export default function Home() {
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
   const nextStarPractice = useMemo(() => starPractices.find((practice) => !completedPractices.includes(practice.key)) ?? null, [completedPractices]);
   const isGradeCompleted = (grade: string) => {
-    if (grade === "P1") return ["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes"].some((id) => completedPractices.includes(id));
+    if (grade === "P1") return ["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes", "p1-solids", "p1-shape-rotation", "p1-length-sort"].some((id) => completedPractices.includes(id));
     if (grade === "P2") return ["p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
     if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
     if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
@@ -230,7 +233,7 @@ export default function Home() {
     return false;
   };
   const courseCompleted = isGradeCompleted(course.grade);
-  const courseCompletionLabel = course.grade === "P1" ? `${["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes"].filter((id) => completedPractices.includes(id)).length}/7 題型完成` : course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P6" ? `${["p6-discount", "p6-profit"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
+  const courseCompletionLabel = course.grade === "P1" ? `${["p1-add-subtract", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes", "p1-solids", "p1-shape-rotation", "p1-length-sort"].filter((id) => completedPractices.includes(id)).length}/10 題型完成` : course.grade === "P2" ? `${["p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/3 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P6" ? `${["p6-discount", "p6-profit"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
