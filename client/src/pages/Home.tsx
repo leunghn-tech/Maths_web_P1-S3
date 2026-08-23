@@ -203,6 +203,8 @@ const starPractices: StarPractice[] = [
   { key: "p2-quadrilaterals", grade: "P2", title: "四邊形", detail: "特性配對", href: "/practice/p2-quadrilaterals", accent: "#c8811e" },
   { key: "p2-pictograph-multiple", grade: "P2", title: "象形圖進階", detail: "圖例 2、5、10", href: "/practice/p2-pictograph-multiple", accent: "#c8811e" },
   { key: "p2-meter-centimeter", grade: "P2", title: "米厘米換算", detail: "1 米＝100 厘米", href: "/practice/p2-meter-centimeter", accent: "#c8811e" },
+  { key: "p2-fractions-basic", grade: "P2", title: "分數初步", detail: "一半、四分一", href: "/practice/p2-fractions-basic", accent: "#c8811e" },
+  { key: "p3-weight", grade: "P3", title: "克與公斤", detail: "虛擬天平", href: "/practice/p3-weight", accent: "#4f6eae" },
   { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
   { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
   { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },
@@ -246,7 +248,7 @@ export default function Home() {
   const isGradeCompleted = (grade: string) => {
     if (grade === "P1") return ["p1-add-subtract", "p1-counting", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes", "p1-solids", "p1-shape-rotation", "p1-length-sort", "p1-calendar", "p1-lines", "p1-pictograph"].some((id) => completedPractices.includes(id));
     if (grade === "P2") return ["p2-numbers", "p2-number-line", "p2-money", "p2-time", "p2-multiply-visual", "p2-money-coins", "p2-directions", "p2-division", "p2-direction-route", "p2-array-builder", "p2-measure", "p2-angles", "p2-division-remainder", "p2-quadrilaterals", "p2-pictograph-multiple", "p2-meter-centimeter", "p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
-    if (grade === "P3") return ["p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
+    if (grade === "P3") return ["p3-weight", "p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
     if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
     if (grade === "P5") return ["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].some((id) => completedPractices.includes(id));
     if (grade === "P6") return ["p6-discount", "p6-profit"].some((id) => completedPractices.includes(id));

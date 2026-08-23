@@ -25,6 +25,7 @@ import P2ConceptPractice from "./pages/P2ConceptPractice";
 import P2AdvancedPractice from "./pages/P2AdvancedPractice";
 import P2AppliedPractice from "./pages/P2AppliedPractice";
 import P2FurtherPractice from "./pages/P2FurtherPractice";
+import P2P3StarterPractice from "./pages/P2P3StarterPractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -73,6 +74,8 @@ function Router() {
       <Route path="/practice/p2-quadrilaterals" component={P2FurtherPractice} />
       <Route path="/practice/p2-pictograph-multiple" component={P2FurtherPractice} />
       <Route path="/practice/p2-meter-centimeter" component={P2FurtherPractice} />
+      <Route path="/practice/p2-fractions-basic" component={P2P3StarterPractice} />
+      <Route path="/practice/p3-weight" component={P2P3StarterPractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
