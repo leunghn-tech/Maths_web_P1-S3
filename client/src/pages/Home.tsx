@@ -210,6 +210,7 @@ const starPractices: StarPractice[] = [
   { key: "p3-weight-builder", grade: "P3", title: "法碼湊重", detail: "多個法碼", href: "/practice/p3-weight-builder", accent: "#4f6eae" },
   { key: "p3-large-numbers", grade: "P3", title: "四五位數", detail: "位值挑戰", href: "/practice/p3-large-numbers", accent: "#4f6eae" },
   { key: "p3-charts", grade: "P3", title: "統計圖表", detail: "方塊圖棒形圖", href: "/practice/p3-charts", accent: "#4f6eae" },
+  { key: "p3-parallel-perpendicular", grade: "P3", title: "平行與垂直", detail: "找線條", href: "/practice/p3-parallel-perpendicular", accent: "#4f6eae" },
   { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
   { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
   { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },

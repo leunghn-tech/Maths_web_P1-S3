@@ -28,6 +28,7 @@ import P2FurtherPractice from "./pages/P2FurtherPractice";
 import P2P3StarterPractice from "./pages/P2P3StarterPractice";
 import P3ProgressPractice from "./pages/P3ProgressPractice";
 import P3DataPractice from "./pages/P3DataPractice";
+import P3GeometryPractice from "./pages/P3GeometryPractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -83,6 +84,7 @@ function Router() {
       <Route path="/practice/p3-weight-builder" component={P3ProgressPractice} />
       <Route path="/practice/p3-large-numbers" component={P3DataPractice} />
       <Route path="/practice/p3-charts" component={P3DataPractice} />
+      <Route path="/practice/p3-parallel-perpendicular" component={P3GeometryPractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
