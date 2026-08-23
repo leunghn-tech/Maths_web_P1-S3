@@ -12,6 +12,7 @@ import P1Practice from "./pages/P1Practice";
 import P1NumbersPractice from "./pages/P1NumbersPractice";
 import P1TimePractice from "./pages/P1TimePractice";
 import P1NumberLinePractice from "./pages/P1NumberLinePractice";
+import P1MeasurePractice from "./pages/P1MeasurePractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/practice/p1-numbers" component={P1NumbersPractice} />
       <Route path="/practice/p1-time" component={P1TimePractice} />
       <Route path="/practice/p1-number-line" component={P1NumberLinePractice} />
+      <Route path="/practice/p1-measure" component={P1MeasurePractice} />
       <Route path="/practice/p2-multiplication" component={P2Practice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
