@@ -232,6 +232,8 @@ const starPractices: StarPractice[] = [
   { key: "p5-decimal-carry", grade: "P5", title: "進位與借位", detail: "直式小數", href: "/practice/p5-decimal-carry", accent: "#7c6cb0" },
   { key: "p5-polygons", grade: "P5", title: "多邊形變換", detail: "旋轉對稱", href: "/practice/p5-polygons", accent: "#6c8b4c" },
   { key: "p5-data-insights", grade: "P5", title: "數據判讀", detail: "平均升跌", href: "/practice/p5-data-insights", accent: "#6c8b4c" },
+  { key: "p5-area-puzzle", grade: "P5", title: "面積拼圖", detail: "公式推導", href: "/practice/p5-area-puzzle", accent: "#6c8b4c" },
+  { key: "p5-volume-life", grade: "P5", title: "體積生活題", detail: "水箱包裝箱", href: "/practice/p5-volume-life", accent: "#4f6eae" },
   { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
   { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
   { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },

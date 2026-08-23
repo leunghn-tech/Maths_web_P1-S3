@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, Lightbulb, Moon, RefreshCw, RotateCcw, Sp
 import { useTheme } from "@/contexts/ThemeContext";
 import { playCelebrationSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { markPracticeCompleted } from "@/lib/practiceCompletion";
+import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { getDailyPracticeProgress, recordDailyPractice } from "@/lib/dailyPractice";
 import MidpointBreak from "@/components/MidpointBreak";
 import FinishAchievementOverlay from "@/components/FinishAchievementOverlay";
@@ -56,7 +57,7 @@ export default function P4QuestionStation({ stationCode, title, subtitle, accent
 
   const startSession = (nextDifficulty = difficulty) => { setDifficulty(nextDifficulty); setSession(createSession(nextDifficulty)); setWrongProblems([]); setReviewMode(false); setIndex(0); setSelected(null); setResult("idle"); setScore(0); setStreak(0); setSeconds(0); setFinished(false); setMidpointOpen(false); setMidpointSeen(false); };
   const reviewWrong = () => { setReviewMode(true); setIndex(0); setSelected(null); setResult("idle"); setScore(0); setStreak(0); setSeconds(0); setFinished(false); };
-  const choose = (choice: string) => { if (result !== "idle") return; setSelected(choice); if (choice === problem.answer) { setResult("correct"); setScore((value) => value + 1); setStreak((value) => value + 1); if (soundEnabled) playCorrectSound(); return; } setResult("incorrect"); setStreak(0); setWrongProblems((items) => items.some((item) => item.id === problem.id) ? items : [...items, problem]); if (soundEnabled) playWrongSound(); };
+  const choose = (choice: string) => { if (result !== "idle") return; setSelected(choice); if (choice === problem.answer) { setResult("correct"); setScore((value) => value + 1); setStreak((value) => value + 1); if (soundEnabled) playCorrectSound(); return; } setResult("incorrect"); setStreak(0); setWrongProblems((items) => items.some((item) => item.id === problem.id) ? items : [...items, problem]); recordPracticeMistake({ key: practiceKey, grade: gradeLabel, title, href: location.pathname }); if (soundEnabled) playWrongSound(); };
   const next = () => { if (index === activeProblems.length - 1) { setFinished(true); if (!reviewMode) { markPracticeCompleted(practiceKey); setDailyProgress(recordDailyPractice(practiceKey)); } if (soundEnabled) playCelebrationSound(); return; } if (!reviewMode && activeProblems.length === 8 && index === 3 && !midpointSeen) { setMidpointSeen(true); setMidpointOpen(true); return; } setIndex((value) => value + 1); setSelected(null); setResult("idle"); };
 
   return <div className={`mq-practice mq-eight-question-station ${reviewMode ? "mq-review-mode" : ""} min-h-screen bg-[#f8f5ed] text-[#172b3f] dark:bg-[#101b27] dark:text-[#f4f7f4]`}><MidpointBreak open={midpointOpen} onContinue={() => { setMidpointOpen(false); setIndex((value) => value + 1); setSelected(null); setResult("idle"); }} />{reviewMode && !finished && <div className="mq-review-hint-overlay"><VisualReviewHint kind={gradeLabel === "P6" ? "application" : "order"} expression={problem.equation} answer={problem.answer} hint={problem.hint} accent={accent} /></div>}{finished && !reviewMode && <FinishAchievementOverlay perfect={activeProblems.length === 8 && score === 8} items={voiceReviewItems} />}

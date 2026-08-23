@@ -40,6 +40,7 @@ import P4AdvancedDataPractice from "./pages/P4AdvancedDataPractice";
 import P5CompletePractice from "./pages/P5CompletePractice";
 import P5CorePractice from "./pages/P5CorePractice";
 import P5ExpansionPractice from "./pages/P5ExpansionPractice";
+import P5AppliedPractice from "./pages/P5AppliedPractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -123,6 +124,8 @@ function Router() {
       <Route path="/practice/p5-decimal-carry" component={P5ExpansionPractice} />
       <Route path="/practice/p5-polygons" component={P5ExpansionPractice} />
       <Route path="/practice/p5-data-insights" component={P5ExpansionPractice} />
+      <Route path="/practice/p5-area-puzzle" component={P5AppliedPractice} />
+      <Route path="/practice/p5-volume-life" component={P5AppliedPractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
