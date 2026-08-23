@@ -34,6 +34,7 @@ import P3FinalPractice from "./pages/P3FinalPractice";
 import ProgressDashboard from "./pages/ProgressDashboard";
 import P4VisualPractice from "./pages/P4VisualPractice";
 import P4ConceptPractice from "./pages/P4ConceptPractice";
+import P4CompletePractice from "./pages/P4CompletePractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -102,6 +103,9 @@ function Router() {
       <Route path="/practice/p4-decimals-line" component={P4ConceptPractice} />
       <Route path="/practice/p4-triangles" component={P4ConceptPractice} />
       <Route path="/practice/p4-eight-directions" component={P4ConceptPractice} />
+      <Route path="/practice/p4-quadrilateral-map" component={P4CompletePractice} />
+      <Route path="/practice/p4-bar-chart" component={P4CompletePractice} />
+      <Route path="/practice/p4-decimal-shopping" component={P4CompletePractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
