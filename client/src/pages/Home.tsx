@@ -234,6 +234,10 @@ const starPractices: StarPractice[] = [
   { key: "p5-data-insights", grade: "P5", title: "數據判讀", detail: "平均升跌", href: "/practice/p5-data-insights", accent: "#6c8b4c" },
   { key: "p5-area-puzzle", grade: "P5", title: "面積拼圖", detail: "公式推導", href: "/practice/p5-area-puzzle", accent: "#6c8b4c" },
   { key: "p5-volume-life", grade: "P5", title: "體積生活題", detail: "水箱包裝箱", href: "/practice/p5-volume-life", accent: "#4f6eae" },
+  { key: "p6-convert", grade: "P6", title: "百分轉換", detail: "分小百", href: "/practice/p6-convert", accent: "#6c8b4c" },
+  { key: "p6-measure-rate", grade: "P6", title: "圓與速率", detail: "生活量度", href: "/practice/p6-measure-rate", accent: "#6c8b4c" },
+  { key: "p6-geometry", grade: "P6", title: "坐標立體", detail: "截面摺紙", href: "/practice/p6-geometry", accent: "#6c8b4c" },
+  { key: "p6-data-equation", grade: "P6", title: "數據方程", detail: "圓圖方程", href: "/practice/p6-data-equation", accent: "#6c8b4c" },
   { key: "p2-multiply", grade: "P2", title: "乘法", detail: "幾組幾個", href: "/practice/p2-multiplication?mode=multiply", accent: "#c8811e" },
   { key: "p2-divide", grade: "P2", title: "除法", detail: "平均分", href: "/practice/p2-multiplication?mode=divide", accent: "#c8811e" },
   { key: "p2-mixed", grade: "P2", title: "混合運算", detail: "先乘除", href: "/practice/p2-multiplication?mode=mixed", accent: "#c8811e" },
@@ -273,6 +277,7 @@ export default function Home() {
   );
   const course = courses.find((item) => item.grade === selectedGrade) ?? courses[0];
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
+  const routeStations = starPractices.filter((practice) => practice.grade === course.grade);
   const nextStarPractice = useMemo(() => starPractices.find((practice) => !completedPractices.includes(practice.key)) ?? null, [completedPractices]);
   const isGradeCompleted = (grade: string) => {
     if (grade === "P1") return ["p1-add-subtract", "p1-counting", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes", "p1-solids", "p1-shape-rotation", "p1-length-sort", "p1-calendar", "p1-lines", "p1-pictograph"].some((id) => completedPractices.includes(id));
@@ -486,7 +491,7 @@ export default function Home() {
                     {courseCompleted && <span className="mq-completion-badge mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-bold"><Check className="size-3" /> {courseCompletionLabel}</span>}
                   </div>
                 </div>
-                {course.grade === "P1" ? (
+                {course.stage !== "primary" && (course.grade === "P1" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p1-add-subtract" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 20 以內加減</Link><Link href="/practice/p1-counting" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">20 以內的數</Link><Link href="/practice/p1-numbers" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">100 以內的數</Link><Link href="/practice/p1-calendar" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">星期日曆</Link><Link href="/practice/p1-lines" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">直線曲線</Link><Link href="/practice/p1-pictograph" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">象形圖</Link></div>
                 ) : course.grade === "P2" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p2-numbers" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 三位數</Link><Link href="/practice/p2-multiply-visual" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">九九乘法</Link><Link href="/practice/p2-division" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">除法分一分</Link><Link href="/practice/p2-division-remainder" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">有餘數</Link><Link href="/practice/p2-measure" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">米與厘米</Link><Link href="/practice/p2-angles" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">角度分類</Link><Link href="/practice/p2-money" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">港幣找錢</Link><Link href="/practice/p2-directions" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">校園方向</Link></div>
@@ -500,10 +505,12 @@ export default function Home() {
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p6-discount" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 百分折扣</Link><Link href="/practice/p6-profit" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">利潤應用</Link></div>
                 ) : (
                   <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
-                )}
+                ))}
               </div>
 
-              {course.grade === "P1" && <section className="mq-p1-recommended mt-6 rounded-2xl border border-[#f05a3c]/20 bg-[#fff7ef] p-4" aria-label="P1 推薦學習次序">
+              {course.stage === "primary" && <section className="mt-6 border-y border-[#172b3f]/10 bg-[#fffdf8] py-5" aria-label="Recommended Route"><div className="grid gap-5 lg:grid-cols-[.78fr_1.22fr] lg:items-center"><div className="flex items-start gap-4"><span className="grid size-[84px] shrink-0 place-items-center rounded-[28px] text-3xl font-black text-white shadow-[0_7px_0_rgba(0,0,0,.13)]" style={{ backgroundColor: course.accent }}>{course.grade}</span><div><p className="font-mono text-[12px] font-bold tracking-[.18em]" style={{ color: course.accent }}>{course.shortLabel} — LEARNING MAP</p><h4 className="mt-2 text-3xl font-black leading-tight tracking-[-.055em]">{course.title}</h4><p className="mt-3 max-w-sm text-sm leading-6 text-[#617286]">選好年級後，按紅色按鈕開始做題。</p></div></div><div className="flex flex-wrap items-center gap-3">{routeStations.map((station, stationIndex) => { const done = completedPractices.includes(station.key); const recommended = !done && routeStations.slice(0, stationIndex).every((prior) => completedPractices.includes(prior.key)); return <Link key={station.key} href={station.href} className={`inline-flex min-h-12 items-center rounded-full border px-5 text-sm font-extrabold transition ${recommended ? "bg-[#f05a3c] text-white shadow-[0_5px_0_#c84932]" : done ? "border-[#0e8b87]/35 bg-[#e8f5f2] text-[#0e8b87]" : "border-[#172b3f]/15 bg-white text-[#172b3f]"}`}>{recommended && <Play className="mr-2 size-4 fill-current" />}{done ? "✓ " : ""}{station.title}</Link>; })}</div></div></section>}
+
+              {false && course.grade === "P1" && <section className="mq-p1-recommended mt-6 rounded-2xl border border-[#f05a3c]/20 bg-[#fff7ef] p-4" aria-label="P1 推薦學習次序">
                 <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-mono text-[10px] font-bold tracking-[.14em] text-[#f05a3c]">RECOMMENDED ROUTE</p><h4 className="mt-1 font-black">跟住這條路，一站一站學。</h4></div><span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">P1 · 14 站</span></div>
                 <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{[
                   { key: "p1-add-subtract", code: "01", icon: "＋", title: "20 以內加減", detail: "先練基本數感", href: "/practice/p1-add-subtract" },
@@ -523,7 +530,7 @@ export default function Home() {
                 ].map((station, stationIndex, stations) => { const done = completedPractices.includes(station.key); const next = !done && stations.slice(0, stationIndex).every((prior) => completedPractices.includes(prior.key)); return <Link key={station.key} href={station.href} className={`mq-p1-route-card ${next ? "is-next" : ""} ${done ? "is-done" : ""}`}><span className="mq-p1-route-code">{done ? <Check className="size-3" /> : station.code}</span><span className="text-lg leading-none">{station.icon}</span><strong>{station.title}</strong><small>{done ? "已收集星星" : next ? "下一站，按這裡" : station.detail}</small></Link>; })}</div>
               </section>}
 
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {course.stage !== "primary" && <div className="mt-6 grid gap-4 md:grid-cols-2">
                 {course.categories.map((category, index) => {
                   const Icon = categoryIcons[index] ?? BookOpen;
                   return (
@@ -540,11 +547,11 @@ export default function Home() {
                     </article>
                   );
                 })}
-              </div>
-              <div className="mq-checkpoint mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
+              </div>}
+              {course.stage !== "primary" && <div className="mq-checkpoint mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[#fff3e8] px-5 py-4">
                 <p className="text-sm font-bold text-[#744230]"><span className="font-mono text-xs text-[#f05a3c]">CHECKPOINT →</span> 建議先挑戰：{course.checkpoint}</p>
                 {courseCompleted ? <span className="inline-flex items-center gap-1 text-sm font-extrabold text-[#0e8b87]"><Check className="size-4" /> 已完成練習</span> : <button onClick={() => notifyComingSoon(course.checkpoint)} className="inline-flex items-center gap-1 text-sm font-extrabold text-[#f05a3c] hover:underline">查看題型 <ArrowRight className="size-4" /></button>}
-              </div>
+              </div>}
             </div>
             </div>
           </div>

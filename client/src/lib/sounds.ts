@@ -1,5 +1,15 @@
 /** Maths Quest interaction sounds — small Web Audio cues, played only after a learner action. */
+import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 type Tone = { frequency: number; start: number; duration: number; volume?: number; type?: OscillatorType };
+
+function recordCurrentRouteMistake() {
+  if (typeof window === "undefined") return;
+  const path = window.location.pathname;
+  const grade = path.match(/\/practice\/(p[1-6])/i)?.[1]?.toUpperCase() ?? "P1";
+  if (!/^P[1-6]$/.test(grade)) return;
+  const slug = path.split("/").pop()?.replace(/-/g, " ") ?? "練習站";
+  recordPracticeMistake({ key: `route:${path}`, grade, title: slug, href: path });
+}
 
 function playTones(tones: Tone[]) {
   if (typeof window === "undefined") return;
@@ -35,6 +45,7 @@ export function playCorrectSound() {
 }
 
 export function playWrongSound() {
+  recordCurrentRouteMistake();
   playTones([
     { frequency: 220, start: 0, duration: 0.11, volume: 0.045, type: "sine" },
     { frequency: 175, start: 0.11, duration: 0.16, volume: 0.04, type: "sine" },
