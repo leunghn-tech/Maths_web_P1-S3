@@ -37,6 +37,8 @@ import P4ConceptPractice from "./pages/P4ConceptPractice";
 import P4CompletePractice from "./pages/P4CompletePractice";
 import P5FractionVisualPractice from "./pages/P5FractionVisualPractice";
 import P4AdvancedDataPractice from "./pages/P4AdvancedDataPractice";
+import P5CompletePractice from "./pages/P5CompletePractice";
+import P5CorePractice from "./pages/P5CorePractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -111,6 +113,11 @@ function Router() {
       <Route path="/practice/p5-fraction-visual" component={P5FractionVisualPractice} />
       <Route path="/practice/p4-route-planning" component={P4AdvancedDataPractice} />
       <Route path="/practice/p4-bar-compare" component={P4AdvancedDataPractice} />
+      <Route path="/practice/p5-decimal-life" component={P5CompletePractice} />
+      <Route path="/practice/p5-volume-build" component={P5CompletePractice} />
+      <Route path="/practice/p5-fraction-add" component={P5CorePractice} />
+      <Route path="/practice/p5-area" component={P5CorePractice} />
+      <Route path="/practice/p5-geometry-data" component={P5CorePractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
