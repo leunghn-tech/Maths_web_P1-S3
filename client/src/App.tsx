@@ -21,6 +21,7 @@ import P2NumbersPractice from "./pages/P2NumbersPractice";
 import P2MoneyPractice from "./pages/P2MoneyPractice";
 import P2TimePractice from "./pages/P2TimePractice";
 import P2NumberLinePractice from "./pages/P2NumberLinePractice";
+import P2ConceptPractice from "./pages/P2ConceptPractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -57,6 +58,9 @@ function Router() {
       <Route path="/practice/p2-money" component={P2MoneyPractice} />
       <Route path="/practice/p2-time" component={P2TimePractice} />
       <Route path="/practice/p2-numbers-compare" component={P2NumberLinePractice} />
+      <Route path="/practice/p2-multiply-visual" component={P2ConceptPractice} />
+      <Route path="/practice/p2-money-coins" component={P2ConceptPractice} />
+      <Route path="/practice/p2-directions" component={P2ConceptPractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
