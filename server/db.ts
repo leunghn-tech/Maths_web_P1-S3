@@ -11,6 +11,7 @@ import {
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
+import { getInitialTeacherPassword, hashLocalPassword, normalizeLocalUsername, verifyLocalPassword } from "./localAuth";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -70,12 +71,61 @@ export async function getUserByOpenId(openId: string) {
   return result[0];
 }
 
+export async function getUserByLocalUsername(localUsername: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.localUsername, normalizeLocalUsername(localUsername))).limit(1);
+  return result[0];
+}
+
 export async function ensureStudentProfile(userId: number) {
   const db = await requireDb();
   await db.insert(studentProfiles).values({ userId }).onDuplicateKeyUpdate({ set: { updatedAt: new Date() } });
   const [profile] = await db.select().from(studentProfiles).where(eq(studentProfiles.userId, userId)).limit(1);
   if (!profile) throw new Error("Could not create student profile");
   return profile;
+}
+
+export async function ensureInitialTeacherAccount() {
+  const db = await requireDb();
+  const username = "admin";
+  const existing = await getUserByLocalUsername(username);
+  if (existing) return existing;
+  const passwordHash = await hashLocalPassword(getInitialTeacherPassword());
+  await db.insert(users).values({ openId: "local:teacher:admin", localUsername: username, passwordHash, name: "教師 admin", loginMethod: "local-password", role: "admin", lastSignedIn: new Date() });
+  const created = await getUserByLocalUsername(username);
+  if (!created) throw new Error("Could not create the initial teacher account");
+  return created;
+}
+
+export async function registerLocalStudent(input: { username: string; password: string; displayName: string }) {
+  const db = await requireDb();
+  const localUsername = normalizeLocalUsername(input.username);
+  if (await getUserByLocalUsername(localUsername)) throw new Error("此用戶名稱已被使用。請選擇另一個用戶名稱。");
+  const passwordHash = await hashLocalPassword(input.password);
+  await db.insert(users).values({ openId: `local:student:${crypto.randomUUID()}`, localUsername, passwordHash, name: input.displayName, loginMethod: "local-password", role: "user", lastSignedIn: new Date() });
+  const user = await getUserByLocalUsername(localUsername);
+  if (!user) throw new Error("未能建立學生帳戶。");
+  await ensureStudentProfile(user.id);
+  return user;
+}
+
+export async function authenticateLocalAccount(input: { username: string; password: string; expectedRole: "user" | "admin" }) {
+  const localUsername = normalizeLocalUsername(input.username);
+  if (input.expectedRole === "admin" && localUsername === "admin") await ensureInitialTeacherAccount();
+  const user = await getUserByLocalUsername(localUsername);
+  if (!user || !user.passwordHash || user.role !== input.expectedRole) return null;
+  const validPassword = await verifyLocalPassword(input.password, user.passwordHash);
+  if (!validPassword) return null;
+  const db = await requireDb();
+  const lastSignedIn = new Date();
+  await db.update(users).set({ lastSignedIn }).where(eq(users.id, user.id));
+  return { ...user, lastSignedIn };
+}
+
+export async function getTeacherManagedStudents() {
+  const db = await requireDb();
+  return db.select({ userId: users.id, username: users.localUsername, accountName: users.name, profileId: studentProfiles.id, nickname: studentProfiles.displayName, classCode: studentProfiles.classCode, dailyTarget: studentProfiles.dailyTarget, lastSyncedAt: studentProfiles.lastSyncedAt, createdAt: users.createdAt }).from(users).leftJoin(studentProfiles, eq(users.id, studentProfiles.userId)).where(eq(users.role, "user")).orderBy(desc(users.createdAt));
 }
 
 async function getLearningOverviewByProfile(profile: Awaited<ReturnType<typeof ensureStudentProfile>>) {

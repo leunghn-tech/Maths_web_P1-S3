@@ -69,6 +69,8 @@ import S3DeepSimulations from "./pages/S3DeepSimulations";
 import S3LabPlus from "./pages/S3LabPlus";
 import AccountHub from "./pages/AccountHub";
 import FamilyDashboard from "./pages/FamilyDashboard";
+import SignInPage from "./pages/SignInPage";
+import TeacherDashboard from "./pages/TeacherDashboard";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -122,6 +124,8 @@ function Router() {
       <Route path="/progress-dashboard" component={ProgressDashboard} />
       <Route path="/account" component={AccountHub} />
       <Route path="/family-dashboard" component={FamilyDashboard} />
+      <Route path="/sign-in" component={SignInPage} />
+      <Route path="/teacher" component={TeacherDashboard} />
       <Route path="/practice/p4-grid-area" component={P4VisualPractice} />
       <Route path="/practice/p4-fractions-visual" component={P4VisualPractice} />
       <Route path="/practice/p4-decimals-line" component={P4ConceptPractice} />
