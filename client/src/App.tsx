@@ -58,6 +58,7 @@ import P5VolumePractice from "./pages/P5VolumePractice";
 import P6DiscountPractice from "./pages/P6DiscountPractice";
 import P6ProfitPractice from "./pages/P6ProfitPractice";
 import S1BilingualPractice from "./pages/S1BilingualPractice";
+import S2BilingualPractice from "./pages/S2BilingualPractice";
 
 function Router() {
   return (
@@ -156,6 +157,7 @@ function Router() {
       <Route path="/practice/p6-discount" component={P6DiscountPractice} />
       <Route path="/practice/p6-profit" component={P6ProfitPractice} />
       <Route path="/practice/s1" component={S1BilingualPractice} />
+      <Route path="/practice/s2" component={S2BilingualPractice} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
