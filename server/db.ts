@@ -13,6 +13,7 @@ import {
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 import { createPasswordResetToken, createStudentRecoveryCode, getInitialTeacherPassword, hashLocalPassword, hashOpaqueSecret, isPasswordResetTokenUsable, normalizeLocalUsername, normalizeRecoveryCode, verifyLocalPassword } from "./localAuth";
+import { buildTeacherLearningTrends } from "./teacherLearningTrends";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -239,6 +240,7 @@ export async function getTeacherStudentDetail(studentUserId: number) {
     stats: { completedPractices: 0, correctAnswers: 0, incorrectAnswers: 0, answeredQuestions: 0, accuracy: null as number | null },
     recentPractices: [],
     reviewRecords: [],
+    trends: { scoreTrend: [], domainTrend: [] },
   };
 
   const [profile] = await db.select().from(studentProfiles).where(eq(studentProfiles.id, student.profileId)).limit(1);
@@ -252,6 +254,7 @@ export async function getTeacherStudentDetail(studentUserId: number) {
     stats: { completedPractices: overview.progress.length, correctAnswers, incorrectAnswers, answeredQuestions, accuracy: answeredQuestions ? Math.round((correctAnswers / answeredQuestions) * 100) : null as number | null },
     recentPractices: overview.progress.slice(0, 10).map((item) => ({ practiceKey: item.practiceKey, completedAt: item.completedAt, bestScore: item.bestScore, perfectRun: item.perfectRun })),
     reviewRecords: overview.reviewRecords.slice(0, 12).map((item) => ({ practiceKey: item.practiceKey, grade: item.grade, title: item.title, misses: item.misses, updatedAt: item.updatedAt })),
+    trends: buildTeacherLearningTrends(overview.progress, overview.reviewRecords),
   };
 }
 
