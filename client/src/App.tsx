@@ -68,7 +68,6 @@ import S3AdvancedSimulations from "./pages/S3AdvancedSimulations";
 import S3DeepSimulations from "./pages/S3DeepSimulations";
 import S3LabPlus from "./pages/S3LabPlus";
 import AccountHub from "./pages/AccountHub";
-import FamilyDashboard from "./pages/FamilyDashboard";
 import SignInPage from "./pages/SignInPage";
 import TeacherDashboard from "./pages/TeacherDashboard";
 function Router() {
@@ -123,7 +122,6 @@ function Router() {
       <Route path="/practice/p4-factors-line" component={P4FactorsPractice} />
       <Route path="/progress-dashboard" component={ProgressDashboard} />
       <Route path="/account" component={AccountHub} />
-      <Route path="/family-dashboard" component={FamilyDashboard} />
       <Route path="/sign-in" component={SignInPage} />
       <Route path="/teacher" component={TeacherDashboard} />
       <Route path="/practice/p4-grid-area" component={P4VisualPractice} />

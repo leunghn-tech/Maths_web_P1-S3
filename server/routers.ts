@@ -5,20 +5,14 @@ import { sdk } from "./_core/sdk";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import {
-  acceptViewerInvite,
   authenticateLocalAccount,
-  createViewerInvite,
-  getStudentAccessGrants,
   getStudentLearningOverview,
   getTeacherManagedStudents,
-  getViewerStudentLearningOverview,
-  getViewerStudents,
   migrateLocalLearningSnapshot,
   recordStudentDailyPractice,
   recordStudentPracticeCompletion,
   recordStudentReviewMistake,
   registerLocalStudent,
-  revokeStudentAccessGrant,
   setStudentDailyTarget,
   setStudentPinnedPractice,
   syncLocalLearningSnapshot,
@@ -65,7 +59,7 @@ export const appRouter = router({
     overview: protectedProcedure.query(({ ctx }) => getStudentLearningOverview(ctx.user.id)),
     migrateLocal: protectedProcedure.input(localSnapshot).mutation(({ ctx, input }) => migrateLocalLearningSnapshot(ctx.user.id, input)),
     syncLocal: protectedProcedure.input(z.object({ snapshot: localSnapshot, expectedSyncRevision: z.number().int().min(0) })).mutation(({ ctx, input }) => syncLocalLearningSnapshot(ctx.user.id, input.snapshot, input.expectedSyncRevision)),
-    updateProfile: protectedProcedure.input(z.object({ displayName: z.string().trim().max(80).transform((value) => value || null), classCode: z.string().trim().max(32).transform((value) => value || null) })).mutation(({ ctx, input }) => updateStudentProfile(ctx.user.id, input)),
+    updateProfile: protectedProcedure.input(z.object({ displayName: z.string().trim().max(80).transform((value) => value || null) })).mutation(({ ctx, input }) => updateStudentProfile(ctx.user.id, input)),
     completePractice: protectedProcedure.input(z.object({ practiceKey, bestScore: z.number().int().min(0).max(8).default(8), perfectRun: z.boolean().default(false) })).mutation(async ({ ctx, input }) => {
       await recordStudentPracticeCompletion(ctx.user.id, input.practiceKey, input.bestScore, input.perfectRun);
       return getStudentLearningOverview(ctx.user.id);
@@ -82,25 +76,6 @@ export const appRouter = router({
     setPinned: protectedProcedure.input(z.object({ practiceKey, pinned: z.boolean(), position: z.number().int().min(0).max(100).default(0) })).mutation(async ({ ctx, input }) => {
       await setStudentPinnedPractice(ctx.user.id, input.practiceKey, input.pinned, input.position);
       return getStudentLearningOverview(ctx.user.id);
-    }),
-  }),
-  familyAccess: router({
-    listMyGrants: protectedProcedure.query(({ ctx }) => getStudentAccessGrants(ctx.user.id)),
-    createInvite: protectedProcedure.input(z.object({ viewerRole: z.enum(["parent", "teacher"]) })).mutation(({ ctx, input }) => createViewerInvite(ctx.user.id, input.viewerRole)),
-    revokeInvite: protectedProcedure.input(z.object({ grantId: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
-      await revokeStudentAccessGrant(ctx.user.id, input.grantId);
-      return { success: true } as const;
-    }),
-    acceptInvite: protectedProcedure.input(z.object({ inviteCode: z.string().trim().toUpperCase().regex(/^MQ-[A-Z0-9]{10}$/) })).mutation(async ({ ctx, input }) => {
-      const grant = await acceptViewerInvite(ctx.user.id, input.inviteCode);
-      if (!grant) throw new Error("邀請碼無效、已被使用，或不能關聯到自己的帳戶。");
-      return grant;
-    }),
-    viewerStudents: protectedProcedure.query(({ ctx }) => getViewerStudents(ctx.user.id)),
-    viewerStudentOverview: protectedProcedure.input(z.object({ studentId: z.number().int().positive() })).query(async ({ ctx, input }) => {
-      const overview = await getViewerStudentLearningOverview(ctx.user.id, input.studentId);
-      if (!overview) throw new Error("你未獲授權檢視這位學生的學習資料。");
-      return overview;
     }),
   }),
   teacher: router({

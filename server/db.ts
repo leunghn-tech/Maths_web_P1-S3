@@ -125,7 +125,21 @@ export async function authenticateLocalAccount(input: { username: string; passwo
 
 export async function getTeacherManagedStudents() {
   const db = await requireDb();
-  return db.select({ userId: users.id, username: users.localUsername, accountName: users.name, profileId: studentProfiles.id, nickname: studentProfiles.displayName, classCode: studentProfiles.classCode, dailyTarget: studentProfiles.dailyTarget, lastSyncedAt: studentProfiles.lastSyncedAt, createdAt: users.createdAt }).from(users).leftJoin(studentProfiles, eq(users.id, studentProfiles.userId)).where(eq(users.role, "user")).orderBy(desc(users.createdAt));
+  const [students, progressStats, mistakeStats] = await Promise.all([
+    db.select({ userId: users.id, username: users.localUsername, accountName: users.name, profileId: studentProfiles.id, nickname: studentProfiles.displayName, lastSyncedAt: studentProfiles.lastSyncedAt, createdAt: users.createdAt }).from(users).leftJoin(studentProfiles, eq(users.id, studentProfiles.userId)).where(eq(users.role, "user")).orderBy(desc(users.createdAt)),
+    db.select({ studentId: studentPracticeProgress.studentId, completedPractices: sql<number>`count(*)`, correctAnswers: sql<number>`coalesce(sum(${studentPracticeProgress.bestScore}), 0)` }).from(studentPracticeProgress).groupBy(studentPracticeProgress.studentId),
+    db.select({ studentId: studentReviewRecords.studentId, incorrectAnswers: sql<number>`coalesce(sum(${studentReviewRecords.misses}), 0)` }).from(studentReviewRecords).groupBy(studentReviewRecords.studentId),
+  ]);
+  const statsByStudent = new Map(progressStats.map((stat) => [stat.studentId, { completedPractices: Number(stat.completedPractices), correctAnswers: Number(stat.correctAnswers) }]));
+  const mistakesByStudent = new Map(mistakeStats.map((stat) => [stat.studentId, Number(stat.incorrectAnswers)]));
+  return students.map((student) => {
+    const stats = student.profileId ? statsByStudent.get(student.profileId) : undefined;
+    const completedPractices = stats?.completedPractices ?? 0;
+    const correctAnswers = stats?.correctAnswers ?? 0;
+    const incorrectAnswers = student.profileId ? mistakesByStudent.get(student.profileId) ?? 0 : 0;
+    const answeredQuestions = correctAnswers + incorrectAnswers;
+    return { ...student, completedPractices, correctAnswers, incorrectAnswers, answeredQuestions, accuracy: answeredQuestions ? Math.round((correctAnswers / answeredQuestions) * 100) : null };
+  });
 }
 
 async function getLearningOverviewByProfile(profile: Awaited<ReturnType<typeof ensureStudentProfile>>) {
@@ -150,10 +164,10 @@ export async function setStudentDailyTarget(userId: number, dailyTarget: number)
   return { ...profile, dailyTarget };
 }
 
-export async function updateStudentProfile(userId: number, input: { displayName: string | null; classCode: string | null }) {
+export async function updateStudentProfile(userId: number, input: { displayName: string | null }) {
   const db = await requireDb();
   const profile = await ensureStudentProfile(userId);
-  await db.update(studentProfiles).set({ displayName: input.displayName, classCode: input.classCode, updatedAt: new Date() }).where(eq(studentProfiles.id, profile.id));
+  await db.update(studentProfiles).set({ displayName: input.displayName, updatedAt: new Date() }).where(eq(studentProfiles.id, profile.id));
   return getStudentLearningOverview(userId);
 }
 
