@@ -39,10 +39,14 @@ export function getSessionCookieOptions(
   //       ? hostname
   //       : undefined;
 
+  const secure = isSecureRequest(req);
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    // Modern browsers reject SameSite=None cookies that are not Secure. During
+    // local or proxy development, use Lax so a valid local account session is
+    // still stored and subsequently sent to tRPC requests.
+    sameSite: secure ? "none" : "lax",
+    secure,
   };
 }
