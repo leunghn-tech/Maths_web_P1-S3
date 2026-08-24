@@ -70,6 +70,7 @@ import S3LabPlus from "./pages/S3LabPlus";
 import AccountHub from "./pages/AccountHub";
 import SignInPage from "./pages/SignInPage";
 import TeacherDashboard from "./pages/TeacherDashboard";
+import TeacherStudentDetailPage from "./pages/TeacherStudentDetailPage";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -124,6 +125,7 @@ function Router() {
       <Route path="/account" component={AccountHub} />
       <Route path="/sign-in" component={SignInPage} />
       <Route path="/teacher" component={TeacherDashboard} />
+      <Route path="/teacher/students/:studentId" component={TeacherStudentDetailPage} />
       <Route path="/practice/p4-grid-area" component={P4VisualPractice} />
       <Route path="/practice/p4-fractions-visual" component={P4VisualPractice} />
       <Route path="/practice/p4-decimals-line" component={P4ConceptPractice} />

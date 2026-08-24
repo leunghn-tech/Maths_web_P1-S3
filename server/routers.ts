@@ -6,8 +6,10 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import {
   authenticateLocalAccount,
+  changeStudentPassword,
   changeTeacherPassword,
   getStudentLearningOverview,
+  getTeacherStudentDetail,
   getTeacherManagedStudents,
   migrateLocalLearningSnapshot,
   recordStudentDailyPractice,
@@ -56,6 +58,10 @@ export const appRouter = router({
     requestStudentPasswordReset: publicProcedure.input(z.object({ username: localUsername, recoveryCode: z.string().trim().min(8).max(64) })).mutation(({ input }) => requestStudentPasswordReset(input)),
     resetStudentPassword: publicProcedure.input(z.object({ resetToken: z.string().min(32).max(128), newPassword: localPassword })).mutation(({ input }) => resetStudentPassword(input)),
     rotateStudentRecoveryCode: protectedProcedure.mutation(({ ctx }) => rotateStudentRecoveryCode(ctx.user.id)),
+    changeStudentPassword: protectedProcedure.input(z.object({ currentPassword: z.string().min(1).max(128), newPassword: localPassword })).mutation(async ({ ctx, input }) => {
+      const user = await changeStudentPassword(ctx.user.id, input.currentPassword, input.newPassword);
+      return issueLocalSession(ctx, user);
+    }),
     changeTeacherPassword: adminProcedure.input(z.object({ currentPassword: z.string().min(1).max(128), newPassword: localPassword })).mutation(async ({ ctx, input }) => {
       const user = await changeTeacherPassword(ctx.user.id, input.currentPassword, input.newPassword);
       return issueLocalSession(ctx, user);
@@ -91,6 +97,7 @@ export const appRouter = router({
   }),
   teacher: router({
     managedStudents: adminProcedure.query(() => getTeacherManagedStudents()),
+    studentDetail: adminProcedure.input(z.object({ userId: z.number().int().positive() })).query(({ input }) => getTeacherStudentDetail(input.userId)),
   }),
 });
 

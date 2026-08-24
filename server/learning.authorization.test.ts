@@ -33,6 +33,8 @@ describe("learning and teacher-only authorisation", () => {
   it("does not let guests or student accounts access the teacher directory", async () => {
     await expect(appRouter.createCaller(createGuestContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(appRouter.createCaller(createStudentContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(appRouter.createCaller(createGuestContext()).teacher.studentDetail({ userId: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(appRouter.createCaller(createStudentContext()).teacher.studentDetail({ userId: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
   it("requires an authenticated student to rotate a recovery code and an admin to change a teacher password", async () => {

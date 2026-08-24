@@ -179,6 +179,16 @@ export async function changeTeacherPassword(userId: number, currentPassword: str
   return { ...user, passwordHash, sessionVersion: user.sessionVersion + 1 };
 }
 
+export async function changeStudentPassword(userId: number, currentPassword: string, newPassword: string) {
+  const db = await requireDb();
+  const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || user.role !== "user" || !user.localUsername || !user.passwordHash) throw new Error("只有學生本機帳戶可以修改密碼。");
+  if (!await verifyLocalPassword(currentPassword, user.passwordHash)) throw new Error("目前密碼不正確。");
+  const passwordHash = await hashLocalPassword(newPassword);
+  await db.update(users).set({ passwordHash, sessionVersion: sql`${users.sessionVersion} + 1`, updatedAt: new Date() }).where(eq(users.id, user.id));
+  return { ...user, passwordHash, sessionVersion: user.sessionVersion + 1 };
+}
+
 export async function rotateStudentRecoveryCode(userId: number) {
   const db = await requireDb();
   const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
@@ -206,6 +216,43 @@ export async function getTeacherManagedStudents() {
     const answeredQuestions = correctAnswers + incorrectAnswers;
     return { ...student, completedPractices, correctAnswers, incorrectAnswers, answeredQuestions, accuracy: answeredQuestions ? Math.round((correctAnswers / answeredQuestions) * 100) : null };
   });
+}
+
+/** Teacher-only, sanitised student learning overview. Password and recovery fields never leave the server. */
+export async function getTeacherStudentDetail(studentUserId: number) {
+  const db = await requireDb();
+  const [student] = await db.select({
+    userId: users.id,
+    username: users.localUsername,
+    accountName: users.name,
+    createdAt: users.createdAt,
+    profileId: studentProfiles.id,
+    nickname: studentProfiles.displayName,
+    dailyTarget: studentProfiles.dailyTarget,
+    syncRevision: studentProfiles.syncRevision,
+    lastSyncedAt: studentProfiles.lastSyncedAt,
+  }).from(users).leftJoin(studentProfiles, eq(users.id, studentProfiles.userId)).where(and(eq(users.id, studentUserId), eq(users.role, "user"))).limit(1);
+  if (!student) return null;
+
+  if (!student.profileId) return {
+    student,
+    stats: { completedPractices: 0, correctAnswers: 0, incorrectAnswers: 0, answeredQuestions: 0, accuracy: null as number | null },
+    recentPractices: [],
+    reviewRecords: [],
+  };
+
+  const [profile] = await db.select().from(studentProfiles).where(eq(studentProfiles.id, student.profileId)).limit(1);
+  if (!profile) throw new Error("Student profile could not be loaded");
+  const overview = await getLearningOverviewByProfile(profile);
+  const correctAnswers = overview.progress.reduce((total, item) => total + item.bestScore, 0);
+  const incorrectAnswers = overview.reviewRecords.reduce((total, item) => total + item.misses, 0);
+  const answeredQuestions = correctAnswers + incorrectAnswers;
+  return {
+    student,
+    stats: { completedPractices: overview.progress.length, correctAnswers, incorrectAnswers, answeredQuestions, accuracy: answeredQuestions ? Math.round((correctAnswers / answeredQuestions) * 100) : null as number | null },
+    recentPractices: overview.progress.slice(0, 10).map((item) => ({ practiceKey: item.practiceKey, completedAt: item.completedAt, bestScore: item.bestScore, perfectRun: item.perfectRun })),
+    reviewRecords: overview.reviewRecords.slice(0, 12).map((item) => ({ practiceKey: item.practiceKey, grade: item.grade, title: item.title, misses: item.misses, updatedAt: item.updatedAt })),
+  };
 }
 
 async function getLearningOverviewByProfile(profile: Awaited<ReturnType<typeof ensureStudentProfile>>) {
