@@ -17,6 +17,8 @@ export const users = mysqlTable("users", {
   email: varchar("email", { length: 320 }),
   localUsername: varchar("localUsername", { length: 48 }).unique(),
   passwordHash: varchar("passwordHash", { length: 255 }),
+  recoveryCodeHash: varchar("recoveryCodeHash", { length: 255 }),
+  sessionVersion: int("sessionVersion").notNull().default(0),
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -110,9 +112,23 @@ export const studentAccessGrants = mysqlTable("student_access_grants", {
   index("student_access_grants_viewer_idx").on(table.viewerUserId, table.status),
 ]);
 
+/** A token is created only after a student proves possession of their account recovery code. */
+export const passwordResetTokens = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tokenHash: varchar("tokenHash", { length: 128 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [
+  index("password_reset_tokens_user_idx").on(table.userId, table.createdAt),
+  index("password_reset_tokens_expiry_idx").on(table.expiresAt),
+]);
+
 export type StudentProfile = typeof studentProfiles.$inferSelect;
 export type StudentPracticeProgress = typeof studentPracticeProgress.$inferSelect;
 export type StudentDailyRecord = typeof studentDailyRecords.$inferSelect;
 export type StudentReviewRecord = typeof studentReviewRecords.$inferSelect;
 export type StudentPinnedPractice = typeof studentPinnedPractices.$inferSelect;
 export type StudentAccessGrant = typeof studentAccessGrants.$inferSelect;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;

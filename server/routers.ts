@@ -6,6 +6,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import {
   authenticateLocalAccount,
+  changeTeacherPassword,
   getStudentLearningOverview,
   getTeacherManagedStudents,
   migrateLocalLearningSnapshot,
@@ -13,6 +14,9 @@ import {
   recordStudentPracticeCompletion,
   recordStudentReviewMistake,
   registerLocalStudent,
+  requestStudentPasswordReset,
+  resetStudentPassword,
+  rotateStudentRecoveryCode,
   setStudentDailyTarget,
   setStudentPinnedPractice,
   syncLocalLearningSnapshot,
@@ -25,8 +29,8 @@ const localSnapshot = z.object({ schemaVersion: z.literal(1), completedPractices
 const localUsername = z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,48}$/, "用戶名稱須為 3–48 個英文小寫字母、數字或 . _ -。");
 const localPassword = z.string().min(6, "密碼至少需要 6 個字元。").max(128);
 
-async function issueLocalSession(ctx: { req: Parameters<typeof getSessionCookieOptions>[0]; res: { cookie: (name: string, value: string, options: Record<string, unknown>) => void } }, user: { openId: string; name: string | null; localUsername: string | null; role: "user" | "admin" }) {
-  const sessionToken = await sdk.createSessionToken(user.openId, { name: user.name || user.localUsername || "Maths Quest User", expiresInMs: ONE_YEAR_MS });
+async function issueLocalSession(ctx: { req: Parameters<typeof getSessionCookieOptions>[0]; res: { cookie: (name: string, value: string, options: Record<string, unknown>) => void } }, user: { openId: string; name: string | null; localUsername: string | null; role: "user" | "admin"; sessionVersion: number }) {
+  const sessionToken = await sdk.createSessionToken(user.openId, { name: user.name || user.localUsername || "Maths Quest User", expiresInMs: ONE_YEAR_MS, sessionVersion: user.sessionVersion });
   ctx.res.cookie(COOKIE_NAME, sessionToken, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
   return { id: user.openId, name: user.name || user.localUsername || "Maths Quest User", username: user.localUsername, role: user.role };
 }
@@ -36,8 +40,8 @@ export const appRouter = router({
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
     registerStudent: publicProcedure.input(z.object({ username: localUsername, password: localPassword, displayName: z.string().trim().min(1, "請輸入暱稱。").max(80) })).mutation(async ({ ctx, input }) => {
-      const user = await registerLocalStudent(input);
-      return issueLocalSession(ctx, user);
+      const { user, recoveryCode } = await registerLocalStudent(input);
+      return { ...await issueLocalSession(ctx, user), recoveryCode };
     }),
     loginStudent: publicProcedure.input(z.object({ username: localUsername, password: z.string().min(1).max(128) })).mutation(async ({ ctx, input }) => {
       const user = await authenticateLocalAccount({ ...input, expectedRole: "user" });
@@ -47,6 +51,13 @@ export const appRouter = router({
     loginTeacher: publicProcedure.input(z.object({ username: localUsername, password: z.string().min(1).max(128) })).mutation(async ({ ctx, input }) => {
       const user = await authenticateLocalAccount({ ...input, expectedRole: "admin" });
       if (!user) throw new Error("教師帳戶或密碼不正確。");
+      return issueLocalSession(ctx, user);
+    }),
+    requestStudentPasswordReset: publicProcedure.input(z.object({ username: localUsername, recoveryCode: z.string().trim().min(8).max(64) })).mutation(({ input }) => requestStudentPasswordReset(input)),
+    resetStudentPassword: publicProcedure.input(z.object({ resetToken: z.string().min(32).max(128), newPassword: localPassword })).mutation(({ input }) => resetStudentPassword(input)),
+    rotateStudentRecoveryCode: protectedProcedure.mutation(({ ctx }) => rotateStudentRecoveryCode(ctx.user.id)),
+    changeTeacherPassword: adminProcedure.input(z.object({ currentPassword: z.string().min(1).max(128), newPassword: localPassword })).mutation(async ({ ctx, input }) => {
+      const user = await changeTeacherPassword(ctx.user.id, input.currentPassword, input.newPassword);
       return issueLocalSession(ctx, user);
     }),
     logout: publicProcedure.mutation(({ ctx }) => {

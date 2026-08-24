@@ -34,4 +34,9 @@ describe("learning and teacher-only authorisation", () => {
     await expect(appRouter.createCaller(createGuestContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(appRouter.createCaller(createStudentContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
+
+  it("requires an authenticated student to rotate a recovery code and an admin to change a teacher password", async () => {
+    await expect(appRouter.createCaller(createGuestContext()).auth.rotateStudentRecoveryCode()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(appRouter.createCaller(createStudentContext()).auth.changeTeacherPassword({ currentPassword: "student-password", newPassword: "teacher-password" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
 });

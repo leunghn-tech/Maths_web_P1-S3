@@ -1,7 +1,8 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
+  passwordResetTokens,
   studentAccessGrants,
   studentDailyRecords,
   studentPinnedPractices,
@@ -11,7 +12,7 @@ import {
   users,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
-import { getInitialTeacherPassword, hashLocalPassword, normalizeLocalUsername, verifyLocalPassword } from "./localAuth";
+import { createPasswordResetToken, createStudentRecoveryCode, getInitialTeacherPassword, hashLocalPassword, hashOpaqueSecret, isPasswordResetTokenUsable, normalizeLocalUsername, normalizeRecoveryCode, verifyLocalPassword } from "./localAuth";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -92,9 +93,9 @@ export async function ensureInitialTeacherAccount() {
   const existing = await getUserByLocalUsername(username);
   const initialPassword = getInitialTeacherPassword();
   if (existing) {
-    const storedPasswordHash = existing.passwordHash;
-    const passwordMatches = storedPasswordHash ? await verifyLocalPassword(initialPassword, storedPasswordHash) : false;
-    if (passwordMatches && existing.role === "admin") return existing;
+    // Bootstrap or repair only an incomplete legacy account. A valid teacher-set
+    // password must never be replaced just because it differs from the initial secret.
+    if (existing.passwordHash && existing.role === "admin") return existing;
     const passwordHash = await hashLocalPassword(initialPassword);
     await db.update(users).set({ passwordHash, role: "admin", loginMethod: "local-password", updatedAt: new Date() }).where(eq(users.id, existing.id));
     const [repaired] = await db.select().from(users).where(eq(users.id, existing.id)).limit(1);
@@ -113,11 +114,13 @@ export async function registerLocalStudent(input: { username: string; password: 
   const localUsername = normalizeLocalUsername(input.username);
   if (await getUserByLocalUsername(localUsername)) throw new Error("此用戶名稱已被使用。請選擇另一個用戶名稱。");
   const passwordHash = await hashLocalPassword(input.password);
-  await db.insert(users).values({ openId: `local:student:${crypto.randomUUID()}`, localUsername, passwordHash, name: input.displayName, loginMethod: "local-password", role: "user", lastSignedIn: new Date() });
+  const recoveryCode = createStudentRecoveryCode();
+  const recoveryCodeHash = await hashLocalPassword(normalizeRecoveryCode(recoveryCode));
+  await db.insert(users).values({ openId: `local:student:${crypto.randomUUID()}`, localUsername, passwordHash, recoveryCodeHash, name: input.displayName, loginMethod: "local-password", role: "user", lastSignedIn: new Date() });
   const user = await getUserByLocalUsername(localUsername);
   if (!user) throw new Error("未能建立學生帳戶。");
   await ensureStudentProfile(user.id);
-  return user;
+  return { user, recoveryCode };
 }
 
 export async function authenticateLocalAccount(input: { username: string; password: string; expectedRole: "user" | "admin" }) {
@@ -131,6 +134,59 @@ export async function authenticateLocalAccount(input: { username: string; passwo
   const lastSignedIn = new Date();
   await db.update(users).set({ lastSignedIn }).where(eq(users.id, user.id));
   return { ...user, lastSignedIn };
+}
+
+export async function requestStudentPasswordReset(input: { username: string; recoveryCode: string }) {
+  const user = await getUserByLocalUsername(input.username);
+  if (!user || user.role !== "user" || !user.recoveryCodeHash) return { resetToken: null };
+  const validRecoveryCode = await verifyLocalPassword(normalizeRecoveryCode(input.recoveryCode), user.recoveryCodeHash);
+  if (!validRecoveryCode) return { resetToken: null };
+
+  const db = await requireDb();
+  const now = new Date();
+  const resetToken = createPasswordResetToken();
+  await db.transaction(async (tx) => {
+    await tx.update(passwordResetTokens).set({ usedAt: now }).where(and(eq(passwordResetTokens.userId, user.id), isNull(passwordResetTokens.usedAt)));
+    await tx.insert(passwordResetTokens).values({ userId: user.id, tokenHash: hashOpaqueSecret(resetToken), expiresAt: new Date(now.getTime() + 15 * 60 * 1000) });
+  });
+  return { resetToken };
+}
+
+export async function resetStudentPassword(input: { resetToken: string; newPassword: string }) {
+  const db = await requireDb();
+  const now = new Date();
+  const tokenHash = hashOpaqueSecret(input.resetToken);
+  return db.transaction(async (tx) => {
+    const [token] = await tx.select().from(passwordResetTokens).where(eq(passwordResetTokens.tokenHash, tokenHash)).limit(1);
+    if (!token || !isPasswordResetTokenUsable(token, now)) throw new Error("重設連結已失效，請重新開始。");
+    const [user] = await tx.select().from(users).where(eq(users.id, token.userId)).limit(1);
+    if (!user || user.role !== "user") throw new Error("重設連結已失效，請重新開始。");
+    const passwordHash = await hashLocalPassword(input.newPassword);
+    const result = await tx.update(passwordResetTokens).set({ usedAt: now }).where(and(eq(passwordResetTokens.id, token.id), isNull(passwordResetTokens.usedAt), gt(passwordResetTokens.expiresAt, now)));
+    if (Number(result[0]?.affectedRows ?? 0) !== 1) throw new Error("重設連結已失效，請重新開始。");
+    await tx.update(users).set({ passwordHash, sessionVersion: sql`${users.sessionVersion} + 1`, updatedAt: now }).where(eq(users.id, user.id));
+    return { ...user, passwordHash, sessionVersion: user.sessionVersion + 1 };
+  });
+}
+
+export async function changeTeacherPassword(userId: number, currentPassword: string, newPassword: string) {
+  const db = await requireDb();
+  const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || user.role !== "admin" || !user.passwordHash) throw new Error("教師帳戶無法修改密碼。");
+  if (!await verifyLocalPassword(currentPassword, user.passwordHash)) throw new Error("目前密碼不正確。");
+  const passwordHash = await hashLocalPassword(newPassword);
+  await db.update(users).set({ passwordHash, sessionVersion: sql`${users.sessionVersion} + 1`, updatedAt: new Date() }).where(eq(users.id, user.id));
+  return { ...user, passwordHash, sessionVersion: user.sessionVersion + 1 };
+}
+
+export async function rotateStudentRecoveryCode(userId: number) {
+  const db = await requireDb();
+  const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || user.role !== "user" || !user.localUsername) throw new Error("只有學生本機帳戶可以更新恢復碼。");
+  const recoveryCode = createStudentRecoveryCode();
+  const recoveryCodeHash = await hashLocalPassword(normalizeRecoveryCode(recoveryCode));
+  await db.update(users).set({ recoveryCodeHash, updatedAt: new Date() }).where(eq(users.id, user.id));
+  return { recoveryCode };
 }
 
 export async function getTeacherManagedStudents() {
