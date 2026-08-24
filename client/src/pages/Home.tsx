@@ -289,13 +289,13 @@ const starPractices: StarPractice[] = [
   { key: "s2-stats", grade: "S2", title: "統計判讀", detail: "圖表誤用", href: "/practice/s2?topic=stats", accent: "#7d5ea8" },
   { key: "s3-identity", grade: "S3", title: "恆等式", detail: "公式配對", href: "/practice/s3-interactive?topic=identity", accent: "#1f8378" },
   { key: "s3-inequality", grade: "S3", title: "一元不等式", detail: "數線範圍", href: "/practice/s3-interactive?topic=inequality", accent: "#1f8378" },
-  { key: "s3-finance", grade: "S3", title: "複利折舊", detail: "多年圖表", href: "/practice/s3-sim?topic=finance", accent: "#1f8378" },
+  { key: "s3-finance", grade: "S3", title: "複利折舊", detail: "比較曲線", href: "/practice/s3-deep?topic=finance", accent: "#1f8378" },
   { key: "s3-proof", grade: "S3", title: "幾何證明", detail: "理由排序", href: "/practice/s3-interactive?topic=proof", accent: "#1f8378" },
-  { key: "s3-trig", grade: "S3", title: "進階三角學", detail: "互動方位圖", href: "/practice/s3-sim?topic=trig", accent: "#1f8378" },
+  { key: "s3-trig", grade: "S3", title: "進階三角學", detail: "高度方位圖", href: "/practice/s3-deep?topic=trig", accent: "#1f8378" },
   { key: "s3-slope", grade: "S3", title: "斜率坐標", detail: "平行垂直", href: "/practice/s3?topic=slope", accent: "#1f8378" },
   { key: "s3-mensuration", grade: "S3", title: "圓錐球體", detail: "表面體積", href: "/practice/s3?topic=mensuration", accent: "#1f8378" },
   { key: "s3-central", grade: "S3", title: "集中趨勢", detail: "平均中位眾", href: "/practice/s3?topic=central", accent: "#1f8378" },
-  { key: "s3-probability", grade: "S3", title: "概率", detail: "樹狀抽樣", href: "/practice/s3-sim?topic=probability", accent: "#1f8378" },
+  { key: "s3-probability", grade: "S3", title: "概率", detail: "兩階段抽樣", href: "/practice/s3-deep?topic=probability", accent: "#1f8378" },
 ];
 
 export default function Home() {
