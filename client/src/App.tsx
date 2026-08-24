@@ -62,6 +62,7 @@ import S2BilingualPractice from "./pages/S2BilingualPractice";
 import S3BilingualPractice from "./pages/S3BilingualPractice";
 import S1InteractiveFoundations from "./pages/S1InteractiveFoundations";
 import S2InteractiveCore from "./pages/S2InteractiveCore";
+import S3InteractiveCore from "./pages/S3InteractiveCore";
 
 function Router() {
   return (
@@ -164,6 +165,7 @@ function Router() {
       <Route path="/practice/s3" component={S3BilingualPractice} />
       <Route path="/practice/s1-interactive" component={S1InteractiveFoundations} />
       <Route path="/practice/s2-interactive" component={S2InteractiveCore} />
+      <Route path="/practice/s3-interactive" component={S3InteractiveCore} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
