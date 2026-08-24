@@ -65,6 +65,7 @@ import S2InteractiveCore from "./pages/S2InteractiveCore";
 import S3InteractiveCore from "./pages/S3InteractiveCore";
 import S3AdvancedSimulations from "./pages/S3AdvancedSimulations";
 import S3DeepSimulations from "./pages/S3DeepSimulations";
+import S3LabPlus from "./pages/S3LabPlus";
 
 function Router() {
   return (
@@ -170,6 +171,7 @@ function Router() {
       <Route path="/practice/s3-interactive" component={S3InteractiveCore} />
       <Route path="/practice/s3-sim" component={S3AdvancedSimulations} />
       <Route path="/practice/s3-deep" component={S3DeepSimulations} />
+      <Route path="/practice/s3-lab" component={S3LabPlus} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
