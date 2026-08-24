@@ -100,6 +100,13 @@ export async function setStudentDailyTarget(userId: number, dailyTarget: number)
   return { ...profile, dailyTarget };
 }
 
+export async function updateStudentProfile(userId: number, input: { displayName: string | null; classCode: string | null }) {
+  const db = await requireDb();
+  const profile = await ensureStudentProfile(userId);
+  await db.update(studentProfiles).set({ displayName: input.displayName, classCode: input.classCode, updatedAt: new Date() }).where(eq(studentProfiles.id, profile.id));
+  return getStudentLearningOverview(userId);
+}
+
 export async function recordStudentPracticeCompletion(userId: number, practiceKey: string, bestScore = 8, perfectRun = false) {
   const db = await requireDb();
   const profile = await ensureStudentProfile(userId);
@@ -161,6 +168,7 @@ async function applyLearningSnapshot(userId: number, snapshot: LearningSnapshotI
   for (const reviewRecord of snapshot.reviewRecords) await recordStudentReviewMistake(userId, reviewRecord);
   await db.delete(studentPinnedPractices).where(eq(studentPinnedPractices.studentId, profile.id));
   for (const [position, practiceKey] of Array.from(snapshot.pinnedPractices.entries())) await db.insert(studentPinnedPractices).values({ studentId: profile.id, practiceKey, position });
+  await db.update(studentProfiles).set({ syncRevision: sql`${studentProfiles.syncRevision} + 1`, lastSyncedAt: new Date(), updatedAt: new Date() }).where(eq(studentProfiles.id, profile.id));
   return getStudentLearningOverview(userId);
 }
 
@@ -170,9 +178,11 @@ export async function migrateLocalLearningSnapshot(userId: number, snapshot: Lea
   return applyLearningSnapshot(userId, snapshot, true);
 }
 
-/** Idempotent current-device backup used after each local learning update. */
-export async function syncLocalLearningSnapshot(userId: number, snapshot: LearningSnapshotInput) {
-  return applyLearningSnapshot(userId, snapshot, false);
+/** Optimistic cross-device backup: a stale device receives the cloud state and retries through the local merge flow. */
+export async function syncLocalLearningSnapshot(userId: number, snapshot: LearningSnapshotInput, expectedSyncRevision: number) {
+  const profile = await ensureStudentProfile(userId);
+  if (profile.syncRevision !== expectedSyncRevision) return { status: "conflict" as const, overview: await getLearningOverviewByProfile(profile) };
+  return { status: "synced" as const, overview: await applyLearningSnapshot(userId, snapshot, false) };
 }
 
 function makeInviteCode() {
@@ -219,7 +229,7 @@ export async function revokeStudentAccessGrant(studentUserId: number, grantId: n
 
 export async function getViewerStudents(viewerUserId: number) {
   const db = await requireDb();
-  return db.select({ grantId: studentAccessGrants.id, viewerRole: studentAccessGrants.viewerRole, studentId: studentProfiles.id, studentName: studentProfiles.displayName, studentUserName: users.name, dailyTarget: studentProfiles.dailyTarget, acceptedAt: studentAccessGrants.acceptedAt }).from(studentAccessGrants).innerJoin(studentProfiles, eq(studentAccessGrants.studentId, studentProfiles.id)).innerJoin(users, eq(studentProfiles.userId, users.id)).where(and(eq(studentAccessGrants.viewerUserId, viewerUserId), eq(studentAccessGrants.status, "active"))).orderBy(desc(studentAccessGrants.acceptedAt));
+  return db.select({ grantId: studentAccessGrants.id, viewerRole: studentAccessGrants.viewerRole, studentId: studentProfiles.id, studentName: studentProfiles.displayName, classCode: studentProfiles.classCode, studentUserName: users.name, dailyTarget: studentProfiles.dailyTarget, lastSyncedAt: studentProfiles.lastSyncedAt, acceptedAt: studentAccessGrants.acceptedAt }).from(studentAccessGrants).innerJoin(studentProfiles, eq(studentAccessGrants.studentId, studentProfiles.id)).innerJoin(users, eq(studentProfiles.userId, users.id)).where(and(eq(studentAccessGrants.viewerUserId, viewerUserId), eq(studentAccessGrants.status, "active"))).orderBy(desc(studentAccessGrants.acceptedAt));
 }
 
 export async function getViewerStudentLearningOverview(viewerUserId: number, studentId: number) {

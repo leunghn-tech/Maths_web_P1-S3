@@ -30,9 +30,12 @@ export const studentProfiles = mysqlTable("student_profiles", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
   displayName: varchar("displayName", { length: 80 }),
+  classCode: varchar("classCode", { length: 32 }),
   timezone: varchar("timezone", { length: 64 }).notNull().default("Asia/Hong_Kong"),
   dailyTarget: int("dailyTarget").notNull().default(3),
   migrationVersion: int("migrationVersion").notNull().default(0),
+  syncRevision: int("syncRevision").notNull().default(0),
+  lastSyncedAt: timestamp("lastSyncedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

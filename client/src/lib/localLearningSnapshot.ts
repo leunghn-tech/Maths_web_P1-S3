@@ -22,7 +22,7 @@ export type LocalLearningSnapshot = {
 };
 
 export type CloudLearningOverview = {
-  profile: { dailyTarget: number };
+  profile: { dailyTarget: number; syncRevision: number; lastSyncedAt: Date | string | null };
   progress: Array<{ practiceKey: string }>;
   dailyRecords: Array<{ practicedOn: Date | string; practiceKey: string }>;
   reviewRecords: Array<{ practiceKey: string; grade: string; title: string; href: string; misses: number; updatedAt: Date | string }>;

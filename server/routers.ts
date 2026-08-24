@@ -18,6 +18,7 @@ import {
   setStudentDailyTarget,
   setStudentPinnedPractice,
   syncLocalLearningSnapshot,
+  updateStudentProfile,
 } from "./db";
 
 const practiceKey = z.string().min(1).max(120);
@@ -37,7 +38,8 @@ export const appRouter = router({
   learning: router({
     overview: protectedProcedure.query(({ ctx }) => getStudentLearningOverview(ctx.user.id)),
     migrateLocal: protectedProcedure.input(localSnapshot).mutation(({ ctx, input }) => migrateLocalLearningSnapshot(ctx.user.id, input)),
-    syncLocal: protectedProcedure.input(localSnapshot).mutation(({ ctx, input }) => syncLocalLearningSnapshot(ctx.user.id, input)),
+    syncLocal: protectedProcedure.input(z.object({ snapshot: localSnapshot, expectedSyncRevision: z.number().int().min(0) })).mutation(({ ctx, input }) => syncLocalLearningSnapshot(ctx.user.id, input.snapshot, input.expectedSyncRevision)),
+    updateProfile: protectedProcedure.input(z.object({ displayName: z.string().trim().max(80).transform((value) => value || null), classCode: z.string().trim().max(32).transform((value) => value || null) })).mutation(({ ctx, input }) => updateStudentProfile(ctx.user.id, input)),
     completePractice: protectedProcedure.input(z.object({ practiceKey, bestScore: z.number().int().min(0).max(8).default(8), perfectRun: z.boolean().default(false) })).mutation(async ({ ctx, input }) => {
       await recordStudentPracticeCompletion(ctx.user.id, input.practiceKey, input.bestScore, input.perfectRun);
       return getStudentLearningOverview(ctx.user.id);
