@@ -299,6 +299,7 @@ const starPractices: StarPractice[] = [
 ];
 
 export default function Home() {
+  // Maths Quest notebook system: homepage progress must recognise a base station and its dedicated interactive lab as one learning outcome.
   const [activeStage, setActiveStage] = useState<Stage>("primary");
   const [selectedGrade, setSelectedGrade] = useState("P1");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -332,18 +333,19 @@ export default function Home() {
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
   const routeStations = starPractices.filter((practice) => practice.grade === course.grade);
   const orderedRouteStations = [...routeStations].sort((a, b) => Number(pinnedPractices.includes(b.key)) - Number(pinnedPractices.includes(a.key)));
-  const nextStarPractice = useMemo(() => starPractices.find((practice) => !completedPractices.includes(practice.key)) ?? null, [completedPractices]);
-  const isGradeCompleted = (grade: string) => {
-    if (grade === "P1") return ["p1-add-subtract", "p1-counting", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes", "p1-solids", "p1-shape-rotation", "p1-length-sort", "p1-calendar", "p1-lines", "p1-pictograph"].some((id) => completedPractices.includes(id));
-    if (grade === "P2") return ["p2-numbers", "p2-number-line", "p2-money", "p2-time", "p2-multiply-visual", "p2-money-coins", "p2-directions", "p2-division", "p2-direction-route", "p2-array-builder", "p2-measure", "p2-angles", "p2-division-remainder", "p2-quadrilaterals", "p2-pictograph-multiple", "p2-meter-centimeter", "p2-multiply", "p2-divide", "p2-mixed"].some((id) => completedPractices.includes(id));
-    if (grade === "P3") return ["p3-weight", "p3-capacity", "p3-24hour", "p3-weight-builder", "p3-level-1", "p3-level-2", "p3-level-3"].some((id) => completedPractices.includes(id));
-    if (grade === "P4") return ["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].some((id) => completedPractices.includes(id));
-    if (grade === "P5") return ["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].some((id) => completedPractices.includes(id));
-    if (grade === "P6") return ["p6-discount", "p6-profit"].some((id) => completedPractices.includes(id));
-    return false;
+  const stationCompletionAliases: Record<string, string[]> = {
+    "s1-directed": ["s1-directed", "s1-directed-interactive"], "s1-algebra": ["s1-algebra", "s1-algebra-interactive"], "s1-equation": ["s1-equation", "s1-equation-interactive"],
+    "s2-indices": ["s2-indices", "s2-indices-interactive"], "s2-factor": ["s2-factor", "s2-factor-interactive"], "s2-simultaneous": ["s2-simultaneous", "s2-simultaneous-interactive"],
+    "s3-identity": ["s3-identity", "s3-identity-interactive"], "s3-inequality": ["s3-inequality", "s3-inequality-interactive"], "s3-proof": ["s3-proof", "s3-proof-interactive"],
+    "s3-finance": ["s3-finance", "s3-finance-sim", "s3-finance-deep", "s3-finance-lab-plus"], "s3-trig": ["s3-trig", "s3-trig-sim", "s3-trig-deep", "s3-trig-lab-plus"], "s3-probability": ["s3-probability", "s3-probability-sim", "s3-probability-deep", "s3-probability-lab-plus"],
   };
-  const courseCompleted = isGradeCompleted(course.grade);
-  const courseCompletionLabel = course.grade === "P1" ? `${["p1-add-subtract", "p1-counting", "p1-numbers", "p1-time", "p1-number-line", "p1-measure", "p1-length-compare", "p1-shapes", "p1-solids", "p1-shape-rotation", "p1-length-sort", "p1-calendar", "p1-lines", "p1-pictograph"].filter((id) => completedPractices.includes(id)).length}/14 題型完成` : course.grade === "P2" ? `${["p2-numbers", "p2-number-line", "p2-money", "p2-time", "p2-multiply-visual", "p2-money-coins", "p2-directions", "p2-division", "p2-direction-route", "p2-array-builder", "p2-measure", "p2-angles", "p2-division-remainder", "p2-quadrilaterals", "p2-pictograph-multiple", "p2-meter-centimeter", "p2-multiply", "p2-divide", "p2-mixed"].filter((id) => completedPractices.includes(id)).length}/19 題型完成` : course.grade === "P3" ? `已完成 ${["p3-level-1", "p3-level-2", "p3-level-3"].filter((id) => completedPractices.includes(id)).length}/3 關` : course.grade === "P4" ? `${["p4-fractions", "p4-decimals", "p4-convert", "p4-factors", "p4-measure", "p4-polygon-area"].filter((id) => completedPractices.includes(id)).length}/6 題型完成` : course.grade === "P5" ? `${["p5-fraction-multiply-divide", "p5-decimal-operations", "p5-unlike-fractions", "p5-volume"].filter((id) => completedPractices.includes(id)).length}/4 題型完成` : course.grade === "P6" ? `${["p6-discount", "p6-profit"].filter((id) => completedPractices.includes(id)).length}/2 題型完成` : "練習已完成";
+  const isStationCompleted = (key: string) => (stationCompletionAliases[key] ?? [key]).some((id) => completedPractices.includes(id));
+  const nextStarPractice = useMemo(() => starPractices.find((practice) => !isStationCompleted(practice.key)) ?? null, [completedPractices]);
+  const completedStationCount = routeStations.filter((station) => isStationCompleted(station.key)).length;
+  const isGradeCompleted = (grade: string) => starPractices.filter((station) => station.grade === grade).some((station) => isStationCompleted(station.key));
+  const gradeCompletedCount = (grade: string) => starPractices.filter((station) => station.grade === grade && isStationCompleted(station.key)).length;
+  const courseCompleted = completedStationCount > 0;
+  const courseCompletionLabel = `${completedStationCount}/${routeStations.length} 題型完成`;
 
   const selectStage = (stage: Stage) => {
     setActiveStage(stage);
@@ -515,11 +517,12 @@ export default function Home() {
                     {visibleCourses.map((item, index) => {
                       const selected = item.grade === selectedGrade;
                       const completed = isGradeCompleted(item.grade);
+                      const completedCount = gradeCompletedCount(item.grade);
                       return (
                         <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative z-10 flex min-w-[98px] flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
                           <span className={`grid size-10 place-items-center rounded-full border-4 text-xs font-black transition ${selected ? "border-white text-white shadow-[0_5px_0_rgba(0,0,0,0.14)]" : "border-[#f8f5ed] bg-[#e8e3d9] text-[#617286]"}`} style={selected ? { backgroundColor: item.accent } : undefined}>{index + 1}</span>
                           <span className="text-xs font-extrabold leading-none">{item.shortLabel}</span>
-                          <span className="font-mono text-[10px] font-bold opacity-65">{completed ? "已完成" : item.grade}</span>
+                          <span className="font-mono text-[10px] font-bold opacity-65">{completed ? `★ ${completedCount}` : item.grade}</span>
                         </button>
                       );
                     })}

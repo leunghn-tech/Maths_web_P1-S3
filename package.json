@@ -9,6 +9,8 @@
     "start": "NODE_ENV=production node dist/index.js",
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
+    "test:content": "node scripts/content-audit.mjs",
+    "test": "pnpm check && pnpm test:content",
     "format": "prettier --write ."
   },
   "dependencies": {
