@@ -90,8 +90,18 @@ export async function ensureInitialTeacherAccount() {
   const db = await requireDb();
   const username = "admin";
   const existing = await getUserByLocalUsername(username);
-  if (existing) return existing;
-  const passwordHash = await hashLocalPassword(getInitialTeacherPassword());
+  const initialPassword = getInitialTeacherPassword();
+  if (existing) {
+    const storedPasswordHash = existing.passwordHash;
+    const passwordMatches = storedPasswordHash ? await verifyLocalPassword(initialPassword, storedPasswordHash) : false;
+    if (passwordMatches && existing.role === "admin") return existing;
+    const passwordHash = await hashLocalPassword(initialPassword);
+    await db.update(users).set({ passwordHash, role: "admin", loginMethod: "local-password", updatedAt: new Date() }).where(eq(users.id, existing.id));
+    const [repaired] = await db.select().from(users).where(eq(users.id, existing.id)).limit(1);
+    if (!repaired) throw new Error("Could not repair the initial teacher account");
+    return repaired;
+  }
+  const passwordHash = await hashLocalPassword(initialPassword);
   await db.insert(users).values({ openId: "local:teacher:admin", localUsername: username, passwordHash, name: "教師 admin", loginMethod: "local-password", role: "admin", lastSignedIn: new Date() });
   const created = await getUserByLocalUsername(username);
   if (!created) throw new Error("Could not create the initial teacher account");
