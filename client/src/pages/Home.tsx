@@ -24,6 +24,8 @@ import {
   X,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { startLogin } from "@/const";
 import { getCompletedPractices, PRACTICE_COMPLETION_EVENT, resetPracticeProgress } from "@/lib/practiceCompletion";
 import { DAILY_PROGRESS_EVENT, getDailyPracticeProgress, setDailyPracticeTarget, type DailyPracticeProgress } from "@/lib/dailyPractice";
 import { getPinnedPractices, togglePinnedPractice } from "@/lib/pinnedPractices";
@@ -299,6 +301,18 @@ const starPractices: StarPractice[] = [
 ];
 
 export default function Home() {
+  // The useAuth hook provides authentication state.
+  // To implement login/logout, call logout(), or start login from an event
+  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
+  // startLogin() during render (no href={startLogin()}) — it mints a one-time
+  // nonce cookie and must run only at the moment of navigation.
+  const { user, loading, isAuthenticated, logout } = useAuth();
+  const accountName = user?.name?.trim() || "我的帳戶";
+  const handleLogout = async () => {
+    try { await logout(); toast.success("已登出帳戶，本機練習仍可繼續使用。"); }
+    catch { toast.error("暫時未能登出，請稍後再試。"); }
+  };
+
   // Maths Quest notebook system: homepage progress must recognise a base station and its dedicated interactive lab as one learning outcome.
   const [activeStage, setActiveStage] = useState<Stage>("primary");
   const [selectedGrade, setSelectedGrade] = useState("P1");
@@ -390,7 +404,7 @@ export default function Home() {
           <nav className="hidden items-center gap-7 text-sm font-bold lg:flex" aria-label="主要導覽">
             <a href="#path" className="transition-colors hover:text-[#f05a3c]">學習路徑</a>
             <a href="#curriculum" className="transition-colors hover:text-[#f05a3c]">課程地圖</a>
-            <button onClick={() => notifyComingSoon("我的進度")} className="transition-colors hover:text-[#f05a3c]">我的進度</button>
+            <Link href="/progress-dashboard" className="transition-colors hover:text-[#f05a3c]">我的進度</Link>
             <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
               <AlertDialogTrigger asChild><button className="transition-colors hover:text-[#f05a3c]">重設進度</button></AlertDialogTrigger>
               <AlertDialogContent className="border-[#172b3f]/15 bg-[#fffdf8] text-[#172b3f] dark:border-white/15 dark:bg-[#172737] dark:text-white">
@@ -404,10 +418,8 @@ export default function Home() {
             <button onClick={toggleTheme} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={theme === "light" ? "切換至深色模式" : "切換至淺色模式"} title={theme === "light" ? "深色模式" : "淺色模式"}>
               {theme === "light" ? <Moon className="size-[17px]" /> : <Sun className="size-[18px]" />}
             </button>
-            <button onClick={() => notifyComingSoon("登入功能")} className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block">登入</button>
-            <button onClick={() => notifyComingSoon("開始練習")} className="mq-start hidden items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none sm:flex">
-              開始練習 <ArrowRight className="size-4" />
-            </button>
+            {isAuthenticated ? <><Link href="/account" className="hidden max-w-28 truncate text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block" title={accountName}>{accountName}</Link><button onClick={handleLogout} className="hidden text-sm font-bold text-[#617286] transition-colors hover:text-[#f05a3c] dark:text-[#b7c8ce] sm:block">登出</button></> : <button onClick={() => startLogin()} disabled={loading} className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] disabled:opacity-50 dark:text-white sm:block">{loading ? "讀取帳戶…" : "登入備份"}</button>}
+            <a href="#path" className="mq-start hidden items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none sm:flex">開始練習 <ArrowRight className="size-4" /></a>
             <button onClick={() => setMenuOpen((open) => !open)} className="grid size-10 place-items-center rounded-full border border-[#172b3f]/15 lg:hidden" aria-label="開啟選單" aria-expanded={menuOpen}>
               {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
             </button>
@@ -418,7 +430,8 @@ export default function Home() {
             <div className="mx-auto grid max-w-[1280px] gap-2 text-sm font-bold">
               <a onClick={() => setMenuOpen(false)} href="#path" className="rounded-xl px-3 py-3 hover:bg-white">學習路徑</a>
               <a onClick={() => setMenuOpen(false)} href="#curriculum" className="rounded-xl px-3 py-3 hover:bg-white">課程地圖</a>
-              <button onClick={() => notifyComingSoon("登入功能")} className="rounded-xl px-3 py-3 text-left hover:bg-white">登入</button>
+              {isAuthenticated ? <Link onClick={() => setMenuOpen(false)} href="/account" className="rounded-xl px-3 py-3 hover:bg-white">我的帳戶與同步</Link> : <button onClick={() => { setMenuOpen(false); startLogin(); }} className="rounded-xl px-3 py-3 text-left hover:bg-white">登入以備份進度</button>}
+              {isAuthenticated && <button onClick={() => { setMenuOpen(false); void handleLogout(); }} className="rounded-xl px-3 py-3 text-left hover:bg-white">登出</button>}
               <button onClick={() => { setMenuOpen(false); setResetOpen(true); }} className="rounded-xl px-3 py-3 text-left text-[#f05a3c] hover:bg-white">重設進度</button>
             </div>
           </nav>

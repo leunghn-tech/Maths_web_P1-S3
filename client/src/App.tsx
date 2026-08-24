@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import PrimaryFractionFormatter from "@/components/PrimaryFractionFormatter";
 import PrimaryLearningCoach from "@/components/PrimaryLearningCoach";
+import CloudLearningSync from "@/components/CloudLearningSync";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -66,8 +67,10 @@ import S3InteractiveCore from "./pages/S3InteractiveCore";
 import S3AdvancedSimulations from "./pages/S3AdvancedSimulations";
 import S3DeepSimulations from "./pages/S3DeepSimulations";
 import S3LabPlus from "./pages/S3LabPlus";
-
+import AccountHub from "./pages/AccountHub";
+import FamilyDashboard from "./pages/FamilyDashboard";
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Home} />
@@ -117,6 +120,8 @@ function Router() {
       <Route path="/practice/p3-shopping-measure" component={P3FinalPractice} />
       <Route path="/practice/p4-factors-line" component={P4FactorsPractice} />
       <Route path="/progress-dashboard" component={ProgressDashboard} />
+      <Route path="/account" component={AccountHub} />
+      <Route path="/family-dashboard" component={FamilyDashboard} />
       <Route path="/practice/p4-grid-area" component={P4VisualPractice} />
       <Route path="/practice/p4-fractions-visual" component={P4VisualPractice} />
       <Route path="/practice/p4-decimals-line" component={P4ConceptPractice} />
@@ -184,6 +189,7 @@ export default function App() {
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
           <Toaster richColors position="top-center" />
+          <div className="fixed bottom-3 right-3 z-50"><CloudLearningSync /></div>
           <Router />
           <PrimaryFractionFormatter />
           <PrimaryLearningCoach />

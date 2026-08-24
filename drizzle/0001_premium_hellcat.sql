@@ -1,0 +1,1 @@
+ALTER TABLE `student_access_grants` MODIFY COLUMN `viewerUserId` int;
