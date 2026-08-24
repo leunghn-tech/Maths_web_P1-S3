@@ -44,6 +44,7 @@ import P5AppliedPractice from "./pages/P5AppliedPractice";
 import P6ExpansionPractice from "./pages/P6ExpansionPractice";
 import P6FurtherPractice from "./pages/P6FurtherPractice";
 import P6InteractivePractice from "./pages/P6InteractivePractice";
+import P6CompletePractice from "./pages/P6CompletePractice";
 import P2Practice from "./pages/P2Practice";
 import P3Practice from "./pages/P3Practice";
 import P4Practice from "./pages/P4Practice";
@@ -139,6 +140,9 @@ function Router() {
       <Route path="/practice/p6-water-3d" component={P6InteractivePractice} />
       <Route path="/practice/p6-pie-drag" component={P6InteractivePractice} />
       <Route path="/practice/p6-equation-steps" component={P6InteractivePractice} />
+      <Route path="/practice/p6-circle-lab" component={P6CompletePractice} />
+      <Route path="/practice/p6-nets" component={P6CompletePractice} />
+      <Route path="/practice/p6-coordinate-lab" component={P6CompletePractice} />
       <Route path="/practice/p3-mixed-operations" component={P3Practice} />
       <Route path="/practice/p4-fractions-decimals" component={P4Practice} />
       <Route path="/practice/p4-factors-multiples" component={P4FactorsPractice} />
