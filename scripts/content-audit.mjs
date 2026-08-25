@@ -107,7 +107,46 @@ assert(p2Further.includes("a:q.n*q.k"), "P2 象形圖答案須為圖案數量乘
 assert(p2Further.includes("1 米 = 100 厘米"), "P2 米厘米換算須明確使用 1 米等於 100 厘米");
 
 const p2Starter = read("client/src/pages/P2P3StarterPractice.tsx");
-assert(p2Starter.includes('q===2?"一半":"四分一"'), "P2 分數初步只可使用一半與四分一的等分圖形");
+assert(p2Starter.includes("const fractionParts"), "P2 分數初步須使用受控的一半與四分一題組");
+assert(p2Starter.includes("function weightChoices"), "P3 克公斤題必須提供四個不重複選項");
+
+const p3Routes = [
+  "/practice/p3-weight", "/practice/p3-capacity", "/practice/p3-24hour", "/practice/p3-weight-builder",
+  "/practice/p3-large-numbers", "/practice/p3-charts", "/practice/p3-parallel-perpendicular", "/practice/p3-mixed-steps",
+  "/practice/p3-parallelogram-trapezium", "/practice/p3-perimeter-area", "/practice/p3-mixed-stories", "/practice/p3-shopping-measure",
+  "/practice/p3-mixed-operations",
+];
+for (const route of p3Routes) assert(appRoutes.has(route), `P3 練習路徑未註冊：${route}`);
+
+const p3Practice = read("client/src/pages/P3Practice.tsx");
+assert(p3Practice.includes("const passed = levelScore >= 5"), "P3 混合運算須答對至少 5 題才可過關");
+assert(p3Practice.includes("答對至少 5 題即可解鎖"), "P3 混合運算過關文案須與五題門檻一致");
+
+const p3Data = read("client/src/pages/P3DataPractice.tsx");
+assert(p3Data.includes("const numberComparisons"), "P3 大數比較題須使用受控的兩數資料");
+assert(p3Data.includes('answer: question.left > question.right ? "＞" : "＜"'), "P3 大數比較符號必須依兩數大小計算");
+assert(p3Data.includes("const barTargets"), "P3 棒形圖題須使用受控的目標格數");
+assert(p3Data.includes("if (index === 7)"), "P3 大數與統計圖站須完成八題才可結算");
+
+const p3Progress = read("client/src/pages/P3ProgressPractice.tsx");
+assert(p3Progress.includes('prompt: "中午 12 時"'), "P3 二十四小時制題幹須使用中午 12 時的正式表述");
+assert(p3Progress.includes('step="50"'), "P3 量杯刻度須以 50 mL 為單位");
+assert(p3Progress.includes("100, 250, 500"), "P3 多法碼天平須提供 100 g、250 g、500 g 法碼");
+
+const p3Core = read("client/src/pages/P3CorePractice.tsx");
+assert(p3Core.includes("function choicesFor"), "P3 混合計算題必須提供四個不重複選項");
+assert(p3Core.includes("兩組對邊分別平行"), "P3 平行四邊形題幹須使用精確的對邊平行表述");
+assert(p3Core.includes("if (index === 7)"), "P3 括號運算及四邊形分類站須完成八題才可結算");
+
+const p3Final = read("client/src/pages/P3FinalPractice.tsx");
+assert(p3Final.includes("面積是多少平方格"), "P3 面積題須使用平方格作答單位");
+assert(p3Final.includes("每杯有 300 mL"), "P3 容量生活題須使用合理且明確的毫升數據");
+assert(p3Final.includes("先把 kg 換成 g，或把 L 換成 mL"), "P3 超市量度題須提示先統一單位");
+
+const p3Geometry = read("client/src/pages/P3GeometryPractice.tsx");
+assert(p3Geometry.includes("同一平面內，兩條永不相交的直線"), "P3 平行線題幹須使用同一平面內永不相交的定義");
+assert(p3Geometry.includes("兩條相交後形成直角的直線"), "P3 垂直線題幹須使用直角定義");
+assert(p3Geometry.includes("if (index === 7)"), "P3 平行垂直線站須完成八題才可結算");
 
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
