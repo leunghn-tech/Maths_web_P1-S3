@@ -29,7 +29,7 @@ const auditSecondaryBank = (file, grade, expectedTopics, questionProperty) => {
   for (const match of topicMatches) {
     const [, id, rows] = match;
     const baseRows = (rows.match(/\],\s*\[/g) ?? []).length + 1;
-    const renderedQuestions = questionProperty === "questions: make" ? baseRows : baseRows * 2;
+    const renderedQuestions = baseRows;
     assert(renderedQuestions === 8, `${grade}「${id}」應提供 8 題，目前為 ${renderedQuestions}`);
   }
   for (const required of ["CMI 中文", "EMI English", "markPracticeCompleted", "recordDailyPractice", "recordPracticeMistake"]) {
@@ -275,10 +275,11 @@ const s1Bilingual = read("client/src/pages/S1BilingualPractice.tsx");
 assert(s1Bilingual.includes('"-4 − 6 是多少？", "What is -4 - 6?", "-10"'), "S1 有向數題必須正確計算負四減六為負十");
 assert(s1Bilingual.includes('"3x＋2＝17，x 是？", "Solve 3x + 2 = 17.", "5"'), "S1 一元一次方程題必須正確求得 x 為五");
 assert(s1Bilingual.includes('"3，6，9，… 的第 n 項是？", "What is the nth term of 3, 6, 9, ...?", "3n"'), "S1 數列第 n 項題必須正確表達為 3n");
-assert(s1Bilingual.includes('"120 km 用 2 h，速率是？", "120 km in 2 h. What is the speed?", "60 km/h"'), "S1 速率題必須正確以路程除時間計算");
+assert(s1Bilingual.includes('"一輛車行駛 120 km 用時 2 h，求其平均速率。", "A car travels 120 km in 2 h. Find its average speed.", "60 km/h"'), "S1 速率題必須以正式題幹及路程除時間正確計算");
 assert(s1Bilingual.includes('"三角形底 8 cm、高 5 cm，面積是？", "Triangle base 8 cm, height 5 cm. Area?", "20 cm²"'), "S1 三角形面積題必須正確使用二分之一乘底乘高");
 assert(s1Bilingual.includes("CMI 中文") && s1Bilingual.includes("EMI English"), "S1 題庫必須提供 CMI 及 EMI 題面切換");
 assert(s1Bilingual.includes("if (index === 7)"), "S1 雙語題庫站須完成八題才可結算");
+assert(s1Bilingual.includes("下列各數中，哪個數最大？") && s1Bilingual.includes("把 21 按 2:5 分配"), "S1 題庫須採用正式中學數學問法，避免含混口語題幹");
 
 const s1Interactive = read("client/src/pages/S1InteractiveFoundations.tsx");
 assert(s1Interactive.includes('target: -7'), "S1 互動數線須包含負數定位任務");
@@ -290,42 +291,46 @@ const s2Routes = ["/practice/s2", "/practice/s2-interactive"];
 for (const route of s2Routes) assert(appRoutes.has(route), `S2 練習路徑未註冊：${route}`);
 
 const s2Bilingual = read("client/src/pages/S2BilingualPractice.tsx");
-assert(s2Bilingual.includes('"a³ × a² 是？","What is a³ × a²?","a⁵"'), "S2 同底數相乘題必須正確相加指數");
-assert(s2Bilingual.includes('"x²＋5x 因式分解是？","Factorise x² + 5x.","x(x+5)"'), "S2 因式分解題必須正確提取 x 公因式");
-assert(s2Bilingual.includes('"x＋y＝7，x−y＝1，x 是？","Solve x+y=7, x-y=1. Find x.","4"'), "S2 聯立方程題必須正確求得 x 為四");
-assert(s2Bilingual.includes('"直角邊 3、4，斜邊是？","Legs 3 and 4. Hypotenuse?","5"'), "S2 畢氏定理題必須正確計算三四五直角三角形");
-assert(s2Bilingual.includes('"(0,0) 與 (3,4) 的距離是？","Distance between (0,0) and (3,4)?","5"'), "S2 坐標距離題必須正確計算為五");
+assert(s2Bilingual.includes('"化簡 a³ × a²。","Simplify a³ × a².","a⁵"'), "S2 同底數相乘題必須以正式問法並正確相加指數");
+assert(s2Bilingual.includes('"把 x²＋5x 因式分解。","Factorise x² + 5x.","x(x+5)"'), "S2 因式分解題必須正確提取 x 公因式");
+assert(s2Bilingual.includes('"解聯立方程 x＋y＝7、x−y＝1，求 x。","Solve x + y = 7 and x - y = 1. Find x.","4"'), "S2 聯立方程題必須以正式問法正確求得 x 為四");
+assert(s2Bilingual.includes('"一直角三角形的兩條直角邊長分別為 3 cm 及 4 cm，求斜邊長。","A right-angled triangle has legs 3 cm and 4 cm. Find the hypotenuse.","5 cm"'), "S2 畢氏定理題必須清楚標示條件、單位及答案");
+assert(s2Bilingual.includes('"求點 (0,0) 與 (3,4) 之間的距離。","Find the distance between (0,0) and (3,4).","5"'), "S2 坐標距離題必須採用正式距離問法");
 assert(s2Bilingual.includes("CMI 中文") && s2Bilingual.includes("EMI English"), "S2 題庫必須提供 CMI 及 EMI 題面切換");
 assert(s2Bilingual.includes("if(index===7)"), "S2 雙語題庫站須完成八題才可結算");
+assert(!s2Bilingual.includes("（延伸）") && !s2Bilingual.includes("(extension)"), "S2 每站八題必須為不重複正式題目，不能以延伸標籤重覆");
 
 const s2Interactive = read("client/src/pages/S2InteractiveCore.tsx");
 assert(s2Interactive.includes('{a:5,b:0,rule:"add",result:5}'), "S2 互動指數站須正確處理 a⁵×a⁰ 為 a⁵");
 assert(s2Interactive.includes('expr:"x² + 5x",factor:"x",inside:"x + 5"'), "S2 互動因式分解須正確提取 x 公因式");
 assert(s2Interactive.includes('answer:"x = 4, y = 3"'), "S2 互動聯立方程須正確求解 x 為四、y 為三");
 assert(s2Interactive.includes("if(index===7)"), "S2 互動站須完成八題才可結算");
+assert(s2Interactive.includes("item=station.items[index]") && s2Interactive.includes("items:[{a:3,b:2"), "S2 互動站須逐題使用八條不重複任務");
 
 const s3Routes = ["/practice/s3", "/practice/s3-interactive", "/practice/s3-sim", "/practice/s3-deep", "/practice/s3-lab"];
 for (const route of s3Routes) assert(appRoutes.has(route), `S3 練習路徑未註冊：${route}`);
 
 const s3Bilingual = read("client/src/pages/S3BilingualPractice.tsx");
-assert(s3Bilingual.includes('"(a+b)² 是？","What is (a+b)²?","a²+2ab+b²"'), "S3 恆等式題必須正確展開完全平方");
-assert(s3Bilingual.includes('"-2x>8，x 是？","Solve -2x>8.","x<-4"'), "S3 負數係數不等式題必須反轉不等號");
-assert(s3Bilingual.includes('"方位角由哪裡量起？","A bearing is measured clockwise from?","北方 / North"'), "S3 方位角題必須由北方順時針量起");
-assert(s3Bilingual.includes('"球體積公式是？","The volume formula of a sphere is?","4/3πr³"'), "S3 球體積公式必須正確為四分之三 πr³");
-assert(s3Bilingual.includes('"公平骰子出 6 的概率是？","Probability of rolling 6 on a fair die?","1/6"'), "S3 骰子概率題必須正確為六分之一");
+assert(s3Bilingual.includes('"展開 (a+b)²。","Expand (a+b)².","a²+2ab+b²"'), "S3 恆等式題必須以正式問法正確展開完全平方");
+assert(s3Bilingual.includes('"解不等式 −2x > 8。","Solve −2x > 8.","x < −4"'), "S3 負數係數不等式題必須以標準間距反轉不等號");
+assert(s3Bilingual.includes('"方位角由哪個方向順時針量起？","A bearing is measured clockwise from which direction?","北方 / North"'), "S3 方位角題必須由北方順時針量起");
+assert(s3Bilingual.includes('"球體的體積公式是甚麼？","What is the volume formula of a sphere?","4/3πr³"'), "S3 球體積公式必須正確為四分之三 πr³");
+assert(s3Bilingual.includes('"擲一個公平骰子，出現 6 的概率是多少？","What is the probability of rolling a 6 on a fair die?","1/6"'), "S3 骰子概率題必須正確為六分之一");
 assert(s3Bilingual.includes("CMI 中文") && s3Bilingual.includes("EMI English"), "S3 題庫必須提供 CMI 及 EMI 題面切換");
 assert(s3Bilingual.includes("if(index===7)"), "S3 雙語題庫站須完成八題才可結算");
+assert(!s3Bilingual.includes("（延伸）") && !s3Bilingual.includes("(extension)"), "S3 每站八題必須為不重複正式題目，不能以延伸標籤重覆");
 
 const s3Interactive = read("client/src/pages/S3InteractiveCore.tsx");
 assert(s3Interactive.includes('form:"(a+b)²",answer:"a² + 2ab + b²"'), "S3 互動恆等式站須正確配對完全平方公式");
 assert(s3Interactive.includes('bound:-2,direction:"left",solid:true'), "S3 互動不等式站須正確表示 x≤−2 的實心點向左");
 assert(s3Interactive.includes('claim:"證明 ∠B = ∠C"'), "S3 互動幾何站須包含等腰三角形底角證明");
 assert(s3Interactive.includes("if(index===7)"), "S3 互動站須完成八題才可結算");
+assert(s3Interactive.includes("item=station.items[index]") && s3Interactive.includes("三條邊的垂直平分線相交"), "S3 互動站須使用八條不重複任務及正確三角形中心術語");
 
 const s3Advanced = read("client/src/pages/S3AdvancedSimulations.tsx");
-assert(s3Advanced.includes('{target:"H",prob:"1/2"},{target:"T",prob:"1/2"},{target:"H",prob:"1/2"},{target:"T",prob:"1/2"}'), "S3 基礎概率模擬的目標、硬幣樹狀圖與概率答案必須一致");
-assert(s3Advanced.includes('principal:1000,rate:10,kind:"interest",years:3'), "S3 複利模擬須提供可驗證的本金、利率及年數資料");
-assert(s3Advanced.includes("bearing===item.bearing&&kind===item.kind&&angle===item.angle"), "S3 方位及仰俯角模擬須核對全部設定");
+assert(s3Advanced.includes("const item = station.items[index]") && s3Advanced.includes("target: \"H\"") && s3Advanced.includes("target: \"T\""), "S3 基礎概率模擬須以八題索引呈現一致的硬幣樹狀圖概率");
+assert(s3Advanced.includes("principal: 1000, rate: 10, kind: \"interest\", years: 3") && s3Advanced.includes("principal: 5000, rate: 12, kind: \"depreciation\", years: 4"), "S3 複利模擬須提供八個可驗證的本金、利率及年數資料");
+assert(s3Advanced.includes("bearing === item.bearing && kind === item.kind && angle === item.angle"), "S3 方位及仰俯角模擬須核對全部設定");
 
 const s3Deep = read("client/src/pages/S3DeepSimulations.tsx");
 assert(s3Deep.includes('answer==="1/3"&&draws.length===2'), "S3 不放回樹狀圖須正確驗證先紅後藍的概率為三分之一");
