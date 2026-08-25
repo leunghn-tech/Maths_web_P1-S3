@@ -216,6 +216,7 @@ export default function P1Practice() {
       </header>
 
       <main className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8 lg:py-10">
+        <div className="mq-p1-setup">
         <div className="mq-route-ruler" aria-hidden="true"><span>起點</span><i /><span>P1.01</span><i /><span>解題站</span></div>
         <KidTopicPicker value={operation} onChange={changeOperation} items={[{ id: "add", label: "加法", detail: "加多啲", Icon: Plus, completed: completedPractices.includes("p1-add") }, { id: "subtract", label: "減法", detail: "拿走", Icon: Minus, completed: completedPractices.includes("p1-subtract") }, { id: "mixed", label: "加減", detail: "一齊做", Icon: Shuffle, completed: completedPractices.includes("p1-mixed") }]} />
         <div className="mb-4 flex flex-wrap items-center gap-3"><KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "10 以內", standard: "15 以內", challenge: "20 以內" }} /><AutoReadToggle checked={autoRead} onCheckedChange={setAutoRead} /></div>
@@ -229,6 +230,7 @@ export default function P1Practice() {
             <span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">今日學習路徑</span>
             <p className="mt-1 font-extrabold">{reviewMode ? "重溫" : "已完成"} {Math.min(currentIndex + (result === "correct" ? 1 : 0), activeIndices.length)} / {activeIndices.length} 題 <span className="mx-1 text-[#f05a3c]">·</span> {timeLabel}</p>
           </div>
+        </div>
         </div>
 
         <div className="mq-practice-grid grid gap-5 lg:grid-cols-[230px_minmax(0,1fr)]">
@@ -250,6 +252,11 @@ export default function P1Practice() {
             <div className="mq-tip mt-5 rounded-2xl border border-[#172b3f]/10 bg-[#fff3e8] p-4 dark:border-white/10 dark:bg-[#3a2f2b]">
               <div className="flex items-center gap-2 text-[#f05a3c]"><Lightbulb className="size-4" /><span className="font-mono text-[10px] font-bold tracking-[0.12em]">小提示</span></div>
               <p className="mt-2 text-sm font-bold leading-6 text-[#744230] dark:text-[#ffe6d6]">加法是「合起來」，減法是「拿走」或「剩下」。</p>
+            </div>
+            <div className="mq-mobile-setup">
+              <p className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">調整下一輪</p>
+              <KidTopicPicker value={operation} onChange={changeOperation} items={[{ id: "add", label: "加法", detail: "加多啲", Icon: Plus, completed: completedPractices.includes("p1-add") }, { id: "subtract", label: "減法", detail: "拿走", Icon: Minus, completed: completedPractices.includes("p1-subtract") }, { id: "mixed", label: "加減", detail: "一齊做", Icon: Shuffle, completed: completedPractices.includes("p1-mixed") }]} />
+              <div className="mt-3 flex flex-wrap items-center gap-3"><KidDifficultyPicker value={difficulty} onChange={startRandom} details={{ easy: "10 以內", standard: "15 以內", challenge: "20 以內" }} /><AutoReadToggle checked={autoRead} onCheckedChange={setAutoRead} /></div>
             </div>
           </aside>
 
