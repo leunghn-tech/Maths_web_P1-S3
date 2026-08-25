@@ -28,6 +28,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getCompletedPractices, PRACTICE_COMPLETION_EVENT, resetPracticeProgress } from "@/lib/practiceCompletion";
 import { DAILY_PROGRESS_EVENT, getDailyPracticeProgress, setDailyPracticeTarget, type DailyPracticeProgress } from "@/lib/dailyPractice";
 import { getPinnedPractices, togglePinnedPractice } from "@/lib/pinnedPractices";
+import { orderGradeTrail } from "@/lib/gradeTrail";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 type Stage = "primary" | "secondary";
@@ -313,7 +314,6 @@ export default function Home() {
   };
 
   // Maths Quest notebook system: homepage progress must recognise a base station and its dedicated interactive lab as one learning outcome.
-  const [activeStage, setActiveStage] = useState<Stage>("primary");
   const [selectedGrade, setSelectedGrade] = useState("P1");
   const [menuOpen, setMenuOpen] = useState(false);
   const [completedPractices, setCompletedPractices] = useState<string[]>([]);
@@ -338,10 +338,7 @@ export default function Home() {
     return () => window.removeEventListener(DAILY_PROGRESS_EVENT, syncDailyProgress);
   }, []);
 
-  const visibleCourses = useMemo(
-    () => courses.filter((course) => course.stage === activeStage),
-    [activeStage],
-  );
+  const visibleCourses = useMemo(() => orderGradeTrail(courses), []);
   const course = courses.find((item) => item.grade === selectedGrade) ?? courses[0];
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
   const routeStations = starPractices.filter((practice) => practice.grade === course.grade);
@@ -359,11 +356,6 @@ export default function Home() {
   const gradeCompletedCount = (grade: string) => starPractices.filter((station) => station.grade === grade && isStationCompleted(station.key)).length;
   const courseCompleted = completedStationCount > 0;
   const courseCompletionLabel = `${completedStationCount}/${routeStations.length} 題型完成`;
-
-  const selectStage = (stage: Stage) => {
-    setActiveStage(stage);
-    setSelectedGrade(stage === "primary" ? "P1" : "S1");
-  };
 
   const resetProgress = () => {
     resetPracticeProgress();
@@ -484,14 +476,11 @@ export default function Home() {
         </section>
 
         <section id="path" className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
-          <div className="mb-7 flex flex-col justify-between gap-5 border-b border-[#172b3f]/10 pb-7 md:flex-row md:items-end">
+          <div className="mb-7 border-b border-[#172b3f]/10 pb-7">
             <div>
               <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">CHOOSE YOUR STATION — 02</p>
               <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">你的學習路徑，從年級開始。</h2>
-            </div>
-            <div className="inline-flex w-fit rounded-full bg-[#e8e3d9] p-1.5" aria-label="選擇學習階段">
-              <button onClick={() => selectStage("primary")} className={`rounded-full px-4 py-2.5 text-sm font-extrabold transition ${activeStage === "primary" ? "bg-white text-[#172b3f] shadow-sm" : "text-[#617286] hover:text-[#172b3f]"}`}>小學 P1–P6</button>
-              <button onClick={() => selectStage("secondary")} className={`rounded-full px-4 py-2.5 text-sm font-extrabold transition ${activeStage === "secondary" ? "bg-white text-[#172b3f] shadow-sm" : "text-[#617286] hover:text-[#172b3f]"}`}>初中 S1–S3</button>
+              <p className="mt-2 text-sm font-bold text-[#617286]">由小一至中三，所有年級都可直接點選。</p>
             </div>
           </div>
 
@@ -503,7 +492,7 @@ export default function Home() {
                   {courses.map((item, index) => {
                     const selected = item.grade === selectedGrade;
                     return (
-                      <button key={item.grade} onClick={() => { setActiveStage(item.stage); setSelectedGrade(item.grade); }} className={`relative flex w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left transition ${selected ? "bg-[#fff0e9] text-[#172b3f]" : "text-[#617286] hover:bg-[#f8f5ed] hover:text-[#172b3f]"}`}>
+                      <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative flex w-full items-center gap-2 rounded-lg px-1 py-1.5 text-left transition ${selected ? "bg-[#fff0e9] text-[#172b3f]" : "text-[#617286] hover:bg-[#f8f5ed] hover:text-[#172b3f]"}`}>
                         <span className={`grid size-7 shrink-0 place-items-center rounded-full border-2 border-[#fffdf8] text-[9px] font-black text-white ${selected ? "shadow-[0_3px_0_rgba(0,0,0,0.12)]" : "opacity-60"}`} style={{ backgroundColor: item.accent }}>{index + 1}</span>
                         <span className="min-w-0"><strong className="block text-[10px] leading-none">{item.grade}</strong><small className="mt-0.5 block text-[9px] leading-none">{item.shortLabel}</small></span>
                       </button>
@@ -519,31 +508,28 @@ export default function Home() {
                 <div className="shrink-0">
                   <div className="flex items-center gap-3">
                     <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#f05a3c]">GRADE TRAIL</p>
-                    <span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">{activeStage === "primary" ? "P1–P6" : "S1–S3"}</span>
+                    <span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">P1–S3</span>
                   </div>
                   <p className="mt-1 text-sm font-extrabold">點選一個年級，即時查看它的學習站點。</p>
                 </div>
-                <div className="-mx-1 overflow-x-auto pb-2 lg:pb-0">
-                  <div className="relative flex min-w-max items-start gap-2 px-1 lg:gap-1">
-                    <div className="absolute left-8 right-8 top-5 h-px bg-[#172b3f]/12" />
+                <div className="mq-grade-trail-grid">
                     {visibleCourses.map((item, index) => {
                       const selected = item.grade === selectedGrade;
                       const completed = isGradeCompleted(item.grade);
                       const completedCount = gradeCompletedCount(item.grade);
                       return (
-                        <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`relative z-10 flex min-w-[98px] flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
+                        <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`mq-grade-step relative z-10 flex flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${item.stage === "secondary" ? "mq-grade-step-secondary" : ""} ${item.grade === "S1" ? "mq-grade-step-secondary-start" : ""} ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
                           <span className={`grid size-10 place-items-center rounded-full border-4 text-xs font-black transition ${selected ? "border-white text-white shadow-[0_5px_0_rgba(0,0,0,0.14)]" : "border-[#f8f5ed] bg-[#e8e3d9] text-[#617286]"}`} style={selected ? { backgroundColor: item.accent } : undefined}>{index + 1}</span>
                           <span className="text-xs font-extrabold leading-none">{item.shortLabel}</span>
                           <span className="font-mono text-[10px] font-bold opacity-65">{completed ? `★ ${completedCount}` : item.grade}</span>
                         </button>
                       );
                     })}
-                  </div>
                 </div>
               </div>
             </div>
 
-            {activeStage === "primary" && <div className="mq-primary-start-grid grid gap-2 rounded-2xl border border-[#f05a3c]/20 bg-[#fff3e8] p-3 sm:grid-cols-3" aria-label="小學生三步開始">
+            {course.stage === "primary" && <div className="mq-primary-start-grid grid gap-2 rounded-2xl border border-[#f05a3c]/20 bg-[#fff3e8] p-3 sm:grid-cols-3" aria-label="小學生三步開始">
               <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2"><span className="grid size-6 place-items-center rounded-full bg-[#f05a3c] font-mono text-[10px] font-black text-white">1</span><strong className="text-sm">選年級</strong></div>
               <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2"><span className="grid size-6 place-items-center rounded-full bg-[#172b3f] font-mono text-[10px] font-black text-white">2</span><strong className="text-sm">按紅色開始</strong></div>
               <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2"><span className="grid size-6 place-items-center rounded-full bg-[#172b3f] font-mono text-[10px] font-black text-white">3</span><strong className="text-sm">做 8 題</strong></div>

@@ -191,6 +191,11 @@
 .mq-stepper button:hover span:first-child { transform: translateY(-3px) scale(1.06); box-shadow: 0 7px 0 rgba(23,43,63,.12); }
 .mq-stepper button:active span:first-child { transform: translateY(1px) scale(.96); box-shadow: none; }
 .mq-stepper button[aria-pressed="true"] span:first-child { animation: mq-step-arrive 420ms cubic-bezier(.23,1,.32,1) both; }
+.mq-grade-trail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; width: 100%; }
+.mq-grade-step { min-width: 0; }
+.mq-grade-step-secondary::after { content: "初中"; position: absolute; right: .2rem; top: .15rem; color: rgba(23,43,63,.42); font-family: "DM Mono", monospace; font-size: 7px; font-weight: 800; letter-spacing: .08em; }
+@media (min-width: 640px) { .mq-grade-trail-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .2rem; } }
+@media (min-width: 1024px) { .mq-grade-trail-grid { grid-template-columns: repeat(9, minmax(0, 1fr)); gap: .1rem; } .mq-grade-step-secondary-start::before { content: ""; position: absolute; left: -.15rem; top: .7rem; bottom: .7rem; border-left: 1px dashed rgba(23,43,63,.28); } }
 .mq-theme-switch { transition: transform 180ms cubic-bezier(.23,1,.32,1), background-color 220ms cubic-bezier(.23,1,.32,1), color 220ms cubic-bezier(.23,1,.32,1), border-color 220ms cubic-bezier(.23,1,.32,1), box-shadow 220ms cubic-bezier(.23,1,.32,1); }
 .mq-theme-switch:hover { box-shadow: 0 7px 16px rgba(23,43,63,.12); }
 .mq-theme-switch:hover svg { transform: rotate(16deg) scale(1.1); }
@@ -383,8 +388,7 @@
 .mq-level-select button { position: relative; overflow: hidden; }
 .mq-level-select button::before { content: "STATION"; position: absolute; right: .75rem; top: .35rem; color: rgba(23,43,63,.22); font-family: "DM Mono", monospace; font-size: 7px; font-weight: 700; letter-spacing: .1em; }
 .mq-practice-grid { position: relative; }
-.mq-practice-grid::before { content: ""; position: absolute; top: -1.5rem; left: 115px; height: calc(100% + 3rem); border-left: 1px dashed rgba(240,90,60,.35); }
-.mq-practice-grid::after { content: "CHECKPOINT"; position: absolute; left: 98px; top: -2.15rem; color: #f05a3c; font-family: "DM Mono", monospace; font-size: 8px; font-weight: 700; letter-spacing: .1em; }
+.mq-practice-grid::before, .mq-practice-grid::after { display: none; }
 .mq-practice-grid > * { position: relative; z-index: 1; }
 .mq-p2-card::before { content: "P2.01 · 九九乘法表"; }
 .mq-p2-card::after { border-color: rgba(200,129,30,.32); }
@@ -404,7 +408,7 @@
 .mq-feedback .mq-fraction { font-size: .88em; }
 
 /* 小學生三步導引：只保留看題、選答、前進三個圖示化步驟。 */
-.mq-primary-coach { position: fixed; top: 5.4rem; right: 1.25rem; z-index: 45; display: flex; align-items: center; gap: .7rem; padding: .55rem .7rem .55rem .8rem; border: 1px solid rgba(23,43,63,.12); border-radius: 999px; background: rgba(255,253,248,.94); box-shadow: 0 10px 24px rgba(23,43,63,.13); backdrop-filter: blur(14px); color: #172b3f; }
+.mq-primary-coach { position: fixed; top: 5.4rem; right: 1.25rem; z-index: 45; display: flex; max-width: calc(100vw - 2.5rem); align-items: center; gap: .7rem; padding: .55rem .7rem .55rem .8rem; border: 1px solid rgba(23,43,63,.12); border-radius: 999px; background: rgba(255,253,248,.94); box-shadow: 0 10px 24px rgba(23,43,63,.13); backdrop-filter: blur(14px); color: #172b3f; }
 .mq-primary-coach-title { color: #f05a3c; font-family: "DM Mono", monospace; font-size: 9px; font-weight: 800; letter-spacing: .11em; }
 .mq-primary-coach ol { display: flex; align-items: center; gap: .18rem; margin: 0; padding: 0; list-style: none; }
 .mq-primary-coach li { display: inline-flex; align-items: center; gap: .24rem; padding: .3rem .48rem; border-radius: 999px; font-size: 11px; line-height: 1; }
