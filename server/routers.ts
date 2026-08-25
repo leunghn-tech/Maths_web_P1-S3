@@ -34,7 +34,7 @@ const localPassword = z.string().min(6, "密碼至少需要 6 個字元。").max
 async function issueLocalSession(ctx: { req: Parameters<typeof getSessionCookieOptions>[0]; res: { cookie: (name: string, value: string, options: Record<string, unknown>) => void } }, user: { openId: string; name: string | null; localUsername: string | null; role: "user" | "admin"; sessionVersion: number }) {
   const sessionToken = await sdk.createSessionToken(user.openId, { name: user.name || user.localUsername || "Maths Quest User", expiresInMs: ONE_YEAR_MS, sessionVersion: user.sessionVersion });
   ctx.res.cookie(COOKIE_NAME, sessionToken, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
-  return { id: user.openId, name: user.name || user.localUsername || "Maths Quest User", username: user.localUsername, role: user.role };
+  return { id: user.openId, name: user.name || user.localUsername || "Maths Quest User", username: user.localUsername, role: user.role, sessionToken };
 }
 
 export const appRouter = router({

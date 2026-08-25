@@ -1,5 +1,6 @@
 import { startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
+import { clearLocalSession } from "@/lib/localSession";
 import { TRPCClientError } from "@trpc/client";
 import { useCallback, useEffect, useMemo } from "react";
 
@@ -45,6 +46,7 @@ export function useAuth(options?: UseAuthOptions) {
       try {
         sessionStorage.removeItem("manus-cookie");
       } catch {}
+      clearLocalSession();
       utils.auth.me.setData(undefined, null);
       await utils.auth.me.invalidate();
     }

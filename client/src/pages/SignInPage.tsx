@@ -4,6 +4,7 @@ import { CheckCircle2, Copy, Eye, EyeOff, GraduationCap, KeyRound, LogIn, Rotate
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { saveLocalSession } from "@/lib/localSession";
 
 type Mode = "student-login" | "student-register" | "teacher" | "student-recovery" | "student-reset";
 const inputClass = "mt-2 w-full rounded-xl border border-[#172b3f]/14 bg-white px-4 py-3 text-[#172b3f] outline-none transition focus:border-[#f05a3c] focus:ring-2 focus:ring-[#f05a3c]/15";
@@ -24,13 +25,13 @@ export default function SignInPage() {
   const isTeacher = mode === "teacher";
   const isRecovery = mode === "student-recovery" || mode === "student-reset";
   const resetVisibility = () => { setShowPassword(false); setShowConfirmPassword(false); };
-  const afterLogin = async (destination: string) => { await utils.auth.me.invalidate(); setLocation(destination); };
-  const studentLogin = trpc.auth.loginStudent.useMutation({ onSuccess: () => void afterLogin("/"), onError: (error) => toast.error(error.message) });
-  const studentRegister = trpc.auth.registerStudent.useMutation({ onSuccess: async (data) => { setRecoveryCode(data.recoveryCode); await utils.auth.me.invalidate(); }, onError: (error) => { if (error.message.includes("已被使用")) { setMode("student-login"); setPassword(""); setConfirmPassword(""); resetVisibility(); toast.error("這個用戶名稱已建立，已切換到學生登入。請輸入原有密碼。", { duration: 6000 }); return; } toast.error(error.message); } });
-  const teacherLogin = trpc.auth.loginTeacher.useMutation({ onSuccess: () => void afterLogin("/teacher"), onError: (error) => toast.error(error.message) });
+  const afterLogin = async (destination: string, sessionToken?: string) => { saveLocalSession(sessionToken); await utils.auth.me.invalidate(); await utils.auth.me.fetch(); setLocation(destination); };
+  const studentLogin = trpc.auth.loginStudent.useMutation({ onSuccess: (data) => void afterLogin("/", data.sessionToken), onError: (error) => toast.error(error.message) });
+  const studentRegister = trpc.auth.registerStudent.useMutation({ onSuccess: async (data) => { saveLocalSession(data.sessionToken); setRecoveryCode(data.recoveryCode); await utils.auth.me.invalidate(); }, onError: (error) => { if (error.message.includes("已被使用")) { setMode("student-login"); setPassword(""); setConfirmPassword(""); resetVisibility(); toast.error("這個用戶名稱已建立，已切換到學生登入。請輸入原有密碼。", { duration: 6000 }); return; } toast.error(error.message); } });
+  const teacherLogin = trpc.auth.loginTeacher.useMutation({ onSuccess: (data) => void afterLogin("/teacher", data.sessionToken), onError: (error) => toast.error(error.message) });
   const requestReset = trpc.auth.requestStudentPasswordReset.useMutation({ onSuccess: (data) => { if (!data.resetToken) { toast.error("資料未能驗證。請檢查帳戶名稱與恢復碼，或使用已登入的裝置更新恢復碼。"); return; } setResetToken(data.resetToken); setPassword(""); setConfirmPassword(""); resetVisibility(); setMode("student-reset"); }, onError: () => toast.error("暫時未能開始重設，請稍後再試。") });
   const resetPassword = trpc.auth.resetStudentPassword.useMutation({ onSuccess: () => { setResetToken(null); setPassword(""); setConfirmPassword(""); resetVisibility(); setMode("student-login"); toast.success("密碼已重設，請用新密碼登入。原有學習進度已保留。"); }, onError: (error) => toast.error(error.message) });
-  useEffect(() => { if (user && !recoveryCode) setLocation(user.role === "admin" ? "/teacher" : "/account"); }, [recoveryCode, setLocation, user]);
+  useEffect(() => { if (user && !recoveryCode) setLocation(user.role === "admin" ? "/teacher" : "/"); }, [recoveryCode, setLocation, user]);
   const pending = studentLogin.isPending || studentRegister.isPending || teacherLogin.isPending || requestReset.isPending || resetPassword.isPending;
   const selectMode = (next: Extract<Mode, "student-login" | "student-register" | "teacher">) => { setMode(next); setPassword(""); setConfirmPassword(""); resetVisibility(); if (next !== "student-register") setDisplayName(""); if (next === "teacher" && !username) setUsername("admin"); };
   const submit = (event: FormEvent) => { event.preventDefault(); if (mode === "teacher") teacherLogin.mutate({ username, password }); else if (mode === "student-register") studentRegister.mutate({ username, password, displayName }); else if (mode === "student-recovery") requestReset.mutate({ username, recoveryCode: password }); else if (mode === "student-reset") { if (!resetToken) { setMode("student-recovery"); return; } if (password !== confirmPassword) { toast.error("兩次輸入的新密碼不一致。"); return; } resetPassword.mutate({ resetToken, newPassword: password }); } else studentLogin.mutate({ username, password }); };
