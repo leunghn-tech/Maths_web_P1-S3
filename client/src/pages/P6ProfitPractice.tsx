@@ -2,7 +2,7 @@
 import P4QuestionStation, { type Difficulty, type RandomProblem } from "@/components/P4QuestionStation";
 
 const shuffled = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
-const money = (value: number) => `$${Number(value.toFixed(2))}`;
+const money = (value: number) => `HK$${Number(value.toFixed(2))}`;
 
 function moneyChoices(answer: number, alternatives: number[]) {
   const values = Array.from(new Set([answer, ...alternatives].map((value) => Number(Math.max(0, value).toFixed(2)))));
@@ -27,7 +27,7 @@ function generateProfit(difficulty: Difficulty): RandomProblem {
   if (difficulty === "standard") {
     return { id: `profit-percent-${cost}-${selling}-${Math.random()}`, prompt: `一件物品成本 ${money(cost)}，售價 ${money(selling)}，利潤率是多少？`, equation: `${profit} ÷ ${cost} × 100%`, answer: `${rate}%`, choices: percentChoices(rate, [rate + 5, Math.max(0, rate - 5), rate * 2]), hint: "利潤率 = 利潤 ÷ 成本 × 100%。" };
   }
-  return { id: `profit-selling-${cost}-${rate}-${Math.random()}`, prompt: `一件物品成本 ${money(cost)}，希望有 ${rate}% 利潤，售價應是多少？`, equation: `${cost} × ${100 + rate}%`, answer: money(selling), choices: moneyChoices(selling, [profit, cost - profit, selling + 20]), hint: "售價 = 成本 + 利潤；先算成本的百分之多少是利潤。" };
+  return { id: `profit-selling-${cost}-${rate}-${Math.random()}`, prompt: `一件物品成本 ${money(cost)}，希望有 ${rate}% 利潤，售價應是多少？`, equation: `${cost} + ${profit}`, answer: money(selling), choices: moneyChoices(selling, [profit, cost - profit, selling + 20]), hint: "售價 = 成本 + 利潤；先算成本的百分之多少是利潤。" };
 }
 
 export default function P6ProfitPractice() {

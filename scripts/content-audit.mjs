@@ -232,6 +232,42 @@ assert(p5Applied.includes("平方厘米"), "P5 面積拼圖答案必須標示平
 assert(p5Applied.includes("立方公尺"), "P5 體積生活題必須標示立方公尺或立方厘米");
 assert(p5Applied.includes("if (index === 7)"), "P5 面積拼圖與生活體積站須完成八題才可結算");
 
+const p6Routes = [
+  "/practice/p6-convert", "/practice/p6-measure-rate", "/practice/p6-geometry", "/practice/p6-data-equation", "/practice/p6-finance",
+  "/practice/p6-solid-volume", "/practice/p6-statistics", "/practice/p6-water-3d", "/practice/p6-pie-drag", "/practice/p6-equation-steps",
+  "/practice/p6-circle-lab", "/practice/p6-nets", "/practice/p6-coordinate-lab", "/practice/p6-discount", "/practice/p6-profit",
+];
+for (const route of p6Routes) assert(appRoutes.has(route), `P6 練習路徑未註冊：${route}`);
+
+const p6Expansion = read("client/src/pages/P6ExpansionPractice.tsx");
+assert(p6Expansion.includes('"0.25 轉成百分數","25%"'), "P6 小數轉百分數必須正確計算 0.25 為 25%");
+assert(p6Expansion.includes('"半徑 7 cm，圓周約多少？（π＝22/7）","44 cm"'), "P6 圓周題必須正確計算半徑 7 cm 的圓周為 44 cm");
+assert(p6Expansion.includes('"120 km 用 2 小時，速率是多少？","60 km/h"'), "P6 速率題必須正確以路程除時間計算");
+assert(p6Expansion.includes('"2x＋3＝11，x 是多少？","4"'), "P6 兩步方程題必須正確求解");
+
+const p6Further = read("client/src/pages/P6FurtherPractice.tsx");
+assert(p6Further.includes('"$2,000 以 2% 單利存兩年，利息是多少？", "$80"'), "P6 單利題必須正確計算兩年利息");
+assert(p6Further.includes('"水位由 200 mL 升至 260 mL，物件體積是多少？", "60 cm³"'), "P6 排水法題必須正確以水位差求物件體積");
+assert(p6Further.includes('"測驗 80 分佔 40%、90 分佔 60%，加權平均是多少？", "86"'), "P6 加權平均題必須正確計算為 86 分");
+
+const p6Interactive = read("client/src/pages/P6InteractivePractice.tsx");
+assert(p6Interactive.includes("1 mL ＝ 1 cm³"), "P6 排水法互動站須明確列出 1 mL 等於 1 cm³");
+assert(p6Interactive.includes("拖／點"), "P6 圓形圖拖曳站須提供點選替代操作");
+assert(p6Interactive.includes('"2x ＋ 3 ＝ 11", "−3，再 ÷2", "4"'), "P6 方程逐步填答必須提供正確的兩步解法");
+
+const p6Complete = read("client/src/pages/P6CompletePractice.tsx");
+assert(p6Complete.includes('"半徑 7 cm，圓周是多少？（π＝22/7）", "44 cm"'), "P6 圓形量度站須正確計算圓周");
+assert(p6Complete.includes('"正方體展開圖有多少個正方形？", "6"'), "P6 展開圖題必須正確列出正方體有六個正方形面");
+assert(p6Complete.includes('"由 (1,1) 向右 3 格、向上 2 格，到哪裡？", "(4,3)"'), "P6 座標移動題必須正確計算終點");
+
+const p6Discount = read("client/src/pages/P6DiscountPractice.tsx");
+assert(p6Discount.includes("HK$"), "P6 折扣題須以 HK$ 顯示港幣");
+assert(p6Discount.includes("第二次折扣要用第一次折後價計算"), "P6 連續折扣題須避免直接相加百分率的錯誤");
+
+const p6Profit = read("client/src/pages/P6ProfitPractice.tsx");
+assert(p6Profit.includes("HK$"), "P6 利潤題須以 HK$ 顯示港幣");
+assert(p6Profit.includes("售價 = 成本 + 利潤"), "P6 售價反推題須使用成本加利潤的正確關係");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);
