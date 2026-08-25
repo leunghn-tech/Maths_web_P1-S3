@@ -1,20 +1,29 @@
-/** P5 分數乘除隨機練習頁。 */
 import P4QuestionStation, { type Difficulty, type RandomProblem } from "@/components/P4QuestionStation";
 
 const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
-const fraction = (numerator: number, denominator: number) => { const divisor = gcd(numerator, denominator); return `${numerator / divisor}/${denominator / divisor}`; };
+const displayFraction = (numerator: number, denominator: number) => { const divisor = gcd(Math.abs(numerator), denominator); const top = numerator / divisor; const bottom = denominator / divisor; return bottom === 1 ? String(top) : `${top}/${bottom}`; };
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
+const choicesFor = (numerator: number, denominator: number) => {
+  const answer = displayFraction(numerator, denominator);
+  const choices = [answer];
+  for (let offset = 1; choices.length < 4; offset += 1) {
+    const candidate = displayFraction(numerator + offset, denominator);
+    if (!choices.includes(candidate)) choices.push(candidate);
+  }
+  return shuffle(choices);
+};
+const properFraction = (minDenominator: number, maxDenominator: number) => { const denominator = minDenominator + Math.floor(Math.random() * (maxDenominator - minDenominator + 1)); return { numerator: 1 + Math.floor(Math.random() * (denominator - 1)), denominator }; };
 
 function generateFraction(difficulty: Difficulty): RandomProblem {
-  const numeratorA = difficulty === "easy" ? 1 + Math.floor(Math.random() * 2) : 1 + Math.floor(Math.random() * 5);
-  const denominatorA = difficulty === "easy" ? 2 + Math.floor(Math.random() * 3) : 3 + Math.floor(Math.random() * 7);
-  const numeratorB = difficulty === "easy" ? 1 : 1 + Math.floor(Math.random() * 4);
-  const denominatorB = difficulty === "easy" ? 2 + Math.floor(Math.random() * 3) : 3 + Math.floor(Math.random() * 7);
+  const minDenominator = difficulty === "easy" ? 2 : 3;
+  const maxDenominator = difficulty === "easy" ? 4 : 8;
+  const first = properFraction(minDenominator, maxDenominator);
+  const second = properFraction(minDenominator, maxDenominator);
   const divide = difficulty === "challenge" || (difficulty === "standard" && Math.random() > 0.55);
-  const answer = divide ? fraction(numeratorA * denominatorB, denominatorA * numeratorB) : fraction(numeratorA * numeratorB, denominatorA * denominatorB);
-  const [top, bottom] = answer.split("/").map(Number);
-  const alternatives = Array.from(new Set([answer, `${Math.max(1, top + 1)}/${bottom}`, `${top}/${bottom + 1}`, `${Math.max(1, numeratorA + numeratorB)}/${denominatorA + denominatorB}`]));
-  return { id: `fraction-${difficulty}-${numeratorA}-${denominatorA}-${numeratorB}-${denominatorB}-${divide}`, prompt: divide ? "把除以分數轉成乘以倒數，再約成最簡分數。" : "先把分子相乘、分母相乘，再把答案約成最簡分數。", equation: `${numeratorA}/${denominatorA} ${divide ? "÷" : "×"} ${numeratorB}/${denominatorB}`, answer, choices: shuffle(alternatives), hint: divide ? "除以一個分數，等於乘以它的倒數。" : "分數相乘：分子乘分子，分母乘分母。" };
+  const resultNumerator = divide ? first.numerator * second.denominator : first.numerator * second.numerator;
+  const resultDenominator = divide ? first.denominator * second.numerator : first.denominator * second.denominator;
+  const answer = displayFraction(resultNumerator, resultDenominator);
+  return { id: `fraction-${difficulty}-${first.numerator}-${first.denominator}-${second.numerator}-${second.denominator}-${divide}`, prompt: "計算以下分數，並把答案約成最簡分數。", equation: `${first.numerator}/${first.denominator} ${divide ? "÷" : "×"} ${second.numerator}/${second.denominator}`, answer, choices: choicesFor(resultNumerator, resultDenominator), hint: divide ? "除以一個分數，等於乘以它的倒數；最後約成最簡分數。" : "分數相乘：分子乘分子，分母乘分母；最後約成最簡分數。" };
 }
 
 export default function P5FractionPractice() { return <P4QuestionStation gradeLabel="P5" stationCode="P5 分數站 · 01" title="分數乘除" subtitle="選擇難度後，隨機練習分數乘法、除法及最簡分數。" accent="#8e5da2" practiceKey="p5-fraction-multiply-divide" generateProblem={generateFraction} />; }

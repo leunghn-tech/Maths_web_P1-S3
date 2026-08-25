@@ -185,6 +185,53 @@ const p4Polygon = read("client/src/pages/P4PolygonAreaPractice.tsx");
 assert(p4Polygon.includes("const top = proposedTop % 2 === base % 2"), "P4 梯形面積題須控制上下底同奇偶以確保整數答案");
 assert(p4Polygon.includes("平方厘米"), "P4 多邊形面積題的選項必須標示平方厘米");
 
+const p5Routes = [
+  "/practice/p5-fraction-visual", "/practice/p5-decimal-life", "/practice/p5-volume-build", "/practice/p5-fraction-add", "/practice/p5-area",
+  "/practice/p5-geometry-data", "/practice/p5-volume-units", "/practice/p5-decimal-carry", "/practice/p5-polygons", "/practice/p5-data-insights",
+  "/practice/p5-area-puzzle", "/practice/p5-volume-life", "/practice/p5-fractions", "/practice/p5-decimals", "/practice/p5-unlike-fractions", "/practice/p5-volume",
+];
+for (const route of p5Routes) assert(appRoutes.has(route), `P5 練習路徑未註冊：${route}`);
+
+const p5Fraction = read("client/src/pages/P5FractionPractice.tsx");
+assert(p5Fraction.includes("bottom === 1 ? String(top)"), "P5 分數乘除整數結果不得顯示為分母 1 的分數");
+assert(p5Fraction.includes("const choicesFor"), "P5 分數乘除題必須提供四個不重複選項");
+
+const p5Unlike = read("client/src/pages/P5UnlikeFractionsPractice.tsx");
+assert(p5Unlike.includes("if (subtract && convertedFirst < convertedSecond)"), "P5 異分母減法須先調整算式順序，避免把負數誤作絕對值");
+assert(p5Unlike.includes("先通分，再計算"), "P5 異分母分數題幹須說明通分步驟");
+
+const p5Decimal = read("client/src/pages/P5DecimalPractice.tsx");
+assert(p5Decimal.includes("const minuend = Math.max(a, b)"), "P5 小數減法須確保被減數不小於減數");
+assert(p5Decimal.includes("const decimalChoices"), "P5 小數題須提供四個不重複選項");
+
+const p5Volume = read("client/src/pages/P5VolumePractice.tsx");
+assert(p5Volume.includes("立方厘米"), "P5 體積題的題幹及選項必須標示立方厘米");
+assert(p5Volume.includes("高是多少厘米"), "P5 體積反推題須清楚標示高的厘米單位");
+
+const p5Visual = read("client/src/pages/P5FractionVisualPractice.tsx");
+assert(p5Visual.includes('answer: "3/8"'), "P5 分數圖形模型須正確計算二分之一乘四分之三為八分之三");
+assert(p5Visual.includes('answer: "2"'), "P5 分數除法整數答案須以整數顯示");
+assert(p5Visual.includes("if (index === 7)"), "P5 分數圖形模型站須完成八題才可結算");
+
+const p5Core = read("client/src/pages/P5CorePractice.tsx");
+assert(p5Core.includes("title: \"三角形面積\""), "P5 面積站須正確標示為三角形面積，不可誤稱混合圖形");
+assert(p5Core.includes("平方厘米"), "P5 三角形面積答案必須標示平方厘米");
+assert(p5Core.includes("<Minus"), "P5 多日數據站須提供點選調整作為拖曳以外的操作方式");
+
+const p5Expansion = read("client/src/pages/P5ExpansionPractice.tsx");
+assert(p5Expansion.includes("1,000,000 立方厘米"), "P5 體積換算須使用一立方公尺等於一百萬立方厘米");
+assert(p5Expansion.includes('answer: "60°"'), "P5 旋轉角題的答案必須標示角度符號");
+assert(p5Expansion.includes('answer: "下降"'), "P5 數據趨勢題須採用文字趨勢答案");
+
+const p5Complete = read("client/src/pages/P5CompletePractice.tsx");
+assert(p5Complete.includes("HK$2.40"), "P5 小數生活題須以 HK$ 顯示港幣");
+assert(p5Complete.includes("長 {dims[0]} 厘米、闊 {dims[1]} 厘米、高 {dims[2]} 厘米"), "P5 體積積木站須列出長、闊、高與厘米單位");
+
+const p5Applied = read("client/src/pages/P5AppliedPractice.tsx");
+assert(p5Applied.includes("平方厘米"), "P5 面積拼圖答案必須標示平方厘米");
+assert(p5Applied.includes("立方公尺"), "P5 體積生活題必須標示立方公尺或立方厘米");
+assert(p5Applied.includes("if (index === 7)"), "P5 面積拼圖與生活體積站須完成八題才可結算");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);
