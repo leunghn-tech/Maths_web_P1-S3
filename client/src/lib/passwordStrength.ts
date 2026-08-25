@@ -6,19 +6,17 @@ export type PasswordStrength = {
 };
 
 export function evaluatePasswordStrength(password: string): PasswordStrength {
-  if (!password) return { score: 0, label: "尚未輸入", color: "#9aa7b5", suggestions: ["建議使用至少 12 個字元的獨特密碼。"] };
+  if (!password) return { score: 0, label: "尚未輸入", color: "#9aa7b5", suggestions: ["密碼最少 4 個英文字母或數字；較長會更安全。"] };
   const suggestions: string[] = [];
   let score = 0;
+  if (password.length >= 4) score += 1;
+  else suggestions.push("至少輸入 4 個英文字母或數字。");
   if (password.length >= 8) score += 1;
-  else suggestions.push("增加至至少 8 個字元。");
-  if (password.length >= 12) score += 1;
-  else suggestions.push("建議使用 12 個或以上字元，會更安全。");
+  else suggestions.push("建議使用 8 個或以上字元，會更安全。");
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
   else suggestions.push("混合英文大寫及小寫字母。");
   if (/\d/.test(password)) score += 1;
   else suggestions.push("加入至少一個數字。");
-  if (/[^A-Za-z0-9]/.test(password)) score += 1;
-  else suggestions.push("加入符號，例如 !、? 或 #。");
   if (/^(password|123456|qwerty|abc123|letmein)/i.test(password) || /(.)\1{3,}/.test(password)) {
     score = Math.min(score, 1);
     suggestions.unshift("避免常見字詞、連續數字或重複字元。");

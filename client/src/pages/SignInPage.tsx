@@ -184,7 +184,7 @@ export default function SignInPage() {
             <p className="font-mono text-[11px] font-bold tracking-[.15em] text-[#f05a3c]">{isTeacher ? "TEACHER SIGN IN" : recoveryCode ? "ONE-TIME RECOVERY CODE" : isRecovery ? "STUDENT ACCOUNT RECOVERY" : mode === "student-register" ? "CREATE STUDENT ACCOUNT" : "STUDENT SIGN IN"}</p>
             <h2 className="mt-3 text-3xl font-black">{heading}</h2>
             <p className="mt-3 text-sm leading-6 text-[#617286]">
-              {isTeacher ? "教師帳戶固定為 admin。請輸入教師密碼登入；學生帳戶不可開啟教師管理頁。" : recoveryCode ? "這組恢復碼只會顯示一次。請立即安全保存，切勿分享給任何人。" : mode === "student-recovery" ? "輸入用戶名稱與你保存的恢復碼，系統會建立一個 15 分鐘內有效、只可使用一次的重設步驟。" : mode === "student-reset" ? "新密碼設定後，所有舊登入會失效；你的學習進度會保留在同一帳戶。" : mode === "student-register" ? "用戶名稱只可使用英文小寫字母、數字與 . _ -；密碼最少 6 個字元。" : "輸入你的學生帳戶，即可取回同步的學習紀錄。"}
+              {isTeacher ? "教師帳戶固定為 admin。請輸入教師密碼登入；學生帳戶不可開啟教師管理頁。" : recoveryCode ? "這組恢復碼只會顯示一次。請立即安全保存，切勿分享給任何人。" : mode === "student-recovery" ? "輸入用戶名稱與你保存的恢復碼，系統會建立一個 15 分鐘內有效、只可使用一次的重設步驟。" : mode === "student-reset" ? "新密碼設定後，所有舊登入會失效；你的學習進度會保留在同一帳戶。" : mode === "student-register" ? "用戶名稱只可使用英文小寫字母、數字與 . _ -；密碼最少 4 個英文字母或數字。" : "輸入你的學生帳戶，即可取回同步的學習紀錄。"}
             </p>
           </div>
 
@@ -219,12 +219,13 @@ export default function SignInPage() {
                 onToggle={() => setShowPassword((value) => !value)}
                 revealable={mode !== "student-recovery"}
                 autoComplete={mode === "student-register" || mode === "student-reset" ? "new-password" : mode === "student-recovery" ? "one-time-code" : "current-password"}
-                minLength={mode === "student-register" || mode === "student-reset" ? 6 : 1}
+                minLength={mode === "student-register" || mode === "student-reset" ? 4 : 1}
+                pattern={mode === "student-register" || mode === "student-reset" ? "[A-Za-z0-9]+" : undefined}
                 placeholder={mode === "student-recovery" ? "例如：ABCD-EF01-2345-6789" : "輸入密碼"}
               />
 
               {mode === "student-reset" && (
-                <LoginSecretField label="確認新密碼" value={confirmPassword} onChange={setConfirmPassword} visible={showConfirmPassword} onToggle={() => setShowConfirmPassword((value) => !value)} autoComplete="new-password" minLength={6} placeholder="再次輸入新密碼" />
+                <LoginSecretField label="確認新密碼" value={confirmPassword} onChange={setConfirmPassword} visible={showConfirmPassword} onToggle={() => setShowConfirmPassword((value) => !value)} autoComplete="new-password" minLength={4} pattern="[A-Za-z0-9]+" placeholder="再次輸入新密碼" />
               )}
 
               <button disabled={pending} className={`mt-2 inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-bold text-white disabled:opacity-60 ${isTeacher ? "bg-[#172b3f]" : "bg-[#f05a3c]"}`}>
@@ -247,12 +248,12 @@ export default function SignInPage() {
   );
 }
 
-function LoginSecretField({ label, value, onChange, visible, onToggle, revealable = true, autoComplete, minLength, placeholder }: { label: string; value: string; onChange: (value: string) => void; visible: boolean; onToggle: () => void; revealable?: boolean; autoComplete: string; minLength: number; placeholder: string }) {
+function LoginSecretField({ label, value, onChange, visible, onToggle, revealable = true, autoComplete, minLength, pattern, placeholder }: { label: string; value: string; onChange: (value: string) => void; visible: boolean; onToggle: () => void; revealable?: boolean; autoComplete: string; minLength: number; pattern?: string; placeholder: string }) {
   return (
     <label>
       <span className="text-xs font-bold text-[#617286]">{label}</span>
       <span className="relative mt-2 block">
-        <input required autoComplete={autoComplete} type={revealable && visible ? "text" : revealable ? "password" : "text"} value={value} onChange={(event) => onChange(event.target.value)} minLength={minLength} maxLength={128} placeholder={placeholder} className={`${inputClass} pr-24`} style={{ color: "#172b3f", WebkitTextFillColor: "#172b3f" }} />
+        <input required autoComplete={autoComplete} type={revealable && visible ? "text" : revealable ? "password" : "text"} value={value} onChange={(event) => onChange(event.target.value)} minLength={minLength} pattern={pattern} maxLength={128} placeholder={placeholder} className={`${inputClass} pr-24`} style={{ color: "#172b3f", WebkitTextFillColor: "#172b3f" }} />
         {revealable && <button type="button" onClick={onToggle} aria-label={`${visible ? "隱藏" : "顯示"}${label}`} aria-pressed={visible} className="absolute inset-y-0 right-11 grid w-10 place-items-center rounded-xl text-[#617286] hover:text-[#172b3f] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f05a3c]">{visible ? <EyeOff className="size-5" aria-hidden="true" /> : <Eye className="size-5" aria-hidden="true" />}</button>}
       </span>
     </label>

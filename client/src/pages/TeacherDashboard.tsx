@@ -6,16 +6,14 @@ import {
   CalendarDays,
   Clock3,
   GraduationCap,
-  KeyRound,
   LogOut,
   Search,
   ShieldCheck,
+  UserPlus,
   UsersRound,
 } from "lucide-react";
-import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
-import { saveLocalSession } from "@/lib/localSession";
 import { sortTeacherStudents, type StudentSort } from "@/lib/teacherStudentSort";
 import { filterStudentsByRegistration, sortStudentsByRegistration, type RegistrationPeriod, type RegistrationSort } from "@/lib/teacherStudentRegistration";
 
@@ -25,14 +23,10 @@ function formatDate(value: Date | string | null) {
 
 export default function TeacherDashboard() {
   const { user, loading, logout } = useAuth();
-  const utils = trpc.useUtils();
   const students = trpc.teacher.managedStudents.useQuery(undefined, { enabled: user?.role === "admin" });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<StudentSort | RegistrationSort>("recentSync");
   const [registrationPeriod, setRegistrationPeriod] = useState<RegistrationPeriod>("all");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const filteredStudents = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -42,27 +36,7 @@ export default function TeacherDashboard() {
     const byRegistrationPeriod = filterStudentsByRegistration(matching, registrationPeriod);
     return sort === "registeredNewest" || sort === "registeredOldest" ? sortStudentsByRegistration(byRegistrationPeriod, sort) : sortTeacherStudents(byRegistrationPeriod, sort);
   }, [registrationPeriod, search, sort, students.data]);
-
-  const changePassword = trpc.auth.changeTeacherPassword.useMutation({
-    onSuccess: async (data) => {
-      saveLocalSession(data.sessionToken);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      await utils.auth.me.invalidate();
-      toast.success("教師密碼已更新；其他舊登入已安全登出。");
-    },
-    onError: (error) => toast.error(error.message),
-  });
-
-  const submitPassword = (event: FormEvent) => {
-    event.preventDefault();
-    if (newPassword !== confirmPassword) {
-      toast.error("兩次輸入的新密碼不一致。");
-      return;
-    }
-    changePassword.mutate({ currentPassword, newPassword });
-  };
+  const recentRegistrationCount = useMemo(() => filterStudentsByRegistration(students.data ?? [], "last7").length, [students.data]);
 
   if (loading) return <main className="grid min-h-screen place-items-center bg-[#172b3f] font-mono font-bold text-white">正在驗證教師帳戶…</main>;
   if (!user) return <Gate icon={<GraduationCap className="mx-auto size-12 text-[#f6be5d]" />} title="需要教師登入" href="/sign-in" action="前往登入" dark />;
@@ -91,25 +65,14 @@ export default function TeacherDashboard() {
           </div>
         </header>
 
-        <section className="mt-6 grid gap-4 sm:grid-cols-3">
+        <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric icon={<UsersRound className="size-5 text-[#4f6eae]" />} label="REGISTERED STUDENTS" value={students.data?.length ?? "—"} detail="已註冊學生帳戶" />
+          <Metric icon={<UserPlus className="size-5 text-[#f05a3c]" />} label="NEW · LAST 7 DAYS" value={recentRegistrationCount} detail="最近 7 日新註冊學生" />
           <Metric icon={<BookOpen className="size-5 text-[#0e8b87]" />} label="SYNC AWARE" value={students.data?.filter((student) => student.lastSyncedAt).length ?? "—"} detail="已有雲端同步紀錄" />
           <Metric icon={<GraduationCap className="size-5 text-[#f05a3c]" />} label="TEACHER ACCOUNT" value={`@${accountName}`} detail="目前登入的教師帳戶" />
         </section>
 
-        <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_1.65fr]">
-          <form onSubmit={submitPassword} className="rounded-[28px] border border-[#172b3f]/12 bg-white p-6">
-            <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-xl bg-[#f6be5d] text-[#172b3f]"><KeyRound className="size-5" /></span>
-              <div><p className="font-mono text-[10px] font-bold tracking-[.14em] text-[#4f6eae]">ACCOUNT SECURITY</p><h2 className="mt-1 text-xl font-black">修改教師密碼</h2></div>
-            </div>
-            <p className="mt-4 text-sm leading-6 text-[#617286]">目前登入帳戶為 @{accountName}。首次登入後建議立即更改預設密碼；更新後，其他瀏覽器或裝置上的舊登入會自動失效。</p>
-            <PasswordInput label="目前密碼" value={currentPassword} onChange={setCurrentPassword} autoComplete="current-password" />
-            <PasswordInput label="新密碼" value={newPassword} onChange={setNewPassword} autoComplete="new-password" minLength={6} />
-            <PasswordInput label="確認新密碼" value={confirmPassword} onChange={setConfirmPassword} autoComplete="new-password" minLength={6} />
-            <button disabled={changePassword.isPending} className="mt-5 w-full rounded-xl bg-[#172b3f] px-5 py-3 font-bold text-white disabled:opacity-60">{changePassword.isPending ? "正在更新…" : "安全更新教師密碼"}</button>
-          </form>
-
+        <section className="mt-6">
           <section className="overflow-hidden rounded-[28px] border border-[#172b3f]/12 bg-white">
             <div className="border-b border-[#172b3f]/10 p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -128,10 +91,6 @@ export default function TeacherDashboard() {
       </div>
     </main>
   );
-}
-
-function PasswordInput({ label, value, onChange, autoComplete, minLength }: { label: string; value: string; onChange: (value: string) => void; autoComplete: string; minLength?: number }) {
-  return <label className="mt-4 block"><span className="text-xs font-bold text-[#617286]">{label}</span><input required type="password" autoComplete={autoComplete} value={value} onChange={(event) => onChange(event.target.value)} minLength={minLength} maxLength={128} className="mt-2 w-full rounded-xl border border-[#172b3f]/14 px-4 py-3 outline-none focus:border-[#f05a3c]" /></label>;
 }
 
 function Metric({ icon, label, value, detail }: { icon: React.ReactNode; label: string; value: React.ReactNode; detail: string }) {

@@ -30,6 +30,12 @@ describe("learning and teacher-only authorisation", () => {
     await expect(caller.learning.syncLocal({ snapshot: { schemaVersion: 1, completedPractices: [], dailyHistory: {}, dailyTarget: 3, reviewRecords: [], pinnedPractices: [] }, expectedSyncRevision: 0 })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
   });
 
+  it("rejects student passwords shorter than four characters or containing non-alphanumeric characters", async () => {
+    const caller = appRouter.createCaller(createGuestContext());
+    await expect(caller.auth.registerStudent({ username: "learner.one", password: "abc", displayName: "學生甲" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(caller.auth.registerStudent({ username: "learner.one", password: "ab!c", displayName: "學生甲" })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
   it("does not let guests or student accounts access the teacher directory", async () => {
     await expect(appRouter.createCaller(createGuestContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
     await expect(appRouter.createCaller(createStudentContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
@@ -37,8 +43,8 @@ describe("learning and teacher-only authorisation", () => {
     await expect(appRouter.createCaller(createStudentContext()).teacher.studentDetail({ userId: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
-  it("requires an authenticated student to rotate a recovery code and an admin to change a teacher password", async () => {
+  it("requires an authenticated student to rotate a recovery code while keeping teacher routes unavailable", async () => {
     await expect(appRouter.createCaller(createGuestContext()).auth.rotateStudentRecoveryCode()).rejects.toMatchObject({ code: "UNAUTHORIZED" });
-    await expect(appRouter.createCaller(createStudentContext()).auth.changeTeacherPassword({ currentPassword: "student-password", newPassword: "teacher-password" })).rejects.toMatchObject({ code: "FORBIDDEN" });
+    await expect(appRouter.createCaller(createStudentContext()).teacher.managedStudents()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 });

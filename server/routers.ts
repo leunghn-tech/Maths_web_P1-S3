@@ -7,7 +7,6 @@ import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_
 import {
   authenticateLocalAccount,
   changeStudentPassword,
-  changeTeacherPassword,
   getStudentLearningOverview,
   getTeacherStudentDetail,
   getTeacherManagedStudents,
@@ -29,7 +28,7 @@ const practiceKey = z.string().min(1).max(120);
 const reviewRecord = z.object({ key: practiceKey, grade: z.string().min(1).max(8), title: z.string().min(1).max(160), href: z.string().min(1).max(255), misses: z.number().int().min(1).max(999), updatedAt: z.number().int().positive() });
 const localSnapshot = z.object({ schemaVersion: z.literal(1), completedPractices: z.array(practiceKey).max(300), dailyHistory: z.record(z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.array(practiceKey).max(50)), dailyTarget: z.number().int().min(1).max(6).nullable(), reviewRecords: z.array(reviewRecord).max(300), pinnedPractices: z.array(practiceKey).max(100) });
 const localUsername = z.string().trim().toLowerCase().regex(/^[a-z0-9._-]{3,48}$/, "用戶名稱須為 3–48 個英文小寫字母、數字或 . _ -。");
-const localPassword = z.string().min(6, "密碼至少需要 6 個字元。").max(128);
+const studentPassword = z.string().min(4, "學生密碼至少需要 4 個英文字母或數字。").max(128).regex(/^[A-Za-z0-9]+$/, "學生密碼只可使用英文字母或數字。");
 
 async function issueLocalSession(ctx: { req: Parameters<typeof getSessionCookieOptions>[0]; res: { cookie: (name: string, value: string, options: Record<string, unknown>) => void } }, user: { openId: string; name: string | null; localUsername: string | null; role: "user" | "admin"; sessionVersion: number }) {
   const sessionToken = await sdk.createSessionToken(user.openId, { name: user.name || user.localUsername || "Maths Quest User", expiresInMs: ONE_YEAR_MS, sessionVersion: user.sessionVersion });
@@ -41,7 +40,7 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query((opts) => opts.ctx.user),
-    registerStudent: publicProcedure.input(z.object({ username: localUsername, password: localPassword, displayName: z.string().trim().min(1, "請輸入暱稱。").max(80) })).mutation(async ({ ctx, input }) => {
+    registerStudent: publicProcedure.input(z.object({ username: localUsername, password: studentPassword, displayName: z.string().trim().min(1, "請輸入暱稱。").max(80) })).mutation(async ({ ctx, input }) => {
       const { user, recoveryCode } = await registerLocalStudent(input);
       return { ...await issueLocalSession(ctx, user), recoveryCode };
     }),
@@ -56,14 +55,10 @@ export const appRouter = router({
       return issueLocalSession(ctx, user);
     }),
     requestStudentPasswordReset: publicProcedure.input(z.object({ username: localUsername, recoveryCode: z.string().trim().min(8).max(64) })).mutation(({ input }) => requestStudentPasswordReset(input)),
-    resetStudentPassword: publicProcedure.input(z.object({ resetToken: z.string().min(32).max(128), newPassword: localPassword })).mutation(({ input }) => resetStudentPassword(input)),
+    resetStudentPassword: publicProcedure.input(z.object({ resetToken: z.string().min(32).max(128), newPassword: studentPassword })).mutation(({ input }) => resetStudentPassword(input)),
     rotateStudentRecoveryCode: protectedProcedure.mutation(({ ctx }) => rotateStudentRecoveryCode(ctx.user.id)),
-    changeStudentPassword: protectedProcedure.input(z.object({ currentPassword: z.string().min(1).max(128), newPassword: localPassword })).mutation(async ({ ctx, input }) => {
+    changeStudentPassword: protectedProcedure.input(z.object({ currentPassword: z.string().min(1).max(128), newPassword: studentPassword })).mutation(async ({ ctx, input }) => {
       const user = await changeStudentPassword(ctx.user.id, input.currentPassword, input.newPassword);
-      return issueLocalSession(ctx, user);
-    }),
-    changeTeacherPassword: adminProcedure.input(z.object({ currentPassword: z.string().min(1).max(128), newPassword: localPassword })).mutation(async ({ ctx, input }) => {
-      const user = await changeTeacherPassword(ctx.user.id, input.currentPassword, input.newPassword);
       return issueLocalSession(ctx, user);
     }),
     logout: publicProcedure.mutation(({ ctx }) => {

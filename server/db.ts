@@ -94,11 +94,11 @@ export async function ensureInitialTeacherAccount() {
   const existing = await getUserByLocalUsername(username);
   const initialPassword = getInitialTeacherPassword();
   if (existing) {
-    // Bootstrap or repair only an incomplete legacy account. A valid teacher-set
-    // password must never be replaced just because it differs from the initial secret.
-    if (existing.passwordHash && existing.role === "admin") return existing;
+    // The project has one fixed teacher account. If a legacy or previously
+    // changed hash differs, restore the secret stored only in the environment.
+    if (existing.passwordHash && existing.role === "admin" && await verifyLocalPassword(initialPassword, existing.passwordHash)) return existing;
     const passwordHash = await hashLocalPassword(initialPassword);
-    await db.update(users).set({ passwordHash, role: "admin", loginMethod: "local-password", updatedAt: new Date() }).where(eq(users.id, existing.id));
+    await db.update(users).set({ passwordHash, role: "admin", loginMethod: "local-password", sessionVersion: sql`${users.sessionVersion} + 1`, updatedAt: new Date() }).where(eq(users.id, existing.id));
     const [repaired] = await db.select().from(users).where(eq(users.id, existing.id)).limit(1);
     if (!repaired) throw new Error("Could not repair the initial teacher account");
     return repaired;
@@ -168,16 +168,6 @@ export async function resetStudentPassword(input: { resetToken: string; newPassw
     await tx.update(users).set({ passwordHash, sessionVersion: sql`${users.sessionVersion} + 1`, updatedAt: now }).where(eq(users.id, user.id));
     return { ...user, passwordHash, sessionVersion: user.sessionVersion + 1 };
   });
-}
-
-export async function changeTeacherPassword(userId: number, currentPassword: string, newPassword: string) {
-  const db = await requireDb();
-  const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-  if (!user || user.role !== "admin" || !user.passwordHash) throw new Error("教師帳戶無法修改密碼。");
-  if (!await verifyLocalPassword(currentPassword, user.passwordHash)) throw new Error("目前密碼不正確。");
-  const passwordHash = await hashLocalPassword(newPassword);
-  await db.update(users).set({ passwordHash, sessionVersion: sql`${users.sessionVersion} + 1`, updatedAt: new Date() }).where(eq(users.id, user.id));
-  return { ...user, passwordHash, sessionVersion: user.sessionVersion + 1 };
 }
 
 export async function changeStudentPassword(userId: number, currentPassword: string, newPassword: string) {
