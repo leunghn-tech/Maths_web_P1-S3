@@ -69,6 +69,46 @@ const p1Spatial = read("client/src/pages/P1SpatialPractice.tsx");
 assert(p1Spatial.includes('name: "橙", answer: "球體"'), "P1 立體圖形生活物件須使用分類明確的球體例子");
 assert(p1Spatial.includes("const shuffle = <T,>(items: T[]) => [...items];"), "P1 長度排序選項不可在作答時重新排列");
 
+const p2Routes = [
+  "/practice/p2-multiplication", "/practice/p2-numbers", "/practice/p2-money", "/practice/p2-time",
+  "/practice/p2-numbers-compare", "/practice/p2-multiply-visual", "/practice/p2-money-coins", "/practice/p2-directions",
+  "/practice/p2-division", "/practice/p2-direction-route", "/practice/p2-array-builder", "/practice/p2-measure",
+  "/practice/p2-angles", "/practice/p2-division-remainder", "/practice/p2-quadrilaterals", "/practice/p2-pictograph-multiple",
+  "/practice/p2-meter-centimeter", "/practice/p2-fractions-basic",
+];
+for (const route of p2Routes) assert(appRoutes.has(route), `P2 練習路徑未註冊：${route}`);
+
+const p2Practice = read("client/src/pages/P2Practice.tsx");
+assert(p2Practice.includes('difficulty === "standard" ? 8 : 9'), "P2 乘法挑戰題必須限制於九九乘法表");
+assert(p2Practice.includes("for (let distance = 1; values.size < 4"), "P2 乘除題必須提供四個不重複選項");
+assert(p2Practice.includes("const useDivision = mode === \"mixed\" && index % 2 === 1"), "P2 混合運算題必須包含整除運算");
+
+const p2Numbers = read("client/src/pages/P2NumbersPractice.tsx");
+assert(p2Numbers.includes("由 2 個百、4 個十和 5 個一組成"), "P2 三位數題幹須使用正式百十個位表達");
+
+const p2Money = read("client/src/pages/P2MoneyPractice.tsx");
+assert(p2Money.includes(">HK${v}</span>"), "P2 港幣找錢題所有金額須採 HK$ 標示");
+
+const p2Time = read("client/src/pages/P2TimePractice.tsx");
+assert(p2Time.includes('min={name === "時" ? "1" : "0"}'), "P2 時計時針只可設定為 1 至 12 時");
+
+const p2Concept = read("client/src/pages/P2ConceptPractice.tsx");
+assert(p2Concept.includes("const coinOptions ="), "P2 硬幣組合題須採用受控選項資料");
+assert(p2Concept.includes("!== question.target"), "P2 硬幣錯誤選項不可剛好湊到目標金額");
+
+const p2NumberLine = read("client/src/pages/P2NumberLinePractice.tsx");
+assert(p2NumberLine.includes('ans:q.a>q.b?">":"<"'), "P2 數線比較符號須依兩數大小計算");
+
+const p2Applied = read("client/src/pages/P2AppliedPractice.tsx");
+assert(p2Applied.includes("a:q.n%q.g"), "P2 有餘數題須以除法餘數計算答案");
+
+const p2Further = read("client/src/pages/P2FurtherPractice.tsx");
+assert(p2Further.includes("a:q.n*q.k"), "P2 象形圖答案須為圖案數量乘上圖例數值");
+assert(p2Further.includes("1 米 = 100 厘米"), "P2 米厘米換算須明確使用 1 米等於 100 厘米");
+
+const p2Starter = read("client/src/pages/P2P3StarterPractice.tsx");
+assert(p2Starter.includes('q===2?"一半":"四分一"'), "P2 分數初步只可使用一半與四分一的等分圖形");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);

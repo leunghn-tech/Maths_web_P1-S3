@@ -14,13 +14,13 @@ import MidpointBreak from "@/components/MidpointBreak";
 import FinishAchievementOverlay from "@/components/FinishAchievementOverlay";
 
 const questions = [
-  { number: 245, ask: "哪一張是 2 百、4 十、5 個？", answer: 245, choices: [245, 425, 254] },
+  { number: 245, ask: "哪一個數是由 2 個百、4 個十和 5 個一組成？", answer: 245, choices: [245, 425, 254] },
   { number: 361, ask: "3 在哪一個位？", answer: "百位", choices: ["百位", "十位", "個位"] },
-  { number: 508, ask: "哪一張是 5 百、0 十、8 個？", answer: 508, choices: [580, 508, 805] },
+  { number: 508, ask: "哪一個數是由 5 個百、0 個十和 8 個一組成？", answer: 508, choices: [580, 508, 805] },
   { number: 472, ask: "7 在哪一個位？", answer: "十位", choices: ["百位", "十位", "個位"] },
-  { number: 129, ask: "哪一張是 1 百、2 十、9 個？", answer: 129, choices: [192, 219, 129] },
+  { number: 129, ask: "哪一個數是由 1 個百、2 個十和 9 個一組成？", answer: 129, choices: [192, 219, 129] },
   { number: 634, ask: "4 在哪一個位？", answer: "個位", choices: ["百位", "十位", "個位"] },
-  { number: 810, ask: "哪一張是 8 百、1 十、0 個？", answer: 810, choices: [801, 810, 180] },
+  { number: 810, ask: "哪一個數是由 8 個百、1 個十和 0 個一組成？", answer: 810, choices: [801, 810, 180] },
   { number: 293, ask: "9 在哪一個位？", answer: "十位", choices: ["百位", "十位", "個位"] },
 ];
 

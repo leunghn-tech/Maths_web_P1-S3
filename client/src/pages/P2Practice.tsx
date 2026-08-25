@@ -56,10 +56,10 @@ const questionSets: Record<OperationMode, MultiplicationQuestion[]> = {
 
 const difficultyLabels: Record<Difficulty, string> = { easy: "輕鬆", standard: "標準", challenge: "挑戰" };
 const uniqueNumbers = (values: number[]) => Array.from(new Set(values));
-const randomChoices = (answer: number) => uniqueNumbers([answer, answer + 1, Math.max(1, answer - 1), answer + 2]).sort(() => Math.random() - 0.5);
+const randomChoices = (answer: number) => { const values = new Set([answer]); for (let distance = 1; values.size < 4; distance += 1) { if (answer - distance >= 1) values.add(answer - distance); if (values.size < 4) values.add(answer + distance); } return Array.from(values).sort(() => Math.random() - 0.5); };
 
 function generateQuestions(mode: OperationMode, difficulty: Difficulty): MultiplicationQuestion[] {
-  const cap = difficulty === "easy" ? 5 : difficulty === "standard" ? 8 : 12;
+  const cap = difficulty === "easy" ? 5 : difficulty === "standard" ? 8 : 9;
   const colors = ["#0e8b87", "#4f6eae", "#b15979", "#c8811e", "#f05a3c"];
   return Array.from({ length: 8 }, (_, index) => {
     const groups = 2 + Math.floor(Math.random() * Math.max(2, cap - 1));
@@ -67,10 +67,13 @@ function generateQuestions(mode: OperationMode, difficulty: Difficulty): Multipl
     const total = groups * each;
     if (mode === "multiply") return { groups, each, expression: `${groups} × ${each}`, answer: total, choices: randomChoices(total), note: `${groups} 組，每組有 ${each} 個。`, color: colors[index] };
     if (mode === "divide") return { groups, each, expression: `${total} ÷ ${groups}`, answer: each, choices: randomChoices(each), note: `${total} 個平均分成 ${groups} 組。`, color: colors[index] };
+    const useDivision = mode === "mixed" && index % 2 === 1;
+    const baseAnswer = useDivision ? each : total;
+    const baseExpression = useDivision ? `${total} ÷ ${groups}` : `${groups} × ${each}`;
     const extra = difficulty === "easy" ? 1 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 6);
     const add = Math.random() > 0.5;
-    const answer = add ? total + extra : total - Math.min(extra, total - 1);
-    return { groups, each, expression: `${groups} × ${each} ${add ? "+" : "−"} ${extra}`, answer, choices: randomChoices(answer), note: `先算 ${groups} × ${each}，再${add ? "加" : "減"} ${extra}。`, color: colors[index] };
+    const answer = add ? baseAnswer + extra : baseAnswer - Math.min(extra, baseAnswer - 1);
+    return { groups, each, expression: `${baseExpression} ${add ? "+" : "−"} ${extra}`, answer, choices: randomChoices(answer), note: `先算 ${baseExpression}，再${add ? "加" : "減"} ${extra}。`, color: colors[index] };
   });
 }
 
