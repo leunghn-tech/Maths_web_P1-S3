@@ -665,6 +665,9 @@
 /* 小螢幕先看題目：將重新選擇課題與難度移到作答後，避免任務面板佔去首屏。 */
 .mq-mobile-setup { display: none; }
 @media (max-width: 1023px) {
+  .mq-practice-grid { display: flex !important; flex-direction: column; }
+  .mq-practice-grid > .mq-practice-card { order: 1 !important; }
+  .mq-practice-grid > .mq-practice-sidebar { order: 2 !important; }
   .mq-p1-practice .mq-p1-setup { display: none; }
   .mq-p1-practice main { padding-top: .85rem; }
   .mq-p1-practice .mq-practice-grid { gap: 1rem; }
