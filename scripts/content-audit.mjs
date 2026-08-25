@@ -268,6 +268,24 @@ const p6Profit = read("client/src/pages/P6ProfitPractice.tsx");
 assert(p6Profit.includes("HK$"), "P6 利潤題須以 HK$ 顯示港幣");
 assert(p6Profit.includes("售價 = 成本 + 利潤"), "P6 售價反推題須使用成本加利潤的正確關係");
 
+const s1Routes = ["/practice/s1", "/practice/s1-interactive"];
+for (const route of s1Routes) assert(appRoutes.has(route), `S1 練習路徑未註冊：${route}`);
+
+const s1Bilingual = read("client/src/pages/S1BilingualPractice.tsx");
+assert(s1Bilingual.includes('"-4 − 6 是多少？", "What is -4 - 6?", "-10"'), "S1 有向數題必須正確計算負四減六為負十");
+assert(s1Bilingual.includes('"3x＋2＝17，x 是？", "Solve 3x + 2 = 17.", "5"'), "S1 一元一次方程題必須正確求得 x 為五");
+assert(s1Bilingual.includes('"3，6，9，… 的第 n 項是？", "What is the nth term of 3, 6, 9, ...?", "3n"'), "S1 數列第 n 項題必須正確表達為 3n");
+assert(s1Bilingual.includes('"120 km 用 2 h，速率是？", "120 km in 2 h. What is the speed?", "60 km/h"'), "S1 速率題必須正確以路程除時間計算");
+assert(s1Bilingual.includes('"三角形底 8 cm、高 5 cm，面積是？", "Triangle base 8 cm, height 5 cm. Area?", "20 cm²"'), "S1 三角形面積題必須正確使用二分之一乘底乘高");
+assert(s1Bilingual.includes("CMI 中文") && s1Bilingual.includes("EMI English"), "S1 題庫必須提供 CMI 及 EMI 題面切換");
+assert(s1Bilingual.includes("if (index === 7)"), "S1 雙語題庫站須完成八題才可結算");
+
+const s1Interactive = read("client/src/pages/S1InteractiveFoundations.tsx");
+assert(s1Interactive.includes('target: -7'), "S1 互動數線須包含負數定位任務");
+assert(s1Interactive.includes('parts: [6, -2], target: 4'), "S1 互動代數積木須正確合併六 x 減二 x 為四 x");
+assert(s1Interactive.includes('start: "2x + 3 = 11"'), "S1 互動方程站須提供標準兩步方程");
+assert(s1Interactive.includes("if (index === 7)"), "S1 互動站須完成八題才可結算");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);
