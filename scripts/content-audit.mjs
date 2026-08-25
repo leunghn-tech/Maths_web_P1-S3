@@ -148,6 +148,43 @@ assert(p3Geometry.includes("同一平面內，兩條永不相交的直線"), "P3
 assert(p3Geometry.includes("兩條相交後形成直角的直線"), "P3 垂直線題幹須使用直角定義");
 assert(p3Geometry.includes("if (index === 7)"), "P3 平行垂直線站須完成八題才可結算");
 
+const p4Routes = [
+  "/practice/p4-grid-area", "/practice/p4-fractions-visual", "/practice/p4-decimals-line", "/practice/p4-triangles", "/practice/p4-eight-directions",
+  "/practice/p4-quadrilateral-map", "/practice/p4-bar-chart", "/practice/p4-decimal-shopping", "/practice/p4-route-planning", "/practice/p4-bar-compare",
+  "/practice/p4-fractions-decimals", "/practice/p4-factors-multiples", "/practice/p4-perimeter-area", "/practice/p4-polygon-area",
+];
+for (const route of p4Routes) assert(appRoutes.has(route), `P4 練習路徑未註冊：${route}`);
+
+const p4QuestionStation = read("client/src/components/P4QuestionStation.tsx");
+assert(p4QuestionStation.includes("Array.from({ length: 8 }"), "P4 隨機題站每組必須產生 8 題");
+assert(p4QuestionStation.includes("完成 8 題"), "P4 隨機題站任務文案須與八題流程一致");
+
+const p4Visual = read("client/src/pages/P4VisualPractice.tsx");
+assert(p4Visual.includes("area: item.width * item.height"), "P4 方格面積答案必須由長乘闊計算");
+assert(p4Visual.includes('answer: "1/2", shaded: 3, choices: ["1/2", "1/6", "2/6", "4/6"]'), "P4 分數題不得同時提供與正解等值的分數選項");
+assert(p4Visual.includes("if (index === 7)"), "P4 方格面積及分數站須完成八題才可結算");
+
+const p4Concept = read("client/src/pages/P4ConceptPractice.tsx");
+assert(p4Concept.includes("HK$2 和 75 仙"), "P4 小數港幣題須使用 HK$ 與仙的正式寫法");
+assert(p4Concept.includes("有兩條邊一樣長"), "P4 等腰三角形題幹須明確指出兩條邊一樣長");
+assert(p4Concept.includes('move: "向右 1 格、向上 1 格"'), "P4 八方向題須提供可判定的位置移動資料");
+
+const p4Complete = read("client/src/pages/P4CompletePractice.tsx");
+assert(p4Complete.includes("只有一組對邊平行"), "P4 梯形題幹須使用一組對邊平行的定義");
+assert(p4Complete.includes("每一格代表"), "P4 棒形圖題須清楚標示每格代表的數量");
+assert(p4Complete.includes("HK$2.50"), "P4 小數購物題須以 HK$ 顯示金額");
+
+const p4Factors = read("client/src/pages/P4FactorsPractice.tsx");
+assert(p4Factors.includes("const nonFactors"), "P4 因數題須排除其他可整除的干擾項");
+
+const p4Measure = read("client/src/pages/P4MeasurePractice.tsx");
+assert(p4Measure.includes("平方厘米"), "P4 面積題的題幹與答案必須標示平方厘米");
+assert(p4Measure.includes("周界是多少厘米"), "P4 周界題的題幹與答案必須標示厘米");
+
+const p4Polygon = read("client/src/pages/P4PolygonAreaPractice.tsx");
+assert(p4Polygon.includes("const top = proposedTop % 2 === base % 2"), "P4 梯形面積題須控制上下底同奇偶以確保整數答案");
+assert(p4Polygon.includes("平方厘米"), "P4 多邊形面積題的選項必須標示平方厘米");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);
