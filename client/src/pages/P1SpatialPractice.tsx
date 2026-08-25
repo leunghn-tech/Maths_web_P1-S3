@@ -1,5 +1,5 @@
 /** Maths Quest P1 空間遊戲：生活物件分類、圖形旋轉與長度排序。 */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, ArrowRight, Check, Cuboid, Lightbulb, Moon, RotateCcw, Sparkles, Star, Sun, Trophy, Volume2, VolumeX, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -12,10 +12,10 @@ import CorrectCelebration from "@/components/CorrectCelebration";
 
 type Mode = "solid" | "rotate" | "sort"; type Result = "idle" | "correct" | "incorrect";
 type Solid = "球體" | "柱體" | "錐體";
-const solidItems = [{ emoji: "⚽", name: "足球", answer: "球體" as Solid }, { emoji: "🥫", name: "汽水罐", answer: "柱體" as Solid }, { emoji: "🍦", name: "雪糕筒", answer: "錐體" as Solid }, { emoji: "🪀", name: "悠悠球", answer: "球體" as Solid }, { emoji: "🕯️", name: "蠟燭", answer: "柱體" as Solid }, { emoji: "🎉", name: "派對帽", answer: "錐體" as Solid }];
+const solidItems = [{ emoji: "⚽", name: "足球", answer: "球體" as Solid }, { emoji: "🥫", name: "汽水罐", answer: "柱體" as Solid }, { emoji: "🍦", name: "雪糕筒", answer: "錐體" as Solid }, { emoji: "🍊", name: "橙", answer: "球體" as Solid }, { emoji: "🕯️", name: "蠟燭", answer: "柱體" as Solid }, { emoji: "🎉", name: "派對帽", answer: "錐體" as Solid }];
 const rotationItems = [{ shape: "▲", name: "三角形", degree: 120 }, { shape: "▰", name: "長方形", degree: 90 }, { shape: "◆", name: "正方形", degree: 45 }, { shape: "▶", name: "三角形", degree: 90 }];
 const sortItems = [[{ emoji: "✏️", name: "鉛筆", length: 7 }, { emoji: "📏", name: "尺子", length: 14 }, { emoji: "🎀", name: "絲帶", length: 20 }], [{ emoji: "🥄", name: "湯匙", length: 9 }, { emoji: "🪥", name: "牙刷", length: 12 }, { emoji: "🌿", name: "樹枝", length: 17 }], [{ emoji: "🧱", name: "積木", length: 5 }, { emoji: "🥤", name: "吸管", length: 15 }, { emoji: "🪢", name: "繩子", length: 22 }]];
-const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - .5);
+const shuffle = <T,>(items: T[]) => [...items];
 const modeFromPath = (path: string): Mode => path.includes("rotation") ? "rotate" : path.includes("length-sort") ? "sort" : "solid";
 const meta: Record<Mode, { key: string; code: string; title: string; subtitle: string; action: string; hint: string; icon: string }> = { solid: { key: "p1-solids", code: "P1.07", title: "立體圖形", subtitle: "把生活物件分類到正確立體形狀。", action: "選出它是哪一種立體形狀", hint: "圓圓會滾動的是球體；上下平平的是柱體；尖尖一端的是錐體。", icon: "🧊" }, rotate: { key: "p1-shape-rotation", code: "P1.06B", title: "旋轉圖形", subtitle: "轉一轉，圖形還是同一個圖形。", action: "把圖形轉到指定方向", hint: "轉動只是改變方向，邊和角的數量不會改變。", icon: "🔄" }, sort: { key: "p1-length-sort", code: "P1.05C", title: "長度排序", subtitle: "把三件物件由短到長排好。", action: "按由短到長的次序點選物件", hint: "先找最短，再找中間，最後就是最長。", icon: "📏" } };
 
@@ -24,6 +24,7 @@ export default function P1SpatialPractice() {
   const session = useMemo(() => Array.from({ length: 8 }, (_, i) => mode === "solid" ? solidItems[i % solidItems.length] : mode === "rotate" ? rotationItems[i % rotationItems.length] : sortItems[i % sortItems.length]), [mode]);
   const [index, setIndex] = useState(0); const [result, setResult] = useState<Result>("idle"); const [score, setScore] = useState(0); const [seconds, setSeconds] = useState(0); const [sound, setSound] = useState(true); const [finished, setFinished] = useState(false); const [selected, setSelected] = useState<string[]>([]); const [rotation, setRotation] = useState(0); const item = session[index];
   const completed = index + (result === "correct" ? 1 : 0); const stars = score === 8 ? 3 : score >= 6 ? 2 : score ? 1 : 0; const timeLabel = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  useEffect(() => { if (finished) return; const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000); return () => window.clearInterval(timer); }, [finished]);
   const resetQuestion = () => { setResult("idle"); setSelected([]); setRotation(0); };
   const verify = (answer?: string) => { if (result !== "idle") return; let correct = false; if (mode === "solid") correct = answer === (item as typeof solidItems[number]).answer; else if (mode === "rotate") correct = rotation % 360 === (item as typeof rotationItems[number]).degree; else { const expected = [...(item as typeof sortItems[number])].sort((a, b) => a.length - b.length).map((entry) => entry.name); correct = selected.length === 3 && selected.every((name, i) => name === expected[i]); } if (correct) { setResult("correct"); setScore((v) => v + 1); if (sound) { playCorrectSound(); speakCorrectEncouragement(); } } else { setResult("incorrect"); if (sound) { playWrongSound(); speakTryAgain(); } } };
   const next = () => { if (index === 7) { setFinished(true); markPracticeCompleted(info.key); recordDailyPractice(info.key); if (sound) playCelebrationSound(); return; } setIndex((v) => v + 1); resetQuestion(); };

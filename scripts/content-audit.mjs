@@ -41,6 +41,34 @@ auditSecondaryBank("client/src/pages/S1BilingualPractice.tsx", "S1", 15, "questi
 auditSecondaryBank("client/src/pages/S2BilingualPractice.tsx", "S2", 13, "r:q");
 auditSecondaryBank("client/src/pages/S3BilingualPractice.tsx", "S3", 9, "r:q");
 
+const p1Routes = [
+  "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",
+  "/practice/p1-measure", "/practice/p1-length-compare", "/practice/p1-shapes", "/practice/p1-solids",
+  "/practice/p1-shape-rotation", "/practice/p1-length-sort", "/practice/p1-counting", "/practice/p1-calendar",
+  "/practice/p1-lines", "/practice/p1-pictograph",
+];
+for (const route of p1Routes) assert(appRoutes.has(route), `P1 練習路徑未註冊：${route}`);
+
+const p1Foundations = read("client/src/pages/P1FoundationsPractice.tsx");
+assert(!p1Foundations.includes('days: ["星期日", "星期一", "星期二"]'), "P1 星期排序不可把星期日排在星期一之前");
+assert(p1Foundations.includes("每個圖形代表 1 個單位"), "P1 象形圖須明確標示每個圖形代表 1 個單位");
+assert(p1Foundations.includes("for (let distance = 1; choices.size < 4"), "P1 數數題必須提供四個不重複選項");
+
+const p1Numbers = read("client/src/pages/P1NumbersPractice.tsx");
+assert(p1Numbers.includes("value >= 90 ? value - 10"), "P1 比大小題必須避免產生兩個相同數字");
+
+const p1Time = read("client/src/pages/P1TimePractice.tsx");
+assert(p1Time.includes("`${hour}時正`"), "P1 鐘面整點答案須採正式時間書寫");
+assert(p1Time.includes("[5, 10, 15, 20, 25, 35, 40, 45, 50, 55]"), "P1 幾時幾分題只可使用五分鐘刻度");
+
+const p1NumberLine = read("client/src/pages/P1NumberLinePractice.tsx");
+assert(p1NumberLine.includes("const span = step * 2"), "P1 數線跳格題必須以兩次跳躍計算終點");
+assert(p1NumberLine.includes("value >= 0 && value <= 20"), "P1 數線答案必須限制在 0 至 20");
+
+const p1Spatial = read("client/src/pages/P1SpatialPractice.tsx");
+assert(p1Spatial.includes('name: "橙", answer: "球體"'), "P1 立體圖形生活物件須使用分類明確的球體例子");
+assert(p1Spatial.includes("const shuffle = <T,>(items: T[]) => [...items];"), "P1 長度排序選項不可在作答時重新排列");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);

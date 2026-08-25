@@ -17,7 +17,7 @@ import VisualReviewHint from "@/components/VisualReviewHint";
 
 type Question = { hour: number; minute: number; label: string; hint: string };
 type Result = "idle" | "correct" | "incorrect";
-function labelTime(hour: number, minute: number) { return minute === 0 ? `${hour} 時正` : minute === 30 ? `${hour} 時半` : `${hour} 時 ${minute} 分`; }
+function labelTime(hour: number, minute: number) { return minute === 0 ? `${hour}時正` : minute === 30 ? `${hour}時半` : `${hour}時${minute}分`; }
 function session(advanced = false) { return Array.from({ length: 8 }, () => { const hour = 1 + Math.floor(Math.random() * 12); const minute = advanced ? [5, 10, 15, 20, 25, 35, 40, 45, 50, 55][Math.floor(Math.random() * 10)] : [0, 30][Math.floor(Math.random() * 2)]; return { hour, minute, label: labelTime(hour, minute), hint: minute === 0 ? "分針指向 12；時針指向這個數字。" : minute === 30 ? "分針指向 6；時針在兩個數字中間。" : `分針每一格是 5 分，現在指向 ${minute / 5}。` }; }); }
 function ClockFace({ hour, minute, onChange }: { hour: number; minute: number; onChange: (part: "hour" | "minute", value: number) => void }) {
   const [dragging, setDragging] = useState<"hour" | "minute" | null>(null);

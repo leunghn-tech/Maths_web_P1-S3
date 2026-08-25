@@ -22,7 +22,7 @@ type Question = { mode: Mode; answer: number; choices: number[]; prompt: string;
 function choicesFor(answer: number, limit = 100) { return Array.from(new Set([answer, Math.max(1, answer - 10), Math.min(limit, answer + 10), answer % 10 === 9 ? answer - 1 : answer + 1])).sort(() => Math.random() - .5); }
 function makeQuestion(mode: Mode): Question {
   const value = 11 + Math.floor(Math.random() * 89);
-  if (mode === "compare") { const other = Math.max(1, Math.min(99, value + (Math.random() > .5 ? 10 : -10))); const answer = Math.max(value, other); return { mode, answer, choices: [value, other], value, other, prompt: "哪一個數較大？", note: "先看十位；十位一樣時，再看個位。" }; }
+  if (mode === "compare") { const other = value >= 90 ? value - 10 : value + (Math.random() > .5 && value > 10 ? -10 : 10); const answer = Math.max(value, other); return { mode, answer, choices: [value, other], value, other, prompt: "哪一個數較大？", note: "先看十位；十位一樣時，再看個位。" }; }
   if (mode === "sequence") { const start = Math.min(96, value); const answer = start + 2; return { mode, answer, choices: choicesFor(answer), value: start, prompt: `${start}，${start + 1}，？`, note: "順數時，每次加 1。" }; }
   return { mode, answer: value, choices: choicesFor(value), value, prompt: `${Math.floor(value / 10)} 個十和 ${value % 10} 個一，是多少？`, note: "一條十位棒代表 10；一粒圓點代表 1。" };
 }
