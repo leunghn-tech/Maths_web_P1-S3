@@ -286,6 +286,24 @@ assert(s1Interactive.includes('parts: [6, -2], target: 4'), "S1 互動代數積�
 assert(s1Interactive.includes('start: "2x + 3 = 11"'), "S1 互動方程站須提供標準兩步方程");
 assert(s1Interactive.includes("if (index === 7)"), "S1 互動站須完成八題才可結算");
 
+const s2Routes = ["/practice/s2", "/practice/s2-interactive"];
+for (const route of s2Routes) assert(appRoutes.has(route), `S2 練習路徑未註冊：${route}`);
+
+const s2Bilingual = read("client/src/pages/S2BilingualPractice.tsx");
+assert(s2Bilingual.includes('"a³ × a² 是？","What is a³ × a²?","a⁵"'), "S2 同底數相乘題必須正確相加指數");
+assert(s2Bilingual.includes('"x²＋5x 因式分解是？","Factorise x² + 5x.","x(x+5)"'), "S2 因式分解題必須正確提取 x 公因式");
+assert(s2Bilingual.includes('"x＋y＝7，x−y＝1，x 是？","Solve x+y=7, x-y=1. Find x.","4"'), "S2 聯立方程題必須正確求得 x 為四");
+assert(s2Bilingual.includes('"直角邊 3、4，斜邊是？","Legs 3 and 4. Hypotenuse?","5"'), "S2 畢氏定理題必須正確計算三四五直角三角形");
+assert(s2Bilingual.includes('"(0,0) 與 (3,4) 的距離是？","Distance between (0,0) and (3,4)?","5"'), "S2 坐標距離題必須正確計算為五");
+assert(s2Bilingual.includes("CMI 中文") && s2Bilingual.includes("EMI English"), "S2 題庫必須提供 CMI 及 EMI 題面切換");
+assert(s2Bilingual.includes("if(index===7)"), "S2 雙語題庫站須完成八題才可結算");
+
+const s2Interactive = read("client/src/pages/S2InteractiveCore.tsx");
+assert(s2Interactive.includes('{a:5,b:0,rule:"add",result:5}'), "S2 互動指數站須正確處理 a⁵×a⁰ 為 a⁵");
+assert(s2Interactive.includes('expr:"x² + 5x",factor:"x",inside:"x + 5"'), "S2 互動因式分解須正確提取 x 公因式");
+assert(s2Interactive.includes('answer:"x = 4, y = 3"'), "S2 互動聯立方程須正確求解 x 為四、y 為三");
+assert(s2Interactive.includes("if(index===7)"), "S2 互動站須完成八題才可結算");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);

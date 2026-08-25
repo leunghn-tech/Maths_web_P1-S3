@@ -8,7 +8,7 @@ import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese } from "@/lib/speech";
 
 const stations={
-  indices:{zh:"指數定律",en:"Laws of Indices",tag:"INDEX MODEL",cue:["先看底數是否相同；相乘時才把指數相加。","Check whether bases match; add exponents only when multiplying."],items:[{a:3,b:2,rule:"add",result:5},{a:7,b:3,rule:"subtract",result:4},{a:2,b:3,rule:"multiply",result:6},{a:5,b:0,rule:"zero",result:0}]},
+  indices:{zh:"指數定律",en:"Laws of Indices",tag:"INDEX MODEL",cue:["先看底數是否相同；相乘時才把指數相加。","Check whether bases match; add exponents only when multiplying."],items:[{a:3,b:2,rule:"add",result:5},{a:7,b:3,rule:"subtract",result:4},{a:2,b:3,rule:"multiply",result:6},{a:5,b:0,rule:"add",result:5}]},
   factor:{zh:"因式分解",en:"Factorization",tag:"FACTOR TILES",cue:["先找每一項共同擁有的因數，再把餘下部分放進括號。","Find the common factor in every term, then place what remains inside brackets."],items:[{expr:"6x + 9",factor:"3",inside:"2x + 3"},{expr:"4a − 12",factor:"4",inside:"a − 3"},{expr:"x² + 5x",factor:"x",inside:"x + 5"},{expr:"8y + 4",factor:"4",inside:"2y + 1"}]},
   simultaneous:{zh:"聯立線性方程",en:"Simultaneous Linear Equations",tag:"SYSTEM SOLVER",cue:["先選方法；每一行只做一個清楚的等價變換。","Choose a method first; perform one clear equivalent step on each line."],items:[{one:"x + y = 7",two:"x − y = 1",method:"消元 / Elimination",middle:"2x = 8",answer:"x = 4, y = 3"},{one:"x + y = 5",two:"2x + y = 8",method:"消元 / Elimination",middle:"x = 3",answer:"x = 3, y = 2"},{one:"y = 8 − 2x",two:"x + y = 5",method:"代入 / Substitution",middle:"x + 8 − 2x = 5",answer:"x = 3, y = 2"},{one:"y = 6 − x",two:"2x + y = 9",method:"代入 / Substitution",middle:"2x + 6 − x = 9",answer:"x = 3, y = 3"}]}
 };
