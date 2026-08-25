@@ -25,7 +25,7 @@ export default function SignInPage() {
   const isTeacher = mode === "teacher";
   const isRecovery = mode === "student-recovery" || mode === "student-reset";
   const resetVisibility = () => { setShowPassword(false); setShowConfirmPassword(false); };
-  const afterLogin = async (destination: string, sessionToken?: string) => { saveLocalSession(sessionToken); await utils.auth.me.invalidate(); await utils.auth.me.fetch(); setLocation(destination); };
+  const afterLogin = async (destination: string, sessionToken?: string) => { saveLocalSession(sessionToken); await utils.auth.me.invalidate(); setLocation(destination); };
   const studentLogin = trpc.auth.loginStudent.useMutation({ onSuccess: (data) => void afterLogin("/", data.sessionToken), onError: (error) => toast.error(error.message) });
   const studentRegister = trpc.auth.registerStudent.useMutation({ onSuccess: async (data) => { saveLocalSession(data.sessionToken); setRecoveryCode(data.recoveryCode); await utils.auth.me.invalidate(); }, onError: (error) => { if (error.message.includes("已被使用")) { setMode("student-login"); setPassword(""); setConfirmPassword(""); resetVisibility(); toast.error("這個用戶名稱已建立，已切換到學生登入。請輸入原有密碼。", { duration: 6000 }); return; } toast.error(error.message); } });
   const teacherLogin = trpc.auth.loginTeacher.useMutation({ onSuccess: (data) => void afterLogin("/teacher", data.sessionToken), onError: (error) => toast.error(error.message) });
