@@ -304,6 +304,40 @@ assert(s2Interactive.includes('expr:"x² + 5x",factor:"x",inside:"x + 5"'), "S2 
 assert(s2Interactive.includes('answer:"x = 4, y = 3"'), "S2 互動聯立方程須正確求解 x 為四、y 為三");
 assert(s2Interactive.includes("if(index===7)"), "S2 互動站須完成八題才可結算");
 
+const s3Routes = ["/practice/s3", "/practice/s3-interactive", "/practice/s3-sim", "/practice/s3-deep", "/practice/s3-lab"];
+for (const route of s3Routes) assert(appRoutes.has(route), `S3 練習路徑未註冊：${route}`);
+
+const s3Bilingual = read("client/src/pages/S3BilingualPractice.tsx");
+assert(s3Bilingual.includes('"(a+b)² 是？","What is (a+b)²?","a²+2ab+b²"'), "S3 恆等式題必須正確展開完全平方");
+assert(s3Bilingual.includes('"-2x>8，x 是？","Solve -2x>8.","x<-4"'), "S3 負數係數不等式題必須反轉不等號");
+assert(s3Bilingual.includes('"方位角由哪裡量起？","A bearing is measured clockwise from?","北方 / North"'), "S3 方位角題必須由北方順時針量起");
+assert(s3Bilingual.includes('"球體積公式是？","The volume formula of a sphere is?","4/3πr³"'), "S3 球體積公式必須正確為四分之三 πr³");
+assert(s3Bilingual.includes('"公平骰子出 6 的概率是？","Probability of rolling 6 on a fair die?","1/6"'), "S3 骰子概率題必須正確為六分之一");
+assert(s3Bilingual.includes("CMI 中文") && s3Bilingual.includes("EMI English"), "S3 題庫必須提供 CMI 及 EMI 題面切換");
+assert(s3Bilingual.includes("if(index===7)"), "S3 雙語題庫站須完成八題才可結算");
+
+const s3Interactive = read("client/src/pages/S3InteractiveCore.tsx");
+assert(s3Interactive.includes('form:"(a+b)²",answer:"a² + 2ab + b²"'), "S3 互動恆等式站須正確配對完全平方公式");
+assert(s3Interactive.includes('bound:-2,direction:"left",solid:true'), "S3 互動不等式站須正確表示 x≤−2 的實心點向左");
+assert(s3Interactive.includes('claim:"證明 ∠B = ∠C"'), "S3 互動幾何站須包含等腰三角形底角證明");
+assert(s3Interactive.includes("if(index===7)"), "S3 互動站須完成八題才可結算");
+
+const s3Advanced = read("client/src/pages/S3AdvancedSimulations.tsx");
+assert(s3Advanced.includes('{target:"H",prob:"1/2"},{target:"T",prob:"1/2"},{target:"H",prob:"1/2"},{target:"T",prob:"1/2"}'), "S3 基礎概率模擬的目標、硬幣樹狀圖與概率答案必須一致");
+assert(s3Advanced.includes('principal:1000,rate:10,kind:"interest",years:3'), "S3 複利模擬須提供可驗證的本金、利率及年數資料");
+assert(s3Advanced.includes("bearing===item.bearing&&kind===item.kind&&angle===item.angle"), "S3 方位及仰俯角模擬須核對全部設定");
+
+const s3Deep = read("client/src/pages/S3DeepSimulations.tsx");
+assert(s3Deep.includes('answer==="1/3"&&draws.length===2'), "S3 不放回樹狀圖須正確驗證先紅後藍的概率為三分之一");
+assert(s3Deep.includes("h = {distance} × tan {angle}°"), "S3 三角學高度站須顯示正切的距離與高度關係");
+
+const s3Lab = read("client/src/pages/S3LabPlus.tsx");
+assert(s3Lab.includes("height / Math.tan(angle * Math.PI / 180)"), "S3 反算三角學站須以高度除正切求水平距離");
+assert(s3Lab.includes("Math.atan(height / distance)"), "S3 反算三角學站須以反正切求角度");
+assert(s3Lab.includes("bag.filter((_, i) => i !== pick)"), "S3 自訂抽樣袋必須在不放回抽樣後移除已抽球");
+assert(s3Lab.includes("principal * Math.pow(1 + monthlyRate, months)"), "S3 儲蓄目標站須以複利公式計算本金增長");
+assert(s3Lab.includes("monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate)"), "S3 每月供款模擬須使用年金終值公式");
+
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
   for (const failure of failures) console.error(`- ${failure}`);
