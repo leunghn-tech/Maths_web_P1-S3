@@ -5,6 +5,7 @@ import PrimaryFractionFormatter from "@/components/PrimaryFractionFormatter";
 import PrimaryLearningCoach from "@/components/PrimaryLearningCoach";
 import CloudLearningSync from "@/components/CloudLearningSync";
 import PracticeQuestionProgress from "@/components/PracticeQuestionProgress";
+import SecondaryOptionLanguageSync from "@/components/SecondaryOptionLanguageSync";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -194,6 +195,7 @@ export default function App() {
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
           <PracticeQuestionProgress />
+          <SecondaryOptionLanguageSync />
           <Toaster richColors position="top-center" />
           <div className="fixed bottom-3 right-3 z-50"><CloudLearningSync /></div>
           <Router />
