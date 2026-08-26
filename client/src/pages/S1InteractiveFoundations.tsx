@@ -6,6 +6,7 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { recordDailyPractice } from "@/lib/dailyPractice";
 import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese } from "@/lib/speech";
+import { getDifficultyQuestionIndex, getSecondaryDifficulty } from "@/lib/secondaryDifficulty";
 
 const stations = {
   directed: {
@@ -24,9 +25,10 @@ const stations = {
 
 export default function S1InteractiveFoundations() {
   const topic = new URLSearchParams(location.search).get("topic") || "directed";
+  const difficulty = getSecondaryDifficulty();
   const station = stations[topic] || stations.directed;
   const [lang, setLang] = useState("zh"), [index, setIndex] = useState(0), [value, setValue] = useState(0), [chosen, setChosen] = useState<number[]>([]), [step, setStep] = useState(0), [result, setResult] = useState(""), [complete, setComplete] = useState(false);
-  const item = station.items[index % station.items.length];
+  const item = station.items[getDifficultyQuestionIndex(difficulty, index, station.items.length)];
   const label = lang === "zh" ? station.zh : station.en;
   const reset = () => { setValue(0); setChosen([]); setStep(0); setResult(""); };
   const advance = () => { if (index === 7) { markPracticeCompleted(`s1-${topic}-interactive`); recordDailyPractice(`s1-${topic}-interactive`); setComplete(true); } else { setIndex(index + 1); reset(); } };

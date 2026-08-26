@@ -6,6 +6,7 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { recordDailyPractice } from "@/lib/dailyPractice";
 import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese } from "@/lib/speech";
+import { getDifficultyQuestionIndex, getSecondaryDifficulty } from "@/lib/secondaryDifficulty";
 import { localizeSecondaryOption } from "@/lib/secondaryBilingual";
 
 const make = (rows) => rows.map(([zh, en, answer, ...wrong]) => ({ zh, en, answer, wrong }));
@@ -45,11 +46,12 @@ const formalQuestionText = {
 export default function S1BilingualPractice() {
   const id = new URLSearchParams(location.search).get("topic") || "directed";
   const station = topics[id] || topics.directed;
+  const difficulty = getSecondaryDifficulty();
   const [language, setLanguage] = useState(new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh");
   const [index, setIndex] = useState(0);
   const [status, setStatus] = useState("");
   const [finished, setFinished] = useState(false);
-  const sourceQuestion = station.questions[index];
+  const sourceQuestion = station.questions[getDifficultyQuestionIndex(difficulty, index, station.questions.length)];
   const question = { ...sourceQuestion, zh: formalQuestionText[sourceQuestion.zh] ?? sourceQuestion.zh };
   const title = station.title[language === "zh" ? 0 : 1];
   const speak = () => { const text = language === "zh" ? question.zh : question.en; if (language === "zh") speakCantonese(text); else if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = "en-HK"; window.speechSynthesis.speak(utterance); } };

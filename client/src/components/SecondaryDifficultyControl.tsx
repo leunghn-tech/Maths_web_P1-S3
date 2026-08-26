@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { getDifficultyLabels, getSecondaryDifficulty, secondaryDifficultyOrder, type SecondaryDifficulty } from "@/lib/secondaryDifficulty";
+import { getDifficultyDescription, getDifficultyLabels, getSecondaryDifficulty, secondaryDifficultyOrder, type SecondaryDifficulty } from "@/lib/secondaryDifficulty";
 
 const secondaryPaths = new Set([
   "/practice/s1",
@@ -45,6 +45,12 @@ function applyDifficultyMode() {
     }
   });
 
+  if (["/practice/s1", "/practice/s2", "/practice/s3"].includes(location.pathname)) {
+    document.querySelectorAll<HTMLElement>(".mq-practice-card > div.mx-auto.my-6").forEach((visual) => {
+      if (!visual.hidden) visual.hidden = true;
+    });
+  }
+
   const header = document.querySelector<HTMLElement>("main header");
   if (!header) return;
   let control = header.querySelector<HTMLElement>(".secondary-difficulty-control");
@@ -70,6 +76,14 @@ function applyDifficultyMode() {
     });
     control?.append(button);
   });
+  let description = header.querySelector<HTMLElement>(".secondary-difficulty-description");
+  if (!description) {
+    description = document.createElement("small");
+    description.className = "secondary-difficulty-description w-full text-[11px] font-bold leading-4 text-[#617286] sm:ml-auto sm:w-auto sm:max-w-[270px]";
+    header.append(description);
+  }
+  const text = getDifficultyDescription(difficulty, language);
+  if (description.textContent !== text) description.textContent = text;
 }
 
 export default function SecondaryDifficultyControl() {

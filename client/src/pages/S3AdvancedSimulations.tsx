@@ -6,6 +6,7 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { recordDailyPractice } from "@/lib/dailyPractice";
 import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese } from "@/lib/speech";
+import { getDifficultyQuestionIndex, getSecondaryDifficulty } from "@/lib/secondaryDifficulty";
 
 const stations = {
   trig: {
@@ -53,6 +54,7 @@ const stations = {
 export default function S3AdvancedSimulations() {
   const topic = new URLSearchParams(location.search).get("topic") || "trig";
   const station = stations[topic] || stations.trig;
+  const difficulty = getSecondaryDifficulty();
   const [lang, setLang] = useState("zh");
   const [index, setIndex] = useState(0);
   const [bearing, setBearing] = useState(0);
@@ -63,7 +65,7 @@ export default function S3AdvancedSimulations() {
   const [years, setYears] = useState(1);
   const [result, setResult] = useState("");
   const [complete, setComplete] = useState(false);
-  const item = station.items[index];
+  const item = station.items[getDifficultyQuestionIndex(difficulty, index, station.items.length)];
   const label = lang === "zh" ? station.zh : station.en;
 
   const reset = () => { setBearing(0); setKind("elevation"); setAngle(0); setPick(""); setSamples({ H: 0, T: 0 }); setYears(1); setResult(""); };

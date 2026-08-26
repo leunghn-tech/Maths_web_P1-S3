@@ -10,8 +10,9 @@ describe("secondary difficulty routing", () => {
 
   it("routes the eight-question flow to foundation, full, or challenge bands", () => {
     expect(getDifficultyQuestionIndex("basic", 5, 8)).toBe(1);
-    expect(getDifficultyQuestionIndex("standard", 5, 8)).toBe(5);
-    expect(getDifficultyQuestionIndex("challenge", 5, 8)).toBe(5);
-    expect(getDifficultyQuestionIndex("challenge", 0, 8)).toBe(4);
+    expect(getDifficultyQuestionIndex("standard", 0, 8)).toBe(3);
+    expect(getDifficultyQuestionIndex("standard", 5, 8)).toBe(0);
+    expect(getDifficultyQuestionIndex("challenge", 0, 8)).toBe(5);
+    expect(getDifficultyQuestionIndex("challenge", 5, 8)).toBe(6);
   });
 });
