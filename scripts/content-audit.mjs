@@ -52,10 +52,16 @@ for (const route of p1Routes) assert(appRoutes.has(route), `P1 練習路徑未�
 const p1Foundations = read("client/src/pages/P1FoundationsPractice.tsx");
 assert(!p1Foundations.includes('days: ["星期日", "星期一", "星期二"]'), "P1 星期排序不可把星期日排在星期一之前");
 assert(p1Foundations.includes("每個圖形代表 1 個單位"), "P1 象形圖須明確標示每個圖形代表 1 個單位");
+assert(!p1Foundations.includes('replace("星期", "週")'), "P1 星期題面須統一使用正式「星期」書寫");
 assert(p1Foundations.includes("for (let distance = 1; choices.size < 4"), "P1 數數題必須提供四個不重複選項");
+
+const p1Practice = read("client/src/pages/P1Practice.tsx");
+assert(p1Practice.includes('const item = ["積木", "蘋果", "星星", "鉛筆", "小花"]'), "P1 加減法題幹須使用具體生活物件，不可使用不完整數量文字");
 
 const p1Numbers = read("client/src/pages/P1NumbersPractice.tsx");
 assert(p1Numbers.includes("value >= 90 ? value - 10"), "P1 比大小題必須避免產生兩個相同數字");
+assert(p1Numbers.includes("Math.floor(Math.random() * 90)"), "P1 100 以內的數題庫必須涵蓋 100");
+assert(p1Numbers.includes("answer + distance <= limit"), "P1 數字題必須提供範圍內四個不重複選項");
 
 const p1Time = read("client/src/pages/P1TimePractice.tsx");
 assert(p1Time.includes("`${hour}時正`"), "P1 鐘面整點答案須採正式時間書寫");
@@ -64,10 +70,12 @@ assert(p1Time.includes("[5, 10, 15, 20, 25, 35, 40, 45, 50, 55]"), "P1 幾時幾
 const p1NumberLine = read("client/src/pages/P1NumberLinePractice.tsx");
 assert(p1NumberLine.includes("const span = step * 2"), "P1 數線跳格題必須以兩次跳躍計算終點");
 assert(p1NumberLine.includes("value >= 0 && value <= 20"), "P1 數線答案必須限制在 0 至 20");
+assert(p1NumberLine.includes("values.size < 4 && distance <= 20"), "P1 數線端點題必須補足四個不重複選項");
 
 const p1Spatial = read("client/src/pages/P1SpatialPractice.tsx");
 assert(p1Spatial.includes('name: "橙", answer: "球體"'), "P1 立體圖形生活物件須使用分類明確的球體例子");
-assert(p1Spatial.includes("const shuffle = <T,>(items: T[]) => [...items];"), "P1 長度排序選項不可在作答時重新排列");
+assert(p1Spatial.includes('degree: 135'), "P1 旋轉目標必須可由 45° 操作到達");
+assert(p1Spatial.includes("const sortChoices = useMemo"), "P1 長度排序選項必須在同一題作答期間保持固定次序");
 
 const p2Routes = [
   "/practice/p2-multiplication", "/practice/p2-numbers", "/practice/p2-money", "/practice/p2-time",

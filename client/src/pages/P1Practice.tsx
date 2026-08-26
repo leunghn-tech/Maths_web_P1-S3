@@ -50,15 +50,16 @@ function generateQuestions(difficulty: Difficulty, mode: OperationMode) {
   const ceiling = difficulty === "easy" ? 10 : difficulty === "standard" ? 15 : 20;
   const colors = ["#f05a3c", "#0e8b87", "#4f6eae", "#b15979", "#c8811e"];
   return Array.from({ length: 8 }, (_, index) => {
+    const item = ["積木", "蘋果", "星星", "鉛筆", "小花"][index % 5];
     const operator: Question["operator"] = mode === "add" ? "+" : mode === "subtract" ? "−" : Math.random() > 0.48 ? "+" : "−";
     if (operator === "+") {
       const first = 1 + Math.floor(Math.random() * Math.max(2, ceiling - 2));
       const second = 1 + Math.floor(Math.random() * Math.max(1, ceiling - first));
-      return { first, operator, second, answer: first + second, story: `${first} 個數量，再放上 ${second} 個。`, color: colors[index] };
+      return { first, operator, second, answer: first + second, story: `有 ${first} 個${item}，再加上 ${second} 個${item}。`, color: colors[index] };
     }
     const first = 3 + Math.floor(Math.random() * Math.max(2, ceiling - 2));
     const second = 1 + Math.floor(Math.random() * Math.max(1, first - 1));
-    return { first, operator, second, answer: first - second, story: `${first} 個數量，拿走 ${second} 個。`, color: colors[index] };
+    return { first, operator, second, answer: first - second, story: `有 ${first} 個${item}，拿走 ${second} 個${item}。`, color: colors[index] };
   });
 }
 
