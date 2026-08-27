@@ -1,18 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { getDifficultyQuestionIndex, getSecondaryDifficulty } from "./secondaryDifficulty";
 
-describe("secondary difficulty routing", () => {
-  it("reads a valid difficulty and defaults safely to standard", () => {
-    expect(getSecondaryDifficulty("?difficulty=basic")).toBe("basic");
-    expect(getSecondaryDifficulty("?difficulty=challenge")).toBe("challenge");
+describe("secondary question routing", () => {
+  it("always uses the single standard learning mode", () => {
+    expect(getSecondaryDifficulty("?difficulty=basic")).toBe("standard");
+    expect(getSecondaryDifficulty("?difficulty=challenge")).toBe("standard");
     expect(getSecondaryDifficulty("?difficulty=unknown")).toBe("standard");
   });
 
-  it("routes the eight-question flow to foundation, full, or challenge bands", () => {
-    expect(getDifficultyQuestionIndex("basic", 5, 8)).toBe(1);
-    expect(getDifficultyQuestionIndex("standard", 0, 8)).toBe(3);
-    expect(getDifficultyQuestionIndex("standard", 5, 8)).toBe(0);
-    expect(getDifficultyQuestionIndex("challenge", 0, 8)).toBe(5);
-    expect(getDifficultyQuestionIndex("challenge", 5, 8)).toBe(6);
+  it("keeps every learner on the same continuous eight-question sequence", () => {
+    expect(getDifficultyQuestionIndex("basic", 0, 8)).toBe(0);
+    expect(getDifficultyQuestionIndex("standard", 5, 8)).toBe(5);
+    expect(getDifficultyQuestionIndex("challenge", 7, 8)).toBe(7);
   });
 });

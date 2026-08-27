@@ -298,8 +298,8 @@ for (const route of s1Routes) assert(appRoutes.has(route), `S1 練習路徑未�
 
 const s1Bilingual = read("client/src/pages/S1BilingualPractice.tsx");
 const secondaryDifficulty = read("client/src/lib/secondaryDifficulty.ts");
-assert(secondaryDifficulty.includes('if (difficulty === "basic")') && secondaryDifficulty.includes('if (difficulty === "standard")'), "S1–S3 難度模式須以獨立題組映射處理基礎、標準及挑戰");
-assert(s1Bilingual.includes("getDifficultyQuestionIndex(difficulty, index, station.questions.length)"), "S1 雙語題庫須依難度選取不同題目區段");
+assert(secondaryDifficulty.includes('return "standard"') && secondaryDifficulty.includes('return Math.min(Math.max(progressIndex, 0), total - 1)'), "S1–S3 須使用單一清晰題序，不能由難度參數改變題目");
+assert(s1Bilingual.includes("getDifficultyQuestionIndex(difficulty, index, station.questions.length)"), "S1 雙語題庫須按連續題序選取題目");
 assert(s1Bilingual.includes('"-4 − 6 是多少？", "What is -4 - 6?", "-10"'), "S1 有向數題必須正確計算負四減六為負十");
 assert(s1Bilingual.includes('"3x＋2＝17，x 是？", "Solve 3x + 2 = 17.", "5"'), "S1 一元一次方程題必須正確求得 x 為五");
 assert(s1Bilingual.includes('"3，6，9，… 的第 n 項是？", "What is the nth term of 3, 6, 9, ...?", "3n"'), "S1 數列第 n 項題必須正確表達為 3n");
@@ -310,7 +310,7 @@ assert(s1Bilingual.includes("if (index === 7)"), "S1 雙語題庫站須完成八
 assert(s1Bilingual.includes("在 -5 和 -2 之間，哪個數較大？") && s1Bilingual.includes("Which number is greater: -5 or -2?") && s1Bilingual.includes("把 21 按 2:5 分配"), "S1 題庫須採用正式中學數學問法，避免含混口語題幹");
 
 const s1Interactive = read("client/src/pages/S1InteractiveFoundations.tsx");
-assert(s1Interactive.includes("getDifficultyQuestionIndex(difficulty, index, station.items.length)"), "S1 互動站須依難度選取不同操作任務");
+assert(s1Interactive.includes("getDifficultyQuestionIndex(difficulty, index, station.items.length)"), "S1 互動站須按連續題序選取操作任務");
 assert(s1Interactive.includes('target: -7'), "S1 互動數線須包含負數定位任務");
 assert(s1Interactive.includes('parts: [6, -2], target: 4'), "S1 互動代數積木須正確合併六 x 減二 x 為四 x");
 assert(s1Interactive.includes('start: "2x + 3 = 11"'), "S1 互動方程站須提供標準兩步方程");
@@ -320,7 +320,7 @@ const s2Routes = ["/practice/s2", "/practice/s2-interactive"];
 for (const route of s2Routes) assert(appRoutes.has(route), `S2 練習路徑未註冊：${route}`);
 
 const s2Bilingual = read("client/src/pages/S2BilingualPractice.tsx");
-assert(s2Bilingual.includes("getDifficultyQuestionIndex(difficulty,index,station.r.length)"), "S2 雙語題庫須依難度選取不同題目區段");
+assert(s2Bilingual.includes("getDifficultyQuestionIndex(difficulty,index,station.r.length)"), "S2 雙語題庫須按連續題序選取題目");
 assert(s2Bilingual.includes('"化簡 a³ × a²。","Simplify a³ × a².","a⁵"'), "S2 同底數相乘題必須以正式問法並正確相加指數");
 assert(s2Bilingual.includes('"把 x²＋5x 因式分解。","Factorise x² + 5x.","x(x+5)"'), "S2 因式分解題必須正確提取 x 公因式");
 assert(s2Bilingual.includes('"解聯立方程 x＋y＝7、x−y＝1，求 x。","Solve x + y = 7 and x - y = 1. Find x.","4"'), "S2 聯立方程題必須以正式問法正確求得 x 為四");
@@ -335,13 +335,13 @@ assert(s2Interactive.includes('{a:5,b:0,rule:"add",result:5}'), "S2 互動指數
 assert(s2Interactive.includes('expr:"x² + 5x",factor:"x",inside:"x + 5"'), "S2 互動因式分解須正確提取 x 公因式");
 assert(s2Interactive.includes('answer:"x = 4, y = 3"'), "S2 互動聯立方程須正確求解 x 為四、y 為三");
 assert(s2Interactive.includes("if(index===7)"), "S2 互動站須完成八題才可結算");
-assert(s2Interactive.includes("item=station.items[getDifficultyQuestionIndex(difficulty,index,station.items.length)]") && s2Interactive.includes("items:[{a:3,b:2"), "S2 互動站須按難度逐題使用八條不重複任務");
+assert(s2Interactive.includes("item=station.items[getDifficultyQuestionIndex(difficulty,index,station.items.length)]") && s2Interactive.includes("items:[{a:3,b:2"), "S2 互動站須按連續題序使用八條不重複任務");
 
 const s3Routes = ["/practice/s3", "/practice/s3-interactive", "/practice/s3-sim", "/practice/s3-deep", "/practice/s3-lab"];
 for (const route of s3Routes) assert(appRoutes.has(route), `S3 練習路徑未註冊：${route}`);
 
 const s3Bilingual = read("client/src/pages/S3BilingualPractice.tsx");
-assert(s3Bilingual.includes("getDifficultyQuestionIndex(difficulty,index,station.r.length)"), "S3 雙語題庫須依難度選取不同題目區段");
+assert(s3Bilingual.includes("getDifficultyQuestionIndex(difficulty,index,station.r.length)"), "S3 雙語題庫須按連續題序選取題目");
 assert(s3Bilingual.includes('"展開 (a+b)²。","Expand (a+b)².","a²+2ab+b²"'), "S3 恆等式題必須以正式問法正確展開完全平方");
 assert(s3Bilingual.includes('"解不等式 −2x > 8。","Solve −2x > 8.","x < −4"'), "S3 負數係數不等式題必須以標準間距反轉不等號");
 assert(s3Bilingual.includes('"方位角由哪個方向順時針量起？","A bearing is measured clockwise from which direction?","北方 / North"'), "S3 方位角題必須由北方順時針量起");
@@ -352,11 +352,11 @@ assert(s3Bilingual.includes("if(index===7)"), "S3 雙語題庫站須完成八題
 assert(!s3Bilingual.includes("（延伸）") && !s3Bilingual.includes("(extension)"), "S3 每站八題必須為不重複正式題目，不能以延伸標籤重覆");
 
 const s3Interactive = read("client/src/pages/S3InteractiveCore.tsx");
-assert(s3Interactive.includes('form:"(a+b)²",answer:"a² + 2ab + b²"'), "S3 互動恆等式站須正確配對完全平方公式");
-assert(s3Interactive.includes('bound:-2,direction:"left",solid:true'), "S3 互動不等式站須正確表示 x≤−2 的實心點向左");
-assert(s3Interactive.includes('claim:"證明 ∠B = ∠C"'), "S3 互動幾何站須包含等腰三角形底角證明");
-assert(s3Interactive.includes("if(index===7)"), "S3 互動站須完成八題才可結算");
-assert(s3Interactive.includes("item=station.items[getDifficultyQuestionIndex(difficulty,index,station.items.length)]") && s3Interactive.includes("三條邊的垂直平分線相交"), "S3 互動站須按難度使用八條不重複任務及正確三角形中心術語");
+assert(s3Interactive.includes('correct: "a² + 2ab + b²"'), "S3 互動恆等式站須正確配對完全平方公式");
+assert(s3Interactive.includes('correct: "closed-left-neg2"') && s3Interactive.includes('"● −2，向左"'), "S3 互動不等式站須以唯一的完整選項正確表示 x≤−2");
+assert(s3Interactive.includes('AB＝AC。可推出甚麼？') && s3Interactive.includes('"∠B＝∠C"'), "S3 互動幾何站須包含等腰三角形底角推論");
+assert(s3Interactive.includes("if (index === 7)"), "S3 互動站須完成八題才可結算");
+assert(s3Interactive.includes("const item = station.items[index]") && s3Interactive.includes("垂直平分線的交點"), "S3 互動站須以單一題序使用八條不重複任務及正確三角形中心術語");
 
 const s3Advanced = read("client/src/pages/S3AdvancedSimulations.tsx");
 assert(s3Advanced.includes("getDifficultyQuestionIndex(difficulty, index, station.items.length)") && s3Advanced.includes("target: \"H\"") && s3Advanced.includes("target: \"T\""), "S3 基礎概率模擬須按難度以八題索引呈現一致的硬幣樹狀圖概率");

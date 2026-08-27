@@ -1,4 +1,4 @@
-// Maths Quest「數學探險手帳」：S3 操作站以證明筆記、Q 路徑及 CMI／EMI 切換，實作恆等式、不等式與幾何理由工作紙。
+// Maths Quest：S3 互動站採用單一步驟、可檢查的選擇題，避免多個控制項造成答案判斷歧義。
 // @ts-nocheck
 import { useState } from "react";
 import { Link } from "wouter";
@@ -6,15 +6,127 @@ import { markPracticeCompleted } from "@/lib/practiceCompletion";
 import { recordDailyPractice } from "@/lib/dailyPractice";
 import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese } from "@/lib/speech";
-import { getDifficultyQuestionIndex, getSecondaryDifficulty } from "@/lib/secondaryDifficulty";
-const stations={
- identity:{zh:"恆等式與因式分解",en:"Identities and Factorization",tag:"IDENTITIES",cue:["先辨認所用恆等式或因式分解形式，再核對中間項及常數項。","Identify the relevant identity or factorisation form, then check the middle and constant terms."],items:[{form:"(a+b)²",answer:"a² + 2ab + b²",options:["a² + b²","a² − 2ab + b²","a² + 2ab + b²"]},{form:"(a−b)²",answer:"a² − 2ab + b²",options:["a² − b²","a² − 2ab + b²","a² + 2ab + b²"]},{form:"a²−b²",answer:"(a+b)(a−b)",options:["(a−b)²","(a+b)(a−b)","a(a−b)"]},{form:"x²+6x+9",answer:"(x+3)²",options:["(x+9)²","(x+3)²","x(x+6)+9"]},{form:"(2x+3)²",answer:"4x² + 12x + 9",options:["4x² + 9","4x² + 12x + 9","2x² + 6x + 3"]},{form:"x²−16",answer:"(x+4)(x−4)",options:["(x−4)²","(x+4)(x−4)","x(x−16)"]},{form:"x²−5x+6",answer:"(x−2)(x−3)",options:["(x+2)(x+3)","(x−2)(x−3)","(x−1)(x−6)"]},{form:"4x²−25",answer:"(2x+5)(2x−5)",options:["(2x−5)²","(2x+5)(2x−5)","(4x+5)(x−5)"]}]},
- inequality:{zh:"一元一次不等式",en:"Linear Inequalities",tag:"NUMBER-LINE REPRESENTATION",cue:["先確定邊界值；嚴格不等式用空心點，含等號的不等式用實心點，並標示解集方向。","Determine the boundary value first; use an open point for strict inequalities and a closed point when equality is included, then mark the solution direction."],items:[{prompt:["在數線上表示 x > 3。","Represent x > 3 on a number line."],bound:3,direction:"right",solid:false},{prompt:["在數線上表示 x ≤ −2。","Represent x ≤ −2 on a number line."],bound:-2,direction:"left",solid:true},{prompt:["在數線上表示 x ≥ 4。","Represent x ≥ 4 on a number line."],bound:4,direction:"right",solid:true},{prompt:["在數線上表示 x < −5。","Represent x < −5 on a number line."],bound:-5,direction:"left",solid:false},{prompt:["解 2x−1>5 後，在數線上表示解集。","Solve 2x - 1 > 5 and represent the solution set on a number line."],bound:3,direction:"right",solid:false},{prompt:["解 3−x≥7 後，在數線上表示解集。","Solve 3 - x ≥ 7 and represent the solution set on a number line."],bound:-4,direction:"left",solid:true},{prompt:["解 4x+2≤10 後，在數線上表示解集。","Solve 4x + 2 ≤ 10 and represent the solution set on a number line."],bound:2,direction:"left",solid:true},{prompt:["解 −2x<8 後，在數線上表示解集。","Solve −2x < 8 and represent the solution set on a number line."],bound:-4,direction:"right",solid:false}]},
- proof:{zh:"幾何證明與三角形中心",en:"Geometric Proofs and Triangle Centres",tag:"GEOMETRIC REASONS",cue:["先寫出已知條件，再選用恰當的幾何定理完成推論。","State the given information first, then apply the appropriate geometric theorem to complete the deduction."],items:[{given:"△ABC 中 AB = AC",claim:"證明 ∠B = ∠C",steps:["AB = AC（已知 / Given）","等邊對等角 / Angles opposite equal sides are equal"],centre:"內心 / Incentre"},{given:"△ABC 中 ∠B = ∠C",claim:"證明 AB = AC",steps:["∠B = ∠C（已知 / Given）","等角對等邊 / Sides opposite equal angles are equal"],centre:"外心 / Circumcentre"},{given:"三條中線相交",claim:"標記重心",steps:["畫出三條中線 / Draw the three medians","中線交於重心 / Medians intersect at the centroid"],centre:"重心 / Centroid"},{given:"三條高相交",claim:"標記垂心",steps:["畫出三條高 / Draw the three altitudes","高交於垂心 / Altitudes intersect at the orthocentre"],centre:"垂心 / Orthocentre"},{given:"三條角平分線相交",claim:"標記內心",steps:["畫出三條角平分線 / Draw the three angle bisectors","角平分線交於內心 / Angle bisectors intersect at the incentre"],centre:"內心 / Incentre"},{given:"三條邊的垂直平分線相交",claim:"標記外心",steps:["畫出三條邊的垂直平分線 / Draw the perpendicular bisectors","垂直平分線交於外心 / Perpendicular bisectors intersect at the circumcentre"],centre:"外心 / Circumcentre"},{given:"△PQR 中 PQ = PR",claim:"證明 ∠Q = ∠R",steps:["PQ = PR（已知 / Given）","等邊對等角 / Angles opposite equal sides are equal"],centre:"內心 / Incentre"},{given:"△XYZ 中 ∠Y = ∠Z",claim:"證明 XY = XZ",steps:["∠Y = ∠Z（已知 / Given）","等角對等邊 / Sides opposite equal angles are equal"],centre:"外心 / Circumcentre"}]}
+
+const answer = (key, zh, en) => ({ key, zh, en });
+
+const stations = {
+  identity: {
+    zh: "恆等式與因式分解", en: "Identities and Factorization", tag: "IDENTITIES",
+    cue: ["先辨認公式中的中間項與常數項。", "Check the middle and constant terms of the identity first."],
+    items: [
+      { prompt: ["展開 (a+b)²。", "Expand (a+b)²."], correct: "a² + 2ab + b²", choices: ["a² + b²", "a² − 2ab + b²", "a² + 2ab + b²", "2a + 2b"] },
+      { prompt: ["把 a²−b² 因式分解。", "Factorise a²−b²."], correct: "(a+b)(a−b)", choices: ["(a−b)²", "(a+b)(a−b)", "a(a−b)", "(a+b)²"] },
+      { prompt: ["把 x²+6x+9 寫成完全平方形式。", "Write x² + 6x + 9 as a perfect square."], correct: "(x+3)²", choices: ["(x+9)²", "(x+3)²", "x(x+6)+9", "(x+6)²"] },
+      { prompt: ["展開 (x−5)²。", "Expand (x−5)²."], correct: "x²−10x+25", choices: ["x²−25", "x²−10x+25", "x²−5x+25", "x²+10x+25"] },
+      { prompt: ["展開 (2x+3)²。", "Expand (2x+3)²."], correct: "4x²+12x+9", choices: ["4x²+9", "4x²+12x+9", "4x²+6x+9", "2x²+12x+3"] },
+      { prompt: ["把 x²−16 因式分解。", "Factorise x²−16."], correct: "(x+4)(x−4)", choices: ["(x−4)²", "(x+4)(x−4)", "x(x−16)", "(x+16)(x−1)"] },
+      { prompt: ["把 x²−5x+6 因式分解。", "Factorise x²−5x+6."], correct: "(x−2)(x−3)", choices: ["(x+2)(x+3)", "(x−2)(x−3)", "(x−1)(x−6)", "x(x−5)+6"] },
+      { prompt: ["把 4x²−25 因式分解。", "Factorise 4x²−25."], correct: "(2x+5)(2x−5)", choices: ["(2x−5)²", "(2x+5)(2x−5)", "(4x+5)(x−5)", "(2x+25)(2x−1)"] },
+    ],
+  },
+  inequality: {
+    zh: "一元一次不等式", en: "Linear Inequalities", tag: "NUMBER-LINE REPRESENTATION",
+    cue: ["只需選擇完整數線表示法：○ 是空心點，● 是實心點；箭嘴表示解集方向。", "Choose one complete number-line representation: ○ is open, ● is closed, and the arrow shows the solution direction."],
+    items: [
+      { prompt: ["在數線上表示 x > 3。", "Represent x > 3 on a number line."], correct: "open-right-3", choices: [answer("open-left-3", "○ 3，向左", "○ 3, left"), answer("open-right-3", "○ 3，向右", "○ 3, right"), answer("closed-right-3", "● 3，向右", "● 3, right"), answer("closed-left-3", "● 3，向左", "● 3, left")] },
+      { prompt: ["在數線上表示 x ≤ −2。", "Represent x ≤ −2 on a number line."], correct: "closed-left-neg2", choices: [answer("open-left-neg2", "○ −2，向左", "○ −2, left"), answer("closed-left-neg2", "● −2，向左", "● −2, left"), answer("closed-right-neg2", "● −2，向右", "● −2, right"), answer("open-right-neg2", "○ −2，向右", "○ −2, right")] },
+      { prompt: ["在數線上表示 x ≥ 4。", "Represent x ≥ 4 on a number line."], correct: "closed-right-4", choices: [answer("closed-left-4", "● 4，向左", "● 4, left"), answer("open-right-4", "○ 4，向右", "○ 4, right"), answer("closed-right-4", "● 4，向右", "● 4, right"), answer("open-left-4", "○ 4，向左", "○ 4, left")] },
+      { prompt: ["在數線上表示 x < −5。", "Represent x < −5 on a number line."], correct: "open-left-neg5", choices: [answer("closed-left-neg5", "● −5，向左", "● −5, left"), answer("open-right-neg5", "○ −5，向右", "○ −5, right"), answer("open-left-neg5", "○ −5，向左", "○ −5, left"), answer("closed-right-neg5", "● −5，向右", "● −5, right")] },
+      { prompt: ["解 2x−1>5 後，在數線上表示解集。", "Solve 2x - 1 > 5 and represent the solution set."], correct: "open-right-3", choices: [answer("open-right-3", "○ 3，向右", "○ 3, right"), answer("closed-right-3", "● 3，向右", "● 3, right"), answer("open-left-3", "○ 3，向左", "○ 3, left"), answer("open-right-2", "○ 2，向右", "○ 2, right")] },
+      { prompt: ["解 3−x≥7 後，在數線上表示解集。", "Solve 3 - x ≥ 7 and represent the solution set."], correct: "closed-left-neg4", choices: [answer("closed-left-neg4", "● −4，向左", "● −4, left"), answer("open-left-neg4", "○ −4，向左", "○ −4, left"), answer("closed-right-neg4", "● −4，向右", "● −4, right"), answer("closed-left-4", "● 4，向左", "● 4, left")] },
+      { prompt: ["解 4x+2≤10 後，在數線上表示解集。", "Solve 4x + 2 ≤ 10 and represent the solution set."], correct: "closed-left-2", choices: [answer("open-left-2", "○ 2，向左", "○ 2, left"), answer("closed-right-2", "● 2，向右", "● 2, right"), answer("closed-left-2", "● 2，向左", "● 2, left"), answer("closed-left-10", "● 10，向左", "● 10, left")] },
+      { prompt: ["解 −2x<8 後，在數線上表示解集。", "Solve −2x < 8 and represent the solution set."], correct: "open-right-neg4", choices: [answer("open-left-neg4", "○ −4，向左", "○ −4, left"), answer("closed-right-neg4", "● −4，向右", "● −4, right"), answer("open-right-neg4", "○ −4，向右", "○ −4, right"), answer("open-right-4", "○ 4，向右", "○ 4, right")] },
+    ],
+  },
+  proof: {
+    zh: "幾何證明與三角形中心", en: "Geometric Proofs and Triangle Centres", tag: "GEOMETRIC REASONS",
+    cue: ["從已知條件找出可直接使用的幾何定理。", "Start with the stated fact and select the applicable geometry theorem."],
+    items: [
+      { prompt: ["在 △ABC 中，AB＝AC。可推出甚麼？", "In △ABC, AB = AC. What can be concluded?"], correct: "∠B＝∠C", choices: ["∠B＝∠C", "∠A＝∠B", "BC＝AB", "∠A＝90°"] },
+      { prompt: ["在 △ABC 中，∠B＝∠C。可推出甚麼？", "In △ABC, ∠B = ∠C. What can be concluded?"], correct: "AB＝AC", choices: ["AB＝AC", "BC＝AC", "∠A＝90°", "AB∥AC"] },
+      { prompt: ["三條中線的交點稱為甚麼？", "What is the intersection of the three medians called?"], correct: "重心 / Centroid", choices: ["重心 / Centroid", "內心 / Incentre", "外心 / Circumcentre", "垂心 / Orthocentre"] },
+      { prompt: ["三條高的交點稱為甚麼？", "What is the intersection of the three altitudes called?"], correct: "垂心 / Orthocentre", choices: ["內心 / Incentre", "垂心 / Orthocentre", "重心 / Centroid", "外心 / Circumcentre"] },
+      { prompt: ["三條角平分線的交點稱為甚麼？", "What is the intersection of the three angle bisectors called?"], correct: "內心 / Incentre", choices: ["內心 / Incentre", "外心 / Circumcentre", "重心 / Centroid", "垂心 / Orthocentre"] },
+      { prompt: ["三條邊的垂直平分線的交點稱為甚麼？", "What is the intersection of the perpendicular bisectors?"], correct: "外心 / Circumcentre", choices: ["垂心 / Orthocentre", "外心 / Circumcentre", "重心 / Centroid", "內心 / Incentre"] },
+      { prompt: ["「等邊對等角」的意思是甚麼？", "What does ‘equal sides subtend equal angles’ mean?"], correct: "相等的邊所對的角相等", choices: ["相等的邊所對的角相等", "相等的角必定是直角", "所有三角形均有等邊", "平行線必定等長"] },
+      { prompt: ["「等角對等邊」的意思是甚麼？", "What does ‘equal angles subtend equal sides’ mean?"], correct: "相等的角所對的邊相等", choices: ["相等的角所對的邊相等", "所有角均相等", "相等的邊必定平行", "所有三角形均全等"] },
+    ],
+  },
 };
-export default function S3InteractiveCore(){const topic=new URLSearchParams(location.search).get("topic")||"identity",station=stations[topic]||stations.identity,difficulty=getSecondaryDifficulty(),[lang,setLang]=useState("zh"),[index,setIndex]=useState(0),[choice,setChoice]=useState(""),[bound,setBound]=useState(0),[dir,setDir]=useState("right"),[solid,setSolid]=useState(false),[proofStep,setProofStep]=useState(0),[result,setResult]=useState(""),[complete,setComplete]=useState(false),item=station.items[getDifficultyQuestionIndex(difficulty,index,station.items.length)],label=lang==="zh"?station.zh:station.en;const reset=()=>{setChoice("");setBound(0);setDir("right");setSolid(false);setProofStep(0);setResult("")};const wrong=()=>{setResult("wrong");recordPracticeMistake({key:`s3-${topic}-interactive`,grade:"S3",title:station.zh,href:`/practice/s3-interactive?topic=${topic}`})};const check=()=>{if(topic==="identity")(choice===item.answer?setResult("correct"):wrong());if(topic==="inequality")(bound===item.bound&&dir===item.direction&&solid===item.solid?setResult("correct"):wrong());if(topic==="proof")(proofStep>=2?setResult("correct"):wrong())};const next=()=>{if(index===7){markPracticeCompleted(`s3-${topic}-interactive`);recordDailyPractice(`s3-${topic}-interactive`);setComplete(true)}else{setIndex(index+1);reset()}};const speak=()=>{const text=topic==="identity"?(lang==="zh"?`為 ${item.form} 選擇正確的展開式或因式分解形式。`:`Choose the correct expansion or factorisation for ${item.form}.`):topic==="inequality"?item.prompt[lang==="zh"?0:1]:(lang==="zh"?`${item.given}；${item.claim}`:`${item.given}. ${item.claim}.`);if(lang==="zh")speakCantonese(text);else if("speechSynthesis"in window){const u=new SpeechSynthesisUtterance(text);u.lang="en-HK";window.speechSynthesis.speak(u)}};
-const identityModel=topic==="identity"?<div className="mx-auto mt-5 max-w-xl"><div className="rounded-2xl border bg-[#fffaf5] p-5 font-mono text-3xl font-black text-[#1f8378]">{item.form}</div><p className="mt-4 font-mono text-xs">{lang==="zh"?"選擇展開或因式分解後的正確公式":"Choose the correct expansion or factorisation"}</p><div className="mt-3 grid gap-3">{item.options.map((option,i)=><button key={option} onClick={()=>setChoice(option)} className={`rounded-xl border-2 p-4 text-left font-mono font-bold ${choice===option?"border-[#0e8b87] bg-[#e8f5f2]":"border-[#1f8378]/35 bg-white"}`}><small className="mr-3 text-[9px] tracking-[.14em] text-[#1f8378]">FORMULA {i+1}</small>{option}</button>)}</div><div className="mt-5 rounded-xl border-2 border-dashed border-[#f05a3c] p-4 font-mono text-xl"><small className="mr-2 text-[9px] text-[#f05a3c]">CHECKPOINT</small>{choice||"?"}</div></div>:null;
-const inequalityModel=topic==="inequality"?<div className="mx-auto mt-5 max-w-xl"><p className="font-mono text-xs">{item.prompt[lang==="zh"?0:1]}</p><div className="relative mt-6 h-32"><div className="absolute left-3 right-3 top-16 border-t-4 border-[#1f8378]"/>{Array.from({length:21},(_,i)=>{const n=i-10;return <button key={n} onClick={()=>setBound(n)} className={`absolute top-[48px] grid size-8 -translate-x-1/2 place-items-center rounded-full border-2 text-[10px] font-bold ${bound===n?"border-[#f05a3c] bg-[#f05a3c] text-white":"border-[#1f8378]/30 bg-white"}`} style={{left:`${5+i*4.5}%`}}>{n}</button>})}<span className="absolute top-1 left-1/2 -translate-x-1/2 rounded-lg bg-[#fff3e8] px-3 py-2 font-mono text-sm font-bold text-[#f05a3c]">BOUNDARY {bound}</span></div><div className="mt-4 grid gap-3 sm:grid-cols-3"><button onClick={()=>setSolid(!solid)} className={`rounded-xl border-2 p-3 font-bold ${solid?"border-[#0e8b87] bg-[#e8f5f2]":"border-[#1f8378]/35 bg-white"}`}>{solid?(lang==="zh"?"● 實心點":"● closed"):(lang==="zh"?"○ 空心點":"○ open")}</button><button onClick={()=>setDir("left")} className={`rounded-xl border-2 p-3 font-bold ${dir==="left"?"border-[#0e8b87] bg-[#e8f5f2]":"border-[#1f8378]/35 bg-white"}`}>← {lang==="zh"?"向左":"left"}</button><button onClick={()=>setDir("right")} className={`rounded-xl border-2 p-3 font-bold ${dir==="right"?"border-[#0e8b87] bg-[#e8f5f2]":"border-[#1f8378]/35 bg-white"}`}>{lang==="zh"?"向右":"right"} →</button></div><div className="mt-5 rounded-xl border-2 border-dashed border-[#f05a3c] p-4 font-mono text-xl"><small className="mr-2 text-[9px] text-[#f05a3c]">NUMBER-LINE MARK</small>{solid?"●":"○"} {bound} {dir==="right"?"→":"←"}</div></div>:null;
-const proofModel=topic==="proof"?<div className="mx-auto mt-5 max-w-xl"><div className="relative mx-auto grid size-28 place-items-center"><i className="absolute bottom-2 h-1 w-28 bg-[#1f8378]"/><i className="absolute bottom-2 left-6 h-1 w-24 rotate-[-55deg] origin-left bg-[#1f8378]"/><i className="absolute bottom-2 right-6 h-1 w-24 rotate-[55deg] origin-right bg-[#1f8378]"/><b className="z-10 rounded bg-[#fff7ef] px-2 font-mono text-xs">{item.centre}</b></div><div className="mt-3 rounded-xl border bg-[#fffaf5] p-4 font-bold"><small className="block font-mono text-[9px] tracking-[.14em] text-[#1f8378]">GIVEN</small>{item.given}<br/><small className="mt-2 block font-mono text-[9px] tracking-[.14em] text-[#1f8378]">CLAIM</small>{item.claim}</div><p className="mt-4 font-mono text-xs">{lang==="zh"?"按正確的證明次序加入理由":"Add the proof reasons in correct order"}</p><div className="mt-3 grid gap-3">{item.steps.map((s,i)=><button key={s} onClick={()=>proofStep===i&&setProofStep(i+1)} className={`rounded-xl border-2 p-3 text-left font-bold ${proofStep>i?"border-[#0e8b87] bg-[#e8f5f2]":"border-[#1f8378]/35 bg-white"}`}><small className="mr-2 font-mono text-[9px] text-[#1f8378]">STEP {i+1}</small>{s}</button>)}</div><div className="mt-5 rounded-xl border-2 border-dashed border-[#f05a3c] p-4 font-mono"><small className="mr-2 text-[9px] text-[#f05a3c]">PROOF PATH</small>{proofStep}/2</div></div>:null;
-const prompt=topic==="identity"?(lang==="zh"?`選擇 ${item.form} 的正確展開式或因式分解形式。`:`Choose the correct expansion or factorisation for ${item.form}.`):topic==="inequality"?item.prompt[lang==="zh"?0:1]:(lang==="zh"?`${item.given}。請完成證明：${item.claim}`:`${item.given}. Complete the proof: ${item.claim}`);
-return <main className="min-h-screen bg-[#f8f5ed] p-5 text-[#172b3f] sm:p-7"><Link href="/#path" className="font-bold">← 返回學習地圖 / Back to map</Link><header className="mt-7 flex flex-wrap items-center gap-3 font-mono text-xs"><b className="relative grid size-12 place-items-center rounded-full bg-[#f05a3c] text-base font-black text-white after:absolute after:-right-2 after:bottom-1 after:size-3 after:rounded-full after:border-2 after:border-[#f05a3c] after:bg-[#f8f5ed]">Q↗</b><strong className="tracking-[.16em]">MATHS QUEST</strong><span className="border-b-2 border-dotted border-[#f05a3c] pb-1">Q-PATH · S3 · {station.tag}</span><div className="ml-auto flex overflow-hidden rounded-lg border border-[#172b3f]/20"><button onClick={()=>setLang("zh")} className={`px-3 py-2 font-bold ${lang==="zh"?"bg-[#172b3f] text-white":"bg-white"}`}>CMI 中文</button><button onClick={()=>setLang("en")} className={`px-3 py-2 font-bold ${lang==="en"?"bg-[#172b3f] text-white":"bg-white"}`}>EMI English</button></div></header><div className="mt-3 flex max-w-md items-center gap-2 font-mono text-[9px] font-bold text-[#617286]"><span className="rounded bg-[#1f8378] px-2 py-1 text-white">01 MARK</span><i className="h-px flex-1 border-t-2 border-dotted border-[#f05a3c]"/><span>02 PROVE</span><i className="h-px flex-1 border-t-2 border-dotted border-[#f05a3c]"/><span>03 CHECK</span></div><h1 className="mt-3 text-4xl font-black">{label}</h1>{complete?<section className="mq-practice-card mt-6 rounded-3xl border bg-white p-9 text-center"><div className="text-6xl">★</div><h2 className="mt-4 text-3xl font-black">{lang==="zh"?"操作站完成！":"Interactive station completed!"}</h2><Link href="/#path" className="mq-start mt-6 inline-block rounded-xl bg-[#f05a3c] px-5 py-3 font-bold text-white">{lang==="zh"?"返回學習地圖":"Back to map"}</Link></section>:<section className="mq-practice-card mt-6 rounded-3xl border bg-white p-6 text-center sm:p-8"><p className="font-mono text-xs">STATION {String(index+1).padStart(2,"0")} · {index+1}/8 · S3 PROOF WORKSHEET</p><p className="mx-auto mt-4 max-w-xl rounded-xl bg-[#fff7ef] p-3 text-sm font-bold">{lang==="zh"?`導師提示：${station.cue[0]}`:`Mentor cue: ${station.cue[1]}`}</p><h2 className="mx-auto mt-5 max-w-2xl text-2xl font-black leading-snug">{prompt}</h2><button onClick={speak} className="mt-4 rounded-full border border-[#172b3f]/20 bg-white px-4 py-2 text-sm font-bold">◉ {lang==="zh"?"朗讀任務":"Read task"}</button>{identityModel||inequalityModel||proofModel}<button onClick={check} className="mq-start mt-7 rounded-xl bg-[#f05a3c] px-6 py-3 font-bold text-white">{lang==="zh"?"檢查操作":"Check model"}</button>{result==="wrong"&&<p className="mx-auto mt-4 max-w-xl rounded-xl bg-[#fff3e8] p-3 font-bold text-[#b84c36]">{lang==="zh"?"再看導師提示，調整你的證明或數線後再試。":"Use the mentor cue, adjust your proof or number line, and try again."}</p>}{result==="correct"&&<div className="mt-4"><p className="font-bold text-[#0e8b87]">{lang==="zh"?"推理正確！前往下一個檢查點。":"Reasoning correct! Proceed to the next checkpoint."}</p><button onClick={next} className="mq-start mt-3 rounded-xl bg-[#f05a3c] px-5 py-3 font-bold text-white">{index===7?(lang==="zh"?"完成本站":"Finish station"):(lang==="zh"?"下一題":"Next task")}</button></div>}</section>}</main>}
+
+export const inequalityQuestions = stations.inequality.items;
+export const isCorrectInequalityChoice = (item, selected) => item.correct === selected;
+
+export default function S3InteractiveCore() {
+  const topic = new URLSearchParams(location.search).get("topic") || "identity";
+  const station = stations[topic] || stations.identity;
+  const [lang, setLang] = useState("zh");
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState("");
+  const [result, setResult] = useState("");
+  const [complete, setComplete] = useState(false);
+  const item = station.items[index];
+  const label = lang === "zh" ? station.zh : station.en;
+  const choices = item.choices;
+  const displayed = (choice) => typeof choice === "string" ? choice : choice[lang];
+  const choiceKey = (choice) => typeof choice === "string" ? choice : choice.key;
+  const correctText = displayed(choices.find((choice) => choiceKey(choice) === item.correct) || item.correct);
+  const check = () => {
+    if (selected === item.correct) setResult("correct");
+    else {
+      setResult("wrong");
+      recordPracticeMistake({ key: `s3-${topic}-interactive`, grade: "S3", title: station.zh, href: `/practice/s3-interactive?topic=${topic}` });
+    }
+  };
+  const next = () => {
+    if (index === 7) {
+      markPracticeCompleted(`s3-${topic}-interactive`);
+      recordDailyPractice(`s3-${topic}-interactive`);
+      setComplete(true);
+      return;
+    }
+    setIndex((value) => value + 1);
+    setSelected("");
+    setResult("");
+  };
+  const speak = () => {
+    const text = item.prompt[lang === "zh" ? 0 : 1];
+    if (lang === "zh") speakCantonese(text);
+    else if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-HK";
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  return <main className="min-h-screen bg-[#f8f5ed] p-5 text-[#172b3f] sm:p-7">
+    <Link href="/#path" className="font-bold">← 返回學習地圖 / Back to map</Link>
+    <header className="mt-7 flex flex-wrap items-center gap-3 font-mono text-xs">
+      <b className="grid size-12 place-items-center rounded-full bg-[#f05a3c] text-base font-black text-white">Q↗</b>
+      <strong className="tracking-[.16em]">MATHS QUEST</strong>
+      <span className="border-b-2 border-dotted border-[#f05a3c] pb-1">Q-PATH · S3 · {station.tag}</span>
+      <div className="ml-auto flex overflow-hidden rounded-lg border border-[#172b3f]/20">
+        <button onClick={() => setLang("zh")} className={`px-3 py-2 font-bold ${lang === "zh" ? "bg-[#172b3f] text-white" : "bg-white"}`}>CMI 中文</button>
+        <button onClick={() => setLang("en")} className={`px-3 py-2 font-bold ${lang === "en" ? "bg-[#172b3f] text-white" : "bg-white"}`}>EMI English</button>
+      </div>
+    </header>
+    <h1 className="mt-5 text-4xl font-black">{label}</h1>
+    {complete ? <section className="mq-practice-card mt-6 rounded-3xl border bg-white p-9 text-center">
+      <div className="text-6xl">★</div><h2 className="mt-4 text-3xl font-black">{lang === "zh" ? "操作站完成！" : "Interactive station completed!"}</h2>
+      <p className="mt-3 text-[#617286]">{lang === "zh" ? "8 題完成，星星與今日紀錄已更新。" : "Eight questions completed. Your star and daily record are updated."}</p>
+      <Link href="/#path" className="mq-start mt-6 inline-block rounded-xl bg-[#f05a3c] px-5 py-3 font-bold text-white">{lang === "zh" ? "返回學習地圖" : "Back to map"}</Link>
+    </section> : <section className="mq-practice-card mt-6 rounded-3xl border bg-white p-6 text-center sm:p-8">
+      <p className="font-mono text-xs">STATION {String(index + 1).padStart(2, "0")} · {index + 1}/8 · S3 INTERACTIVE</p>
+      <p className="mx-auto mt-4 max-w-xl rounded-xl bg-[#fff7ef] p-3 text-sm font-bold">{lang === "zh" ? `提示：${station.cue[0]}` : `Hint: ${station.cue[1]}`}</p>
+      <h2 className="mx-auto mt-5 max-w-2xl text-2xl font-black leading-snug">{item.prompt[lang === "zh" ? 0 : 1]}</h2>
+      <button onClick={speak} className="mt-4 rounded-full border border-[#172b3f]/20 bg-white px-4 py-2 text-sm font-bold">◉ {lang === "zh" ? "朗讀題目" : "Read task"}</button>
+      <div className="mq-concept-choices mx-auto mt-7 grid max-w-xl gap-3">
+        {choices.map((choice) => <button key={choiceKey(choice)} type="button" onClick={() => { setSelected(choiceKey(choice)); setResult(""); }} className={`rounded-xl border-2 p-4 text-left font-bold ${selected === choiceKey(choice) ? "border-[#0e8b87] bg-[#e8f5f2]" : "border-[#1f8378]/35 bg-white"}`}>{displayed(choice)}</button>)}
+      </div>
+      <button onClick={check} disabled={!selected} className="mq-start mt-7 rounded-xl bg-[#f05a3c] px-6 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50">{lang === "zh" ? "檢查答案" : "Check answer"}</button>
+      {result === "wrong" && <div className="mx-auto mt-4 max-w-xl rounded-xl bg-[#fff3e8] p-3 font-bold text-[#b84c36]">{lang === "zh" ? `再試一次。正確表示法是：${correctText}` : `Try again. The correct representation is: ${correctText}`}</div>}
+      {result === "correct" && <div className="mt-4"><p className="font-bold text-[#0e8b87]">{lang === "zh" ? "答對了！" : "Correct!"}</p><button onClick={next} className="mq-start mt-3 rounded-xl bg-[#f05a3c] px-5 py-3 font-bold text-white">{index === 7 ? (lang === "zh" ? "完成本站" : "Finish station") : (lang === "zh" ? "下一題" : "Next task")}</button></div>}
+    </section>}
+  </main>;
+}
