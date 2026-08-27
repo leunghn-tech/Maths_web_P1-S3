@@ -118,13 +118,12 @@ export default function SignInPage() {
     setConfirmPassword("");
     resetVisibility();
     if (next !== "student-register") setDisplayName("");
-    if (next === "teacher") setUsername("admin");
   };
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (mode === "teacher") {
-      teacherLogin.mutate({ username: "admin", password });
+      teacherLogin.mutate({ username, password });
       return;
     }
     if (mode === "student-register") {
@@ -184,7 +183,7 @@ export default function SignInPage() {
             <p className="font-mono text-[11px] font-bold tracking-[.15em] text-[#f05a3c]">{isTeacher ? "TEACHER SIGN IN" : recoveryCode ? "ONE-TIME RECOVERY CODE" : isRecovery ? "STUDENT ACCOUNT RECOVERY" : mode === "student-register" ? "CREATE STUDENT ACCOUNT" : "STUDENT SIGN IN"}</p>
             <h2 className="mt-3 text-3xl font-black">{heading}</h2>
             <p className="mt-3 text-sm leading-6 text-[#617286]">
-              {isTeacher ? "教師帳戶固定為 admin。請輸入教師密碼登入；學生帳戶不可開啟教師管理頁。" : recoveryCode ? "這組恢復碼只會顯示一次。請立即安全保存，切勿分享給任何人。" : mode === "student-recovery" ? "輸入用戶名稱與你保存的恢復碼，系統會建立一個 15 分鐘內有效、只可使用一次的重設步驟。" : mode === "student-reset" ? "新密碼設定後，所有舊登入會失效；你的學習進度會保留在同一帳戶。" : mode === "student-register" ? "用戶名稱只可使用英文小寫字母、數字與 . _ -；密碼最少 4 個英文字母或數字。" : "輸入你的學生帳戶，即可取回同步的學習紀錄。"}
+              {isTeacher ? "輸入教師帳戶名稱與密碼登入；只有已獲授權的教師帳戶可以開啟教師管理頁。" : recoveryCode ? "這組恢復碼只會顯示一次。請立即安全保存，切勿分享給任何人。" : mode === "student-recovery" ? "輸入用戶名稱與你保存的恢復碼，系統會建立一個 15 分鐘內有效、只可使用一次的重設步驟。" : mode === "student-reset" ? "新密碼設定後，所有舊登入會失效；你的學習進度會保留在同一帳戶。" : mode === "student-register" ? "用戶名稱只可使用英文小寫字母、數字與 . _ -；密碼最少 4 個英文字母或數字。" : "輸入你的學生帳戶，即可取回同步的學習紀錄。"}
             </p>
           </div>
 
@@ -199,17 +198,12 @@ export default function SignInPage() {
                 </label>
               )}
 
-              {mode !== "student-reset" && (isTeacher ? (
+              {mode !== "student-reset" && (
                 <label>
-                  <span className="text-xs font-bold text-[#617286]">教師帳戶名稱</span>
-                  <input readOnly value="admin" aria-label="固定教師帳戶名稱：admin" className={`${inputClass} cursor-not-allowed bg-[#f3f0e8] font-mono`} />
+                  <span className="text-xs font-bold text-[#617286]">{isTeacher ? "教師帳戶名稱" : "用戶名稱"}</span>
+                  <input required autoComplete="username" value={username} onChange={(event) => setUsername(isTeacher ? event.target.value : event.target.value.toLowerCase())} placeholder={isTeacher ? "輸入教師帳戶名稱" : "例如：maths.chan"} className={`${inputClass} font-mono`} />
                 </label>
-              ) : (
-                <label>
-                  <span className="text-xs font-bold text-[#617286]">用戶名稱</span>
-                  <input required autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value.toLowerCase())} placeholder="例如：maths.chan" className={`${inputClass} font-mono`} />
-                </label>
-              ))}
+              )}
 
               <LoginSecretField
                 label={mode === "student-recovery" ? "恢復碼" : mode === "student-reset" ? "新密碼" : "密碼"}

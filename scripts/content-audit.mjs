@@ -14,6 +14,7 @@ const assert = (condition, message) => {
 
 const home = read("client/src/pages/Home.tsx");
 const studentHome = read("client/src/pages/StudentLearningHome.tsx");
+const signIn = read("client/src/pages/SignInPage.tsx");
 const app = read("client/src/App.tsx");
 const homeRoutes = [...home.matchAll(/href: "([^"?]+)(?:\?[^\"]*)?"/g)].map((match) => match[1]);
 const appRoutes = new Set([...app.matchAll(/path="([^\"]+)"/g)].map((match) => match[1]));
@@ -25,6 +26,8 @@ assert(home.includes('setLocation(!isAuthenticated ? "/sign-in"'), "根目錄必
 assert(appRoutes.has("/dashboard"), "登入學生的個人學習首頁路徑必須已註冊");
 assert(studentHome.includes("trpc.learning.overview.useQuery"), "學生個人學習首頁必須讀取帳戶的雲端學習資料");
 assert(studentHome.includes("getPriorityReviewItems"), "學生個人學習首頁必須按錯題優先顯示重溫課題");
+assert(!signIn.includes('setUsername("admin")') && !signIn.includes('value="admin"'), "教師登入頁不應固定或預填 admin 帳戶名稱");
+assert(!signIn.includes("教師帳戶固定為 admin") && signIn.includes("teacherLogin.mutate({ username, password })"), "教師登入必須使用學生輸入的帳戶名稱，且不顯示固定 admin 提示");
 
 const p1Routes = [
   "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",
