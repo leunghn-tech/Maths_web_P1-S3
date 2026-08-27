@@ -22,10 +22,13 @@ for (const route of [...new Set(homeRoutes)]) assert(appRoutes.has(route), `首�
 assert(!app.includes('/practice/s1') && !app.includes('/practice/s2') && !app.includes('/practice/s3'), "應已移除全部中學作答路由");
 assert(!home.includes('grade: "S1"') && !home.includes('grade: "S2"') && !home.includes('grade: "S3"'), "首頁不應保留中一至中三年級資料或課題卡");
 assert(home.includes("由小一至小六，所有年級都可直接點選。") && !home.includes("由小一至中三"), "首頁年級說明必須清楚標示小一至小六");
-assert(home.includes('setLocation(!isAuthenticated ? "/sign-in"'), "根目錄必須在未登入時導向學生登入頁");
+assert(home.includes("if (!isAuthenticated)") && home.includes('setLocation("/sign-in")'), "根目錄必須在未登入時導向學生登入頁");
 assert(appRoutes.has("/dashboard"), "登入學生的個人學習首頁路徑必須已註冊");
+assert(appRoutes.has("/library"), "學生年級題目庫路徑必須已註冊");
 assert(studentHome.includes("trpc.learning.overview.useQuery"), "學生個人學習首頁必須讀取帳戶的雲端學習資料");
 assert(studentHome.includes("getPriorityReviewItems"), "學生個人學習首頁必須按錯題優先顯示重溫課題");
+assert(studentHome.includes('["P1", "P2", "P3", "P4", "P5", "P6"]') && studentHome.includes('href="/library#path"'), "學生個人學習首頁必須提供 P1 至 P6 題目庫選擇");
+assert(home.includes('window.location.hash === "#path"') && home.includes('setLocation("/library#path")'), "原有返回題目庫連結必須開啟已選年級的題目庫");
 assert(!signIn.includes('setUsername("admin")') && !signIn.includes('value="admin"'), "教師登入頁不應固定或預填 admin 帳戶名稱");
 assert(!signIn.includes("教師帳戶固定為 admin") && signIn.includes("teacherLogin.mutate({ username, password })"), "教師登入必須使用學生輸入的帳戶名稱，且不顯示固定 admin 提示");
 

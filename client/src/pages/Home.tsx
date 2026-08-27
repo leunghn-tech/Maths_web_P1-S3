@@ -231,7 +231,8 @@ export default function Home() {
   // startLogin() during render (no href={startLogin()}) — it mints a one-time
   // nonce cookie and must run only at the moment of navigation.
   const { user, loading, isAuthenticated, logout } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const isLearningLibrary = location === "/library" || (location === "/" && typeof window !== "undefined" && window.location.hash === "#path");
   const accountName = user?.name?.trim() || "我的帳戶";
   const handleLogout = async () => {
     try { await logout(); toast.success("已登出帳戶，本機練習仍可繼續使用。"); }
@@ -258,8 +259,20 @@ export default function Home() {
 
   useEffect(() => {
     if (loading) return;
-    setLocation(!isAuthenticated ? "/sign-in" : user?.role === "admin" ? "/teacher" : "/dashboard");
-  }, [isAuthenticated, loading, setLocation, user?.role]);
+    if (!isAuthenticated) {
+      setLocation("/sign-in");
+      return;
+    }
+    if (user?.role === "admin") {
+      setLocation("/teacher");
+      return;
+    }
+    if (isLearningLibrary && location !== "/library") {
+      setLocation("/library#path");
+      return;
+    }
+    if (!isLearningLibrary) setLocation("/dashboard");
+  }, [isAuthenticated, isLearningLibrary, loading, location, setLocation, user?.role]);
 
   useEffect(() => {
     const syncCompletion = () => setCompletedPractices(getCompletedPractices());
@@ -312,6 +325,7 @@ export default function Home() {
 
   if (loading || !isAuthenticated) return <main className="grid min-h-screen place-items-center bg-[#f8f5ed] font-bold text-[#172b3f]">正在前往登入頁…</main>;
   if (user?.role === "admin") return <main className="grid min-h-screen place-items-center bg-[#f8f5ed] font-bold text-[#172b3f]">正在前往教師管理頁…</main>;
+  if (!isLearningLibrary) return <main className="grid min-h-screen place-items-center bg-[#f8f5ed] font-bold text-[#172b3f]">正在前往你的學習首頁…</main>;
 
   return (
     <div className="mq-app min-h-screen overflow-x-clip bg-[#f8f5ed] text-[#172b3f]">
