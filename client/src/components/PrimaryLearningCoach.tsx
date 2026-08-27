@@ -1,6 +1,8 @@
 /** Maths Quest 小學生導引：以圖示加三個短詞，降低 P1–P6 練習頁的閱讀負擔。 */
+import { useEffect } from "react";
 import { ArrowRight, Eye, Hand, type LucideIcon } from "lucide-react";
 import { speakCantonese } from "@/lib/speech";
+import { getPrimaryGradeFromPracticePath } from "@/lib/primaryGradeNavigation";
 import { useLocation } from "wouter";
 
 const steps: { label: string; prompt: string; Icon: LucideIcon }[] = [
@@ -11,6 +13,10 @@ const steps: { label: string; prompt: string; Icon: LucideIcon }[] = [
 
 export default function PrimaryLearningCoach() {
   const [location] = useLocation();
+  useEffect(() => {
+    const grade = getPrimaryGradeFromPracticePath(location);
+    if (grade) window.localStorage.setItem("mq-selected-primary-grade", grade);
+  }, [location]);
   if (!/^\/practice\/p[1-6]/.test(location)) return null;
   return <aside className="mq-primary-coach" aria-label="做題三步">
     <span className="mq-primary-coach-title">跟住做</span>

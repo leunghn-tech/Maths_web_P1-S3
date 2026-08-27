@@ -4,7 +4,7 @@ import { BarChart3, CheckCircle2, HeartHandshake, Target } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { buildLearningSummary, type LearningGrade } from "@/lib/learningSummary";
 
-const grades: LearningGrade[] = ["P1", "P2", "P3", "P4", "P5", "P6", "S1", "S2", "S3"];
+const grades: LearningGrade[] = ["P1", "P2", "P3", "P4", "P5", "P6"];
 const colors: Record<string, string> = { "數與代數": "#f05a3c", "度量": "#c8811e", "圖形與空間": "#4f6eae", "數據處理": "#0e8b87" };
 
 export default function ParentLearningSummary() {

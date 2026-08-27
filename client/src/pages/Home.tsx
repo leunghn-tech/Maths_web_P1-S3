@@ -131,45 +131,6 @@ const courses: Course[] = [
       { name: "代數", topics: ["簡易方程（一步及兩步方程）"] },
     ],
   },
-  {
-    grade: "S1",
-    shortLabel: "中一",
-    stage: "secondary",
-    title: "踏入代數與坐標世界",
-    checkpoint: "一元一次方程",
-    accent: "#3867a7",
-    categories: [
-      { name: "數與代數", topics: ["有向數及數線（正負數）", "代數簡介", "一元一次方程", "數型與數列", "簡易多項式的運算及指數記數法", "百分法（增減、盈利虧損、折扣、單利）", "率及比"] },
-      { name: "圖形與空間", topics: ["幾何簡介", "與直線和點相關的角", "估算與量度（四捨五入、上捨入、下捨入）", "面積和體積（梯形、角柱、圓柱）", "全等與相似", "對稱與變換", "直角坐標簡介"] },
-      { name: "數據處理", topics: ["統計簡介（資料收集、條形圖、折線圖、圓形圖、組織圖）"] },
-    ],
-  },
-  {
-    grade: "S2",
-    shortLabel: "中二",
-    stage: "secondary",
-    title: "用關係、證明與圖像解題",
-    checkpoint: "聯立一元一次方程",
-    accent: "#7d5ea8",
-    categories: [
-      { name: "數與代數", topics: ["估算與近似（有效數字、誤差）", "指數定律", "代數式的因式分解", "公式（變更主項）", "聯立線性方程（代入、消元、圖像）", "常值、變分及比例"] },
-      { name: "圖形與空間", topics: ["多邊形的角", "畢氏定理", "無理數簡介", "三角比簡介", "立體圖形的空間概念", "直角坐標幾何（距離、中點）"] },
-      { name: "數據處理", topics: ["統計圖表的解讀與誤用"] },
-    ],
-  },
-  {
-    grade: "S3",
-    shortLabel: "中三",
-    stage: "secondary",
-    title: "整合理論與真實應用",
-    checkpoint: "三角學初步",
-    accent: "#1f8378",
-    categories: [
-      { name: "數與代數", topics: ["乘法公式與因式分解（三大恆等式）", "一元一次不等式", "百分法進階應用（複利、折舊）"] },
-      { name: "圖形與空間", topics: ["幾何證明與三角形四心", "進階三角學（仰角、俯角、方位角）", "直角坐標幾何（斜率、平行、垂直）", "圓錐與球體求積"] },
-      { name: "數據處理", topics: ["集中趨勢的量度（平均、中位、眾、加權）", "概率簡介"] },
-    ],
-  },
 ];
 
 const categoryIcons = [BookOpen, Compass, LineChart, Dices, CircleHelp];
@@ -261,43 +222,6 @@ const starPractices: StarPractice[] = [
   { key: "p3-level-1", grade: "P3", title: "第一關", detail: "先乘除", href: "/practice/p3-mixed-operations?level=1", accent: "#4f6eae" },
   { key: "p3-level-2", grade: "P3", title: "第二關", detail: "兩步算", href: "/practice/p3-mixed-operations?level=2", accent: "#4f6eae" },
   { key: "p3-level-3", grade: "P3", title: "第三關", detail: "過大關", href: "/practice/p3-mixed-operations?level=3", accent: "#4f6eae" },
-  { key: "s1-directed", grade: "S1", title: "有向數", detail: "移動數線", href: "/practice/s1-interactive?topic=directed", accent: "#3867a7" },
-  { key: "s1-algebra", grade: "S1", title: "代數初步", detail: "代數積木", href: "/practice/s1-interactive?topic=algebra", accent: "#3867a7" },
-  { key: "s1-equation", grade: "S1", title: "一元方程", detail: "平衡解題", href: "/practice/s1-interactive?topic=equation", accent: "#3867a7" },
-  { key: "s1-sequence", grade: "S1", title: "數列規律", detail: "第 n 項", href: "/practice/s1?topic=sequence", accent: "#3867a7" },
-  { key: "s1-polynomial", grade: "S1", title: "多項式", detail: "同類項", href: "/practice/s1?topic=polynomial", accent: "#3867a7" },
-  { key: "s1-percentage", grade: "S1", title: "百分應用", detail: "折扣利潤", href: "/practice/s1?topic=percentage", accent: "#3867a7" },
-  { key: "s1-rate", grade: "S1", title: "率與比", detail: "速率單價", href: "/practice/s1?topic=rate", accent: "#3867a7" },
-  { key: "s1-geometry", grade: "S1", title: "幾何簡介", detail: "點線角", href: "/practice/s1?topic=geometry", accent: "#3867a7" },
-  { key: "s1-angles", grade: "S1", title: "直線角度", detail: "平行線角", href: "/practice/s1?topic=angles", accent: "#3867a7" },
-  { key: "s1-estimation", grade: "S1", title: "估算量度", detail: "四捨五入", href: "/practice/s1?topic=estimation", accent: "#3867a7" },
-  { key: "s1-area", grade: "S1", title: "面積體積", detail: "柱體梯形", href: "/practice/s1?topic=area", accent: "#3867a7" },
-  { key: "s1-similarity", grade: "S1", title: "全等相似", detail: "比例圖形", href: "/practice/s1?topic=similarity", accent: "#3867a7" },
-  { key: "s1-transform", grade: "S1", title: "對稱變換", detail: "平移反射", href: "/practice/s1?topic=transform", accent: "#3867a7" },
-  { key: "s1-coordinate", grade: "S1", title: "直角坐標", detail: "四個象限", href: "/practice/s1?topic=coordinate", accent: "#3867a7" },
-  { key: "s1-statistics", grade: "S1", title: "統計圖表", detail: "收集表達", href: "/practice/s1?topic=statistics", accent: "#3867a7" },
-  { key: "s2-estimation", grade: "S2", title: "估算近似", detail: "有效數字", href: "/practice/s2?topic=estimation", accent: "#7d5ea8" },
-  { key: "s2-indices", grade: "S2", title: "指數定律", detail: "規則配對", href: "/practice/s2-interactive?topic=indices", accent: "#7d5ea8" },
-  { key: "s2-factor", grade: "S2", title: "因式分解", detail: "公因式積木", href: "/practice/s2-interactive?topic=factor", accent: "#7d5ea8" },
-  { key: "s2-formula", grade: "S2", title: "公式主項", detail: "變更主項", href: "/practice/s2?topic=formula", accent: "#7d5ea8" },
-  { key: "s2-simultaneous", grade: "S2", title: "聯立方程", detail: "代入消元", href: "/practice/s2-interactive?topic=simultaneous", accent: "#7d5ea8" },
-  { key: "s2-proportion", grade: "S2", title: "變分比例", detail: "正反比例", href: "/practice/s2?topic=proportion", accent: "#7d5ea8" },
-  { key: "s2-polygon", grade: "S2", title: "多邊形角", detail: "內外角", href: "/practice/s2?topic=polygon", accent: "#7d5ea8" },
-  { key: "s2-pythagoras", grade: "S2", title: "畢氏定理", detail: "直角三角", href: "/practice/s2?topic=pythagoras", accent: "#7d5ea8" },
-  { key: "s2-irrational", grade: "S2", title: "無理數", detail: "根式 π", href: "/practice/s2?topic=irrational", accent: "#7d5ea8" },
-  { key: "s2-trig", grade: "S2", title: "三角比", detail: "sin cos tan", href: "/practice/s2?topic=trig", accent: "#7d5ea8" },
-  { key: "s2-spatial", grade: "S2", title: "立體空間", detail: "等角圖", href: "/practice/s2?topic=spatial", accent: "#7d5ea8" },
-  { key: "s2-coordinate", grade: "S2", title: "坐標幾何", detail: "距離中點", href: "/practice/s2?topic=coordinate", accent: "#7d5ea8" },
-  { key: "s2-stats", grade: "S2", title: "統計判讀", detail: "圖表誤用", href: "/practice/s2?topic=stats", accent: "#7d5ea8" },
-  { key: "s3-identity", grade: "S3", title: "恆等式", detail: "公式配對", href: "/practice/s3-interactive?topic=identity", accent: "#1f8378" },
-  { key: "s3-inequality", grade: "S3", title: "一元不等式", detail: "數線範圍", href: "/practice/s3-interactive?topic=inequality", accent: "#1f8378" },
-  { key: "s3-finance", grade: "S3", title: "複利折舊", detail: "百分法應用", href: "/practice/s3-sim?topic=finance", accent: "#1f8378" },
-  { key: "s3-proof", grade: "S3", title: "幾何證明", detail: "理由排序", href: "/practice/s3-interactive?topic=proof", accent: "#1f8378" },
-  { key: "s3-trig", grade: "S3", title: "進階三角學", detail: "反向高度圖", href: "/practice/s3-lab?topic=trig", accent: "#1f8378" },
-  { key: "s3-slope", grade: "S3", title: "斜率坐標", detail: "平行垂直", href: "/practice/s3?topic=slope", accent: "#1f8378" },
-  { key: "s3-mensuration", grade: "S3", title: "圓錐球體", detail: "表面體積", href: "/practice/s3?topic=mensuration", accent: "#1f8378" },
-  { key: "s3-central", grade: "S3", title: "集中趨勢", detail: "平均中位眾", href: "/practice/s3?topic=central", accent: "#1f8378" },
-  { key: "s3-probability", grade: "S3", title: "概率", detail: "自訂抽樣袋", href: "/practice/s3-lab?topic=probability", accent: "#1f8378" },
 ];
 
 export default function Home() {
@@ -314,7 +238,14 @@ export default function Home() {
   };
 
   // Maths Quest notebook system: homepage progress must recognise a base station and its dedicated interactive lab as one learning outcome.
-  const [selectedGrade, setSelectedGrade] = useState("P1");
+  const [selectedGrade, setSelectedGrade] = useState(() => {
+    const savedGrade = window.localStorage.getItem("mq-selected-primary-grade");
+    return ["P1", "P2", "P3", "P4", "P5", "P6"].includes(savedGrade ?? "") ? savedGrade! : "P1";
+  });
+  const selectGrade = (grade: string) => {
+    window.localStorage.setItem("mq-selected-primary-grade", grade);
+    setSelectedGrade(grade);
+  };
   const [menuOpen, setMenuOpen] = useState(false);
   const [completedPractices, setCompletedPractices] = useState<string[]>([]);
   const [resetOpen, setResetOpen] = useState(false);
@@ -343,12 +274,7 @@ export default function Home() {
   const topicCount = course.categories.reduce((total, category) => total + category.topics.length, 0);
   const routeStations = starPractices.filter((practice) => practice.grade === course.grade);
   const orderedRouteStations = [...routeStations].sort((a, b) => Number(pinnedPractices.includes(b.key)) - Number(pinnedPractices.includes(a.key)));
-  const stationCompletionAliases: Record<string, string[]> = {
-    "s1-directed": ["s1-directed", "s1-directed-interactive"], "s1-algebra": ["s1-algebra", "s1-algebra-interactive"], "s1-equation": ["s1-equation", "s1-equation-interactive"],
-    "s2-indices": ["s2-indices", "s2-indices-interactive"], "s2-factor": ["s2-factor", "s2-factor-interactive"], "s2-simultaneous": ["s2-simultaneous", "s2-simultaneous-interactive"],
-    "s3-identity": ["s3-identity", "s3-identity-interactive"], "s3-inequality": ["s3-inequality", "s3-inequality-interactive"], "s3-proof": ["s3-proof", "s3-proof-interactive"],
-    "s3-finance": ["s3-finance", "s3-finance-sim", "s3-finance-deep", "s3-finance-lab-plus"], "s3-trig": ["s3-trig", "s3-trig-sim", "s3-trig-deep", "s3-trig-lab-plus"], "s3-probability": ["s3-probability", "s3-probability-sim", "s3-probability-deep", "s3-probability-lab-plus"],
-  };
+  const stationCompletionAliases: Record<string, string[]> = {};
   const isStationCompleted = (key: string) => (stationCompletionAliases[key] ?? [key]).some((id) => completedPractices.includes(id));
   const nextStarPractice = useMemo(() => starPractices.find((practice) => !isStationCompleted(practice.key)) ?? null, [completedPractices]);
   const completedStationCount = routeStations.filter((station) => isStationCompleted(station.key)).length;
@@ -436,7 +362,7 @@ export default function Home() {
             <div className="relative z-10 max-w-[650px]">
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 bg-white/70 px-3 py-1.5 text-xs font-bold text-[#41566e] shadow-sm">
                 <span className="size-2 rounded-full bg-[#f05a3c]" />
-                為香港 P1–S3 學生設計
+                為香港 P1–P6 學生設計
               </div>
               <p className="font-mono text-xs font-bold tracking-[0.18em] text-[#f05a3c]">YOUR LEARNING TRAIL — 01</p>
               <h1 className="mt-4 text-balance text-[clamp(2.8rem,6vw,5.5rem)] font-black leading-[0.94] tracking-[-0.075em] text-[#172b3f]">
@@ -508,7 +434,7 @@ export default function Home() {
                 <div className="shrink-0">
                   <div className="flex items-center gap-3">
                     <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#f05a3c]">GRADE TRAIL</p>
-                    <span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">P1–S3</span>
+                    <span className="rounded-full bg-[#172b3f] px-2.5 py-1 font-mono text-[10px] font-bold text-white">P1–P6</span>
                   </div>
                   <p className="mt-1 text-sm font-extrabold">點選一個年級，即時查看它的學習站點。</p>
                 </div>
@@ -518,7 +444,7 @@ export default function Home() {
                       const completed = isGradeCompleted(item.grade);
                       const completedCount = gradeCompletedCount(item.grade);
                       return (
-                        <button key={item.grade} onClick={() => setSelectedGrade(item.grade)} className={`mq-grade-step relative z-10 flex flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${item.stage === "secondary" ? "mq-grade-step-secondary" : ""} ${item.grade === "S1" ? "mq-grade-step-secondary-start" : ""} ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
+                        <button key={item.grade} onClick={() => selectGrade(item.grade)} className={`mq-grade-step relative z-10 flex flex-col items-center gap-1.5 rounded-2xl px-2 py-1.5 text-center transition duration-200 hover:-translate-y-0.5 ${selected ? "text-[#172b3f]" : "text-[#617286] hover:text-[#172b3f]"}`} aria-pressed={selected}>
                           <span className={`grid size-10 place-items-center rounded-full border-4 text-xs font-black transition ${selected ? "border-white text-white shadow-[0_5px_0_rgba(0,0,0,0.14)]" : "border-[#f8f5ed] bg-[#e8e3d9] text-[#617286]"}`} style={selected ? { backgroundColor: item.accent } : undefined}>{index + 1}</span>
                           <span className="text-xs font-extrabold leading-none">{item.shortLabel}</span>
                           <span className="font-mono text-[10px] font-bold opacity-65">{completed ? `★ ${completedCount}` : item.grade}</span>
@@ -542,12 +468,11 @@ export default function Home() {
                   <div>
                     <p className="font-mono text-[11px] font-bold tracking-[0.16em]" style={{ color: course.accent }}>{course.shortLabel.toUpperCase()} LEARNING MAP</p>
                     <h3 className="mt-1 text-2xl font-black tracking-[-0.045em]">{course.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#617286]">{course.stage === "primary" ? "選好年級後，按紅色按鈕開始做題。" : `共 ${topicCount} 個課程焦點 · 從最常用的核心概念開始整理。`}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#617286]">選好年級後，按紅色按鈕開始做題。</p>
                     {courseCompleted && <span className="mq-completion-badge mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-bold"><Check className="size-3" /> {courseCompletionLabel}</span>}
                   </div>
                 </div>
-                {(course.grade === "S1" || course.grade === "S2" || course.grade === "S3") && <Link href={course.grade === "S3" ? "/practice/s3?topic=identity" : course.grade === "S2" ? "/practice/s2?topic=estimation" : "/practice/s1?topic=directed"} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> CMI／EMI 開始 {course.grade}</Link>}
-                {course.grade !== "S1" && course.grade !== "S2" && course.grade !== "S3" && course.stage !== "primary" && (course.grade === "P1" ? (
+                {course.grade === "P1" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p1-add-subtract" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 20 以內加減</Link><Link href="/practice/p1-counting" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">20 以內的數</Link><Link href="/practice/p1-numbers" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">100 以內的數</Link><Link href="/practice/p1-calendar" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">星期日曆</Link><Link href="/practice/p1-lines" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">直線曲線</Link><Link href="/practice/p1-pictograph" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">象形圖</Link></div>
                 ) : course.grade === "P2" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p2-numbers" className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 三位數</Link><Link href="/practice/p2-multiply-visual" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">九九乘法</Link><Link href="/practice/p2-division" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">除法分一分</Link><Link href="/practice/p2-division-remainder" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">有餘數</Link><Link href="/practice/p2-measure" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">米與厘米</Link><Link href="/practice/p2-angles" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">角度分類</Link><Link href="/practice/p2-money" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">港幣找錢</Link><Link href="/practice/p2-directions" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">校園方向</Link></div>
@@ -559,9 +484,7 @@ export default function Home() {
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p5-fractions" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 分數乘除</Link><Link href="/practice/p5-decimals" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">小數四則</Link><Link href="/practice/p5-unlike-fractions" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">異分母加減</Link><Link href="/practice/p5-volume" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">體積計算</Link></div>
                 ) : course.grade === "P6" ? (
                   <div className="flex flex-wrap justify-end gap-2"><Link href="/practice/p6-discount" className="mq-start inline-flex items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-4 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition"><Play className="size-4 fill-current" /> 百分折扣</Link><Link href="/practice/p6-profit" className="mq-library-return inline-flex items-center gap-2 rounded-full border border-[#172b3f]/15 px-4 py-3 text-sm font-extrabold dark:border-white/15">利潤應用</Link></div>
-                ) : (
-                  <button onClick={() => notifyComingSoon(`${course.shortLabel}練習`)} className="mq-start inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_#c84932] transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-none"><Play className="size-4 fill-current" /> 開始 {course.grade} 練習</button>
-                ))}
+                ) : null}
               </div>
 
               {(course.stage === "primary" || course.grade === "S1" || course.grade === "S2" || course.grade === "S3") && <section className="mt-6 border-y border-[#172b3f]/10 bg-[#fffdf8] py-5" aria-label="Recommended Route"><div className="grid gap-5 lg:grid-cols-[.78fr_1.22fr] lg:items-center"><div className="flex items-start gap-4"><span className="grid size-[84px] shrink-0 place-items-center rounded-[28px] text-3xl font-black text-white shadow-[0_7px_0_rgba(0,0,0,.13)]" style={{ backgroundColor: course.accent }}>{course.grade}</span><div><p className="font-mono text-[12px] font-bold tracking-[.18em]" style={{ color: course.accent }}>{course.shortLabel} — LEARNING MAP</p><h4 className="mt-2 text-3xl font-black leading-tight tracking-[-.055em]">{course.title}</h4><p className="mt-3 max-w-sm text-sm leading-6 text-[#617286]">按紅色卡開始；按圖釘把常練的課題放到最前。</p></div></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-3">{orderedRouteStations.map((station) => { const originalIndex = routeStations.indexOf(station); const done = completedPractices.includes(station.key); const recommended = !done && routeStations.slice(0, originalIndex).every((prior) => completedPractices.includes(prior.key)); const pinned = pinnedPractices.includes(station.key); const symbol = station.title.includes("加") ? "＋" : station.title.includes("減") ? "−" : station.title.includes("分數") ? "½" : station.title.includes("小數") ? ".5" : station.title.includes("體積") ? "▦" : station.title.includes("面積") ? "▱" : station.title.includes("圖") ? "⌁" : station.title.includes("時間") ? "◷" : station.title.includes("錢") || station.title.includes("港") ? "$" : station.title.includes("方向") ? "↗" : station.title.includes("形") ? "△" : station.title.includes("量") ? "▥" : station.title.includes("數") ? "123" : "✦"; const iconColor = ["#f05a3c", "#4f6eae", "#0e8b87", "#c8811e", "#7c6cb0", "#6c8b4c"][originalIndex % 6]; return <div key={station.key} className="relative"><Link href={station.href} className={`group relative flex min-h-[76px] items-center gap-3 rounded-xl border-2 px-3 pr-9 text-left transition ${recommended ? "border-[#f05a3c] bg-[#f05a3c] text-white shadow-[0_5px_0_#c84932]" : done ? "border-[#0e8b87]/35 bg-[#e8f5f2] text-[#0e8b87]" : "border-[#172b3f]/15 bg-white text-[#172b3f] hover:border-[#f05a3c]"}`}><span style={{ backgroundColor: recommended ? "rgba(255,255,255,.2)" : iconColor }} className="grid size-11 shrink-0 place-items-center rounded-lg font-mono text-lg font-black text-white">{recommended ? <Play className="size-4 fill-current" /> : done ? "✓" : symbol}</span><span><strong className="block text-sm font-black leading-tight">{station.title}</strong><small className={`mt-1 block font-mono text-[9px] font-bold tracking-[.08em] ${recommended ? "text-white/80" : "text-[#8390a0]"}`}>{recommended ? "NEXT · 開始" : done ? "完成" : "練習站"}</small></span></Link><button onClick={() => setPinnedPractices(togglePinnedPractice(station.key))} aria-label={pinned ? `取消釘選${station.title}` : `釘選${station.title}`} className={`absolute right-2 top-2 grid size-6 place-items-center rounded-full text-xs font-black ${recommended ? "bg-white/20 text-white" : pinned ? "bg-[#f6be5d] text-[#172b3f]" : "bg-[#f0eee7] text-[#617286]"}`}>⌖</button></div>; })}</div></div></section>}
@@ -666,7 +589,7 @@ export default function Home() {
 
       <footer className="border-t border-[#172b3f]/10 bg-[#f8f5ed]">
         <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-5 py-8 text-xs text-[#617286] sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <p className="font-bold text-[#172b3f]">Maths Quest <span className="ml-2 font-normal text-[#617286]">P1–S3 數學操題地圖</span></p>
+          <p className="font-bold text-[#172b3f]">Maths Quest <span className="ml-2 font-normal text-[#617286]">P1–P6 數學操題地圖</span></p>
           <p className="font-mono text-[10px] tracking-[0.12em]">LEARN · PRACTISE · UNDERSTAND</p>
         </div>
       </footer>

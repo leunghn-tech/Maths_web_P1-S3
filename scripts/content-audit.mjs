@@ -1,7 +1,6 @@
 /**
- * Maths Quest quality gate — validates the public P1–S3 learning map without a browser runtime.
- * It guards the notebook's core promise: every Recommended Route card has a route, and S1–S3
- * retain eight CMI/EMI questions plus completion, daily-practice and error-review hooks.
+ * Maths Quest quality gate — validates the public P1–P6 learning map without a browser runtime.
+ * It guards the core promise: every Recommended Route card has a route and an eight-question flow.
  */
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -18,28 +17,8 @@ const app = read("client/src/App.tsx");
 const homeRoutes = [...home.matchAll(/href: "([^"?]+)(?:\?[^\"]*)?"/g)].map((match) => match[1]);
 const appRoutes = new Set([...app.matchAll(/path="([^\"]+)"/g)].map((match) => match[1]));
 for (const route of [...new Set(homeRoutes)]) assert(appRoutes.has(route), `首頁路徑未註冊：${route}`);
-
-const auditSecondaryBank = (file, grade, expectedTopics, questionProperty) => {
-  const source = read(file);
-  const topicPattern = questionProperty === "questions: make"
-    ? /\s{2}([a-z]+):\s*\{[^\n]*?questions:\s*make\(\[\[(.*?)\]\]\)/g
-    : /(?:^|[,\n])\s*([a-z]+):\s*\{[^\n]*?r:\s*q\(\[\[(.*?)\]\]\)/g;
-  const topicMatches = [...source.matchAll(topicPattern)];
-  assert(topicMatches.length === expectedTopics, `${grade} 題庫數量應為 ${expectedTopics}，目前為 ${topicMatches.length}`);
-  for (const match of topicMatches) {
-    const [, id, rows] = match;
-    const baseRows = (rows.match(/\],\s*\[/g) ?? []).length + 1;
-    const renderedQuestions = baseRows;
-    assert(renderedQuestions === 8, `${grade}「${id}」應提供 8 題，目前為 ${renderedQuestions}`);
-  }
-  for (const required of ["CMI 中文", "EMI English", "markPracticeCompleted", "recordDailyPractice", "recordPracticeMistake"]) {
-    assert(source.includes(required), `${grade} 缺少必要流程：${required}`);
-  }
-};
-
-auditSecondaryBank("client/src/pages/S1BilingualPractice.tsx", "S1", 15, "questions: make");
-auditSecondaryBank("client/src/pages/S2BilingualPractice.tsx", "S2", 13, "r:q");
-auditSecondaryBank("client/src/pages/S3BilingualPractice.tsx", "S3", 9, "r:q");
+assert(!app.includes('/practice/s1') && !app.includes('/practice/s2') && !app.includes('/practice/s3'), "應已移除全部中學作答路由");
+assert(!home.includes('grade: "S1"') && !home.includes('grade: "S2"') && !home.includes('grade: "S3"'), "首頁不應保留中一至中三年級資料或課題卡");
 
 const p1Routes = [
   "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",
@@ -293,86 +272,8 @@ const p6Profit = read("client/src/pages/P6ProfitPractice.tsx");
 assert(p6Profit.includes("HK$"), "P6 利潤題須以 HK$ 顯示港幣");
 assert(p6Profit.includes("售價 = 成本 + 利潤"), "P6 售價反推題須使用成本加利潤的正確關係");
 
-const s1Routes = ["/practice/s1", "/practice/s1-interactive"];
-for (const route of s1Routes) assert(appRoutes.has(route), `S1 練習路徑未註冊：${route}`);
-
-const s1Bilingual = read("client/src/pages/S1BilingualPractice.tsx");
-const secondaryDifficulty = read("client/src/lib/secondaryDifficulty.ts");
-assert(secondaryDifficulty.includes('return "standard"') && secondaryDifficulty.includes('return Math.min(Math.max(progressIndex, 0), total - 1)'), "S1–S3 須使用單一清晰題序，不能由難度參數改變題目");
-assert(s1Bilingual.includes("getDifficultyQuestionIndex(difficulty, index, station.questions.length)"), "S1 雙語題庫須按連續題序選取題目");
-assert(s1Bilingual.includes('"-4 − 6 是多少？", "What is -4 - 6?", "-10"'), "S1 有向數題必須正確計算負四減六為負十");
-assert(s1Bilingual.includes('"3x＋2＝17，x 是？", "Solve 3x + 2 = 17.", "5"'), "S1 一元一次方程題必須正確求得 x 為五");
-assert(s1Bilingual.includes('"3，6，9，… 的第 n 項是？", "What is the nth term of 3, 6, 9, ...?", "3n"'), "S1 數列第 n 項題必須正確表達為 3n");
-assert(s1Bilingual.includes('"一輛車行駛 120 km 用時 2 h，求其平均速率。", "A car travels 120 km in 2 h. Find its average speed.", "60 km/h"'), "S1 速率題必須以正式題幹及路程除時間正確計算");
-assert(s1Bilingual.includes('"三角形底 8 cm、高 5 cm，面積是？", "Triangle base 8 cm, height 5 cm. Area?", "20 cm²"'), "S1 三角形面積題必須正確使用二分之一乘底乘高");
-assert(s1Bilingual.includes("CMI 中文") && s1Bilingual.includes("EMI English"), "S1 題庫必須提供 CMI 及 EMI 題面切換");
-assert(s1Bilingual.includes("if (index === 7)"), "S1 雙語題庫站須完成八題才可結算");
-assert(s1Bilingual.includes("在 -5 和 -2 之間，哪個數較大？") && s1Bilingual.includes("Which number is greater: -5 or -2?") && s1Bilingual.includes("把 21 按 2:5 分配"), "S1 題庫須採用正式中學數學問法，避免含混口語題幹");
-
-const s1Interactive = read("client/src/pages/S1InteractiveFoundations.tsx");
-assert(s1Interactive.includes("getDifficultyQuestionIndex(difficulty, index, station.items.length)"), "S1 互動站須按連續題序選取操作任務");
-assert(s1Interactive.includes('target: -7'), "S1 互動數線須包含負數定位任務");
-assert(s1Interactive.includes('parts: [6, -2], target: 4'), "S1 互動代數積木須正確合併六 x 減二 x 為四 x");
-assert(s1Interactive.includes('start: "2x + 3 = 11"'), "S1 互動方程站須提供標準兩步方程");
-assert(s1Interactive.includes("if (index === 7)"), "S1 互動站須完成八題才可結算");
-
-const s2Routes = ["/practice/s2", "/practice/s2-interactive"];
-for (const route of s2Routes) assert(appRoutes.has(route), `S2 練習路徑未註冊：${route}`);
-
-const s2Bilingual = read("client/src/pages/S2BilingualPractice.tsx");
-assert(s2Bilingual.includes("getDifficultyQuestionIndex(difficulty,index,station.r.length)"), "S2 雙語題庫須按連續題序選取題目");
-assert(s2Bilingual.includes('"化簡 a³ × a²。","Simplify a³ × a².","a⁵"'), "S2 同底數相乘題必須以正式問法並正確相加指數");
-assert(s2Bilingual.includes('"把 x²＋5x 因式分解。","Factorise x² + 5x.","x(x+5)"'), "S2 因式分解題必須正確提取 x 公因式");
-assert(s2Bilingual.includes('"解聯立方程 x＋y＝7、x−y＝1，求 x。","Solve x + y = 7 and x - y = 1. Find x.","4"'), "S2 聯立方程題必須以正式問法正確求得 x 為四");
-assert(s2Bilingual.includes('"一直角三角形的兩條直角邊長分別為 3 cm 及 4 cm，求斜邊長。","A right-angled triangle has legs 3 cm and 4 cm. Find the hypotenuse.","5 cm"'), "S2 畢氏定理題必須清楚標示條件、單位及答案");
-assert(s2Bilingual.includes('"求點 (0,0) 與 (3,4) 之間的距離。","Find the distance between (0,0) and (3,4).","5"'), "S2 坐標距離題必須採用正式距離問法");
-assert(s2Bilingual.includes("CMI 中文") && s2Bilingual.includes("EMI English"), "S2 題庫必須提供 CMI 及 EMI 題面切換");
-assert(s2Bilingual.includes("if(index===7)"), "S2 雙語題庫站須完成八題才可結算");
-assert(!s2Bilingual.includes("（延伸）") && !s2Bilingual.includes("(extension)"), "S2 每站八題必須為不重複正式題目，不能以延伸標籤重覆");
-
-const s2Interactive = read("client/src/pages/S2InteractiveCore.tsx");
-assert(s2Interactive.includes('{a:5,b:0,rule:"add",result:5}'), "S2 互動指數站須正確處理 a⁵×a⁰ 為 a⁵");
-assert(s2Interactive.includes('expr:"x² + 5x",factor:"x",inside:"x + 5"'), "S2 互動因式分解須正確提取 x 公因式");
-assert(s2Interactive.includes('answer:"x = 4, y = 3"'), "S2 互動聯立方程須正確求解 x 為四、y 為三");
-assert(s2Interactive.includes("if(index===7)"), "S2 互動站須完成八題才可結算");
-assert(s2Interactive.includes("item=station.items[getDifficultyQuestionIndex(difficulty,index,station.items.length)]") && s2Interactive.includes("items:[{a:3,b:2"), "S2 互動站須按連續題序使用八條不重複任務");
-
-const s3Routes = ["/practice/s3", "/practice/s3-interactive", "/practice/s3-sim", "/practice/s3-deep", "/practice/s3-lab"];
-for (const route of s3Routes) assert(appRoutes.has(route), `S3 練習路徑未註冊：${route}`);
-
-const s3Bilingual = read("client/src/pages/S3BilingualPractice.tsx");
-assert(s3Bilingual.includes("getDifficultyQuestionIndex(difficulty,index,station.r.length)"), "S3 雙語題庫須按連續題序選取題目");
-assert(s3Bilingual.includes('"展開 (a+b)²。","Expand (a+b)².","a²+2ab+b²"'), "S3 恆等式題必須以正式問法正確展開完全平方");
-assert(s3Bilingual.includes('"解不等式 −2x > 8。","Solve −2x > 8.","x < −4"'), "S3 負數係數不等式題必須以標準間距反轉不等號");
-assert(s3Bilingual.includes('"方位角由哪個方向順時針量起？","A bearing is measured clockwise from which direction?","北方 / North"'), "S3 方位角題必須由北方順時針量起");
-assert(s3Bilingual.includes('"球體的體積公式是甚麼？","What is the volume formula of a sphere?","4/3πr³"'), "S3 球體積公式必須正確為四分之三 πr³");
-assert(s3Bilingual.includes('"擲一個公平骰子，出現 6 的概率是多少？","What is the probability of rolling a 6 on a fair die?","1/6"'), "S3 骰子概率題必須正確為六分之一");
-assert(s3Bilingual.includes("CMI 中文") && s3Bilingual.includes("EMI English"), "S3 題庫必須提供 CMI 及 EMI 題面切換");
-assert(s3Bilingual.includes("if(index===7)"), "S3 雙語題庫站須完成八題才可結算");
-assert(!s3Bilingual.includes("（延伸）") && !s3Bilingual.includes("(extension)"), "S3 每站八題必須為不重複正式題目，不能以延伸標籤重覆");
-
-const s3Interactive = read("client/src/pages/S3InteractiveCore.tsx");
-assert(s3Interactive.includes('correct: "a² + 2ab + b²"'), "S3 互動恆等式站須正確配對完全平方公式");
-assert(s3Interactive.includes('correct: "closed-left-neg2"') && s3Interactive.includes('"● −2，向左"'), "S3 互動不等式站須以唯一的完整選項正確表示 x≤−2");
-assert(s3Interactive.includes('AB＝AC。可推出甚麼？') && s3Interactive.includes('"∠B＝∠C"'), "S3 互動幾何站須包含等腰三角形底角推論");
-assert(s3Interactive.includes("if (index === 7)"), "S3 互動站須完成八題才可結算");
-assert(s3Interactive.includes("const item = station.items[index]") && s3Interactive.includes("垂直平分線的交點"), "S3 互動站須以單一題序使用八條不重複任務及正確三角形中心術語");
-
-const s3Advanced = read("client/src/pages/S3AdvancedSimulations.tsx");
-assert(s3Advanced.includes("getDifficultyQuestionIndex(difficulty, index, station.items.length)") && s3Advanced.includes("target: \"H\"") && s3Advanced.includes("target: \"T\""), "S3 基礎概率模擬須按難度以八題索引呈現一致的硬幣樹狀圖概率");
-assert(s3Advanced.includes("principal: 1000, rate: 10, kind: \"interest\", years: 3") && s3Advanced.includes("principal: 5000, rate: 12, kind: \"depreciation\", years: 4"), "S3 複利模擬須提供八個可驗證的本金、利率及年數資料");
-assert(s3Advanced.includes("bearing === item.bearing && kind === item.kind && angle === item.angle"), "S3 方位及仰俯角模擬須核對全部設定");
-
-const s3Deep = read("client/src/pages/S3DeepSimulations.tsx");
-assert(s3Deep.includes("deepDifficultyTargets") && s3Deep.includes("answer===target.answer&&draws.length>=target.draws"), "S3 深層模擬須按難度驗證不同的抽樣與金融任務條件");
-assert(s3Deep.includes("h = {distance} × tan {angle}°"), "S3 三角學高度站須顯示正切的距離與高度關係");
-
-const s3Lab = read("client/src/pages/S3LabPlus.tsx");
-assert(s3Lab.includes("height / Math.tan(angle * Math.PI / 180)"), "S3 反算三角學站須以高度除正切求水平距離");
-assert(s3Lab.includes("Math.atan(height / distance)"), "S3 反算三角學站須以反正切求角度");
-assert(s3Lab.includes("bag.filter((_, i) => i !== pick)"), "S3 自訂抽樣袋必須在不放回抽樣後移除已抽球");
-assert(!s3Lab.includes("monthly") && !s3Lab.includes("Savings Goal"), "S3 不應保留未明列於初中課程的每月供款或儲蓄目標延伸站");
-assert(home.includes('href: "/practice/s3-sim?topic=finance"') && home.includes('detail: "百分法應用"'), "S3 財務入口須指向複利與折舊的百分法核心站");
+const primaryRandomStation = read("client/src/components/P4QuestionStation.tsx");
+assert(!primaryRandomStation.includes("mq-difficulty-switch") && !primaryRandomStation.includes("選擇難度"), "P4–P6 隨機題站不應保留沒有實質分別的難度選擇");
 
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
@@ -380,4 +281,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Maths Quest content audit passed: ${new Set(homeRoutes).size} learning-map routes, S1/S2/S3 bilingual stations and eight-question flows verified.`);
+console.log(`Maths Quest content audit passed: ${new Set(homeRoutes).size} learning-map routes and eight-question primary-school flows verified.`);

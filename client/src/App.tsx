@@ -5,7 +5,6 @@ import PrimaryFractionFormatter from "@/components/PrimaryFractionFormatter";
 import PrimaryLearningCoach from "@/components/PrimaryLearningCoach";
 import CloudLearningSync from "@/components/CloudLearningSync";
 import PracticeQuestionProgress from "@/components/PracticeQuestionProgress";
-import SecondaryOptionLanguageSync from "@/components/SecondaryOptionLanguageSync";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -60,15 +59,6 @@ import P5UnlikeFractionsPractice from "./pages/P5UnlikeFractionsPractice";
 import P5VolumePractice from "./pages/P5VolumePractice";
 import P6DiscountPractice from "./pages/P6DiscountPractice";
 import P6ProfitPractice from "./pages/P6ProfitPractice";
-import S1BilingualPractice from "./pages/S1BilingualPractice";
-import S2BilingualPractice from "./pages/S2BilingualPractice";
-import S3BilingualPractice from "./pages/S3BilingualPractice";
-import S1InteractiveFoundations from "./pages/S1InteractiveFoundations";
-import S2InteractiveCore from "./pages/S2InteractiveCore";
-import S3InteractiveCore from "./pages/S3InteractiveCore";
-import S3AdvancedSimulations from "./pages/S3AdvancedSimulations";
-import S3DeepSimulations from "./pages/S3DeepSimulations";
-import S3LabPlus from "./pages/S3LabPlus";
 import AccountHub from "./pages/AccountHub";
 import SignInPage from "./pages/SignInPage";
 import TeacherDashboard from "./pages/TeacherDashboard";
@@ -174,15 +164,6 @@ function Router() {
       <Route path="/practice/p5-volume" component={P5VolumePractice} />
       <Route path="/practice/p6-discount" component={P6DiscountPractice} />
       <Route path="/practice/p6-profit" component={P6ProfitPractice} />
-      <Route path="/practice/s1" component={S1BilingualPractice} />
-      <Route path="/practice/s2" component={S2BilingualPractice} />
-      <Route path="/practice/s3" component={S3BilingualPractice} />
-      <Route path="/practice/s1-interactive" component={S1InteractiveFoundations} />
-      <Route path="/practice/s2-interactive" component={S2InteractiveCore} />
-      <Route path="/practice/s3-interactive" component={S3InteractiveCore} />
-      <Route path="/practice/s3-sim" component={S3AdvancedSimulations} />
-      <Route path="/practice/s3-deep" component={S3DeepSimulations} />
-      <Route path="/practice/s3-lab" component={S3LabPlus} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -195,7 +176,6 @@ export default function App() {
       <ThemeProvider defaultTheme="light" switchable>
         <TooltipProvider>
           <PracticeQuestionProgress />
-          <SecondaryOptionLanguageSync />
           <Toaster richColors position="top-center" />
           <div className="fixed bottom-3 right-3 z-50"><CloudLearningSync /></div>
           <Router />

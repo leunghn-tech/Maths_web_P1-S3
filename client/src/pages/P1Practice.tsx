@@ -204,7 +204,7 @@ export default function P1Practice() {
             <span className="leading-none"><strong className="block text-[16px] font-extrabold tracking-[-0.04em]">Maths Quest</strong><small className="mt-1 block font-mono text-[9px] font-bold tracking-[0.14em] text-[#f05a3c]">P1 練習站 · 01</small></span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <span className="hidden font-mono text-[11px] font-bold tracking-[0.1em] text-[#617286] dark:text-[#b7c8ce] sm:block">隨機出題 · {difficultyLabels[difficulty]}</span>
+            <span className="hidden font-mono text-[11px] font-bold tracking-[0.1em] text-[#617286] dark:text-[#b7c8ce] sm:block">隨機出題</span>
             <button onClick={() => setSoundEnabled((enabled) => !enabled)} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={soundEnabled ? "關閉答題音效" : "開啟答題音效"} title={soundEnabled ? "答題音效：開啟" : "答題音效：關閉"}>
               {soundEnabled ? <Volume2 className="size-[17px]" /> : <VolumeX className="size-[17px]" />}
             </button>
@@ -225,7 +225,7 @@ export default function P1Practice() {
           <div>
             <div className="flex items-center gap-2 font-mono text-[11px] font-bold tracking-[0.16em] text-[#f05a3c]"><span className="size-2 rounded-full bg-[#f05a3c]" /> P1 · 學習站 01</div>
             <h1 className="mt-3 text-3xl font-black tracking-[-0.055em] sm:text-4xl">20 以內的加減法</h1>
-            <p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">{reviewMode ? "現在只會重溫本輪答錯的題目。" : `已選擇${difficultyLabels[difficulty]}難度，每次都會產生新的計算題。`}</p>
+            <p className="mt-2 text-sm leading-6 text-[#617286] dark:text-[#b7c8ce]">{reviewMode ? "現在只會重溫本輪答錯的題目。" : "每次都會產生新的計算題。"}</p>
           </div>
           <div className="mq-progress-label rounded-2xl border border-[#172b3f]/10 bg-white px-4 py-3 text-sm dark:border-white/10 dark:bg-[#172737]">
             <span className="font-mono text-[10px] font-bold tracking-[0.12em] text-[#f05a3c]">今日學習路徑</span>
