@@ -56,7 +56,7 @@ const questionSets: Record<OperationMode, MultiplicationQuestion[]> = {
 
 const difficultyLabels: Record<Difficulty, string> = { easy: "輕鬆", standard: "標準", challenge: "挑戰" };
 const uniqueNumbers = (values: number[]) => Array.from(new Set(values));
-const randomChoices = (answer: number) => { const values = new Set([answer]); for (let distance = 1; values.size < 4; distance += 1) { if (answer - distance >= 1) values.add(answer - distance); if (values.size < 4) values.add(answer + distance); } return Array.from(values).sort(() => Math.random() - 0.5); };
+export const randomChoices = (answer: number) => { const values = new Set([answer]); for (let distance = 1; values.size < 4; distance += 1) { if (answer - distance >= 1) values.add(answer - distance); if (values.size < 4) values.add(answer + distance); } return Array.from(values).sort(() => Math.random() - 0.5); };
 
 function generateQuestions(mode: OperationMode, difficulty: Difficulty): MultiplicationQuestion[] {
   const cap = difficulty === "easy" ? 5 : difficulty === "standard" ? 8 : 9;

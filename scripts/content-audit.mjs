@@ -96,6 +96,7 @@ assert(p2Numbers.includes("由 2 個百、4 個十和 5 個一組成"), "P2 三�
 
 const p2Money = read("client/src/pages/P2MoneyPractice.tsx");
 assert(p2Money.includes(">HK${v}</span>"), "P2 港幣找錢題所有金額須採 HK$ 標示");
+assert(p2Money.includes('"HK$" + q.paid'), "P2 港幣找錢題的回饋與朗讀亦須採 HK$ 書寫");
 
 const p2Time = read("client/src/pages/P2TimePractice.tsx");
 assert(p2Time.includes('min={name === "時" ? "1" : "0"}'), "P2 時計時針只可設定為 1 至 12 時");
@@ -109,13 +110,16 @@ assert(p2NumberLine.includes('ans:q.a>q.b?">":"<"'), "P2 數線比較符號須�
 
 const p2Applied = read("client/src/pages/P2AppliedPractice.tsx");
 assert(p2Applied.includes("a:q.n%q.g"), "P2 有餘數題須以除法餘數計算答案");
+assert(p2Applied.includes('u:"厘米"') && p2Applied.includes('u:"米"'), "P2 量度題須使用正式中文單位「厘米」及「米」");
 
 const p2Further = read("client/src/pages/P2FurtherPractice.tsx");
 assert(p2Further.includes("a:q.n*q.k"), "P2 象形圖答案須為圖案數量乘上圖例數值");
+assert(p2Further.includes("圖中的圖案一共代表多少個"), "P2 象形圖題幹須清楚問圖案所代表的總數");
 assert(p2Further.includes("1 米 = 100 厘米"), "P2 米厘米換算須明確使用 1 米等於 100 厘米");
 
 const p2Starter = read("client/src/pages/P2P3StarterPractice.tsx");
 assert(p2Starter.includes("const fractionParts"), "P2 分數初步須使用受控的一半與四分一題組");
+assert(p2Starter.includes("四分之一"), "P2 分數題須使用正式「四分之一」書寫");
 assert(p2Starter.includes("function weightChoices"), "P3 克公斤題必須提供四個不重複選項");
 
 const p3Routes = [
@@ -129,6 +133,8 @@ for (const route of p3Routes) assert(appRoutes.has(route), `P3 練習路徑未�
 const p3Practice = read("client/src/pages/P3Practice.tsx");
 assert(p3Practice.includes("const passed = levelScore >= 5"), "P3 混合運算須答對至少 5 題才可過關");
 assert(p3Practice.includes("答對至少 5 題即可解鎖"), "P3 混合運算過關文案須與五題門檻一致");
+assert(p3Practice.includes("product - 1") && p3Practice.includes("answer = product - extra"), "P3 隨機減法題不得產生負數答案");
+assert(p3Practice.includes("for (let distance = 1; values.size < 4"), "P3 隨機運算題必須提供四個互異選項");
 
 const p3Data = read("client/src/pages/P3DataPractice.tsx");
 assert(p3Data.includes("const numberComparisons"), "P3 大數比較題須使用受控的兩數資料");
@@ -167,9 +173,14 @@ const p4QuestionStation = read("client/src/components/P4QuestionStation.tsx");
 assert(p4QuestionStation.includes("Array.from({ length: 8 }"), "P4 隨機題站每組必須產生 8 題");
 assert(p4QuestionStation.includes("完成 8 題"), "P4 隨機題站任務文案須與八題流程一致");
 
+const p4Practice = read("client/src/pages/P4Practice.tsx");
+assert(p4Practice.includes("四分之一 + 四分之二"), "P4 分數加減題面須使用正式中文分數名稱");
+assert(p4Practice.includes("二分之一 = ?"), "P4 分數小數互化題面不可使用斜線分數格式");
+
 const p4Visual = read("client/src/pages/P4VisualPractice.tsx");
 assert(p4Visual.includes("area: item.width * item.height"), "P4 方格面積答案必須由長乘闊計算");
 assert(p4Visual.includes('answer: "1/2", shaded: 3, choices: ["1/2", "1/6", "2/6", "4/6"]'), "P4 分數題不得同時提供與正解等值的分數選項");
+assert(p4Visual.includes("const fractionLabel"), "P4 分數視覺站須把內部算式轉為正式中文分數名稱");
 assert(p4Visual.includes("if (index === 7)"), "P4 方格面積及分數站須完成八題才可結算");
 
 const p4Concept = read("client/src/pages/P4ConceptPractice.tsx");
@@ -179,8 +190,13 @@ assert(p4Concept.includes('move: "向右 1 格、向上 1 格"'), "P4 八方向�
 
 const p4Complete = read("client/src/pages/P4CompletePractice.tsx");
 assert(p4Complete.includes("只有一組對邊平行"), "P4 梯形題幹須使用一組對邊平行的定義");
+assert(p4Complete.includes("相對的兩組邊分別平行"), "P4 平行四邊形題幹須清楚表達相對兩組邊平行");
 assert(p4Complete.includes("每一格代表"), "P4 棒形圖題須清楚標示每格代表的數量");
 assert(p4Complete.includes("HK$2.50"), "P4 小數購物題須以 HK$ 顯示金額");
+
+const p4AdvancedData = read("client/src/pages/P4AdvancedDataPractice.tsx");
+assert(p4AdvancedData.includes("export const comparisonChoices"), "P4 棒形圖比較站須使用可驗證的四選項產生器");
+assert(p4AdvancedData.includes(".filter((value) => value > 0).slice(0, 4)"), "P4 棒形圖比較站須提供四個互異正數選項");
 
 const p4Factors = read("client/src/pages/P4FactorsPractice.tsx");
 assert(p4Factors.includes("const nonFactors"), "P4 因數題須排除其他可整除的干擾項");
@@ -201,7 +217,8 @@ const p5Routes = [
 for (const route of p5Routes) assert(appRoutes.has(route), `P5 練習路徑未註冊：${route}`);
 
 const p5Fraction = read("client/src/pages/P5FractionPractice.tsx");
-assert(p5Fraction.includes("bottom === 1 ? String(top)"), "P5 分數乘除整數結果不得顯示為分母 1 的分數");
+assert(p5Fraction.includes("bottom === 1 ? chineseNumber(top)"), "P5 分數乘除整數結果不得顯示為分母 1 的分數");
+assert(p5Fraction.includes("分之"), "P5 分數乘除題面須使用正式中文分數名稱");
 assert(p5Fraction.includes("const choicesFor"), "P5 分數乘除題必須提供四個不重複選項");
 
 const p5Unlike = read("client/src/pages/P5UnlikeFractionsPractice.tsx");
@@ -290,7 +307,7 @@ assert(s1Bilingual.includes('"一輛車行駛 120 km 用時 2 h，求其平均�
 assert(s1Bilingual.includes('"三角形底 8 cm、高 5 cm，面積是？", "Triangle base 8 cm, height 5 cm. Area?", "20 cm²"'), "S1 三角形面積題必須正確使用二分之一乘底乘高");
 assert(s1Bilingual.includes("CMI 中文") && s1Bilingual.includes("EMI English"), "S1 題庫必須提供 CMI 及 EMI 題面切換");
 assert(s1Bilingual.includes("if (index === 7)"), "S1 雙語題庫站須完成八題才可結算");
-assert(s1Bilingual.includes("下列各數中，哪個數最大？") && s1Bilingual.includes("把 21 按 2:5 分配"), "S1 題庫須採用正式中學數學問法，避免含混口語題幹");
+assert(s1Bilingual.includes("在 -5 和 -2 之間，哪個數較大？") && s1Bilingual.includes("Which number is greater: -5 or -2?") && s1Bilingual.includes("把 21 按 2:5 分配"), "S1 題庫須採用正式中學數學問法，避免含混口語題幹");
 
 const s1Interactive = read("client/src/pages/S1InteractiveFoundations.tsx");
 assert(s1Interactive.includes("getDifficultyQuestionIndex(difficulty, index, station.items.length)"), "S1 互動站須依難度選取不同操作任務");

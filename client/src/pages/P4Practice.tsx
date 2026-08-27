@@ -15,16 +15,16 @@ import VisualReviewHint from "@/components/VisualReviewHint";
 type Mode = "fractions" | "decimals" | "convert";
 type Question = { expression: string; answer: string; choices: string[]; note: string; parts: number; shaded: number; color: string };
 
-const questionSets: Record<Mode, Question[]> = {
+export const questionSets: Record<Mode, Question[]> = {
   fractions: [
-    { expression: "1/4 + 2/4", answer: "3/4", choices: ["2/4", "3/4", "3/8", "4/4"], note: "分母相同，只需要把分子相加。", parts: 4, shaded: 3, color: "#b15979" },
-    { expression: "5/6 − 2/6", answer: "3/6", choices: ["3/6", "3/12", "7/6", "2/6"], note: "分母相同，5 減 2，分母仍然是 6。", parts: 6, shaded: 3, color: "#b15979" },
-    { expression: "3/8 + 4/8", answer: "7/8", choices: ["7/8", "7/16", "1/8", "8/8"], note: "把同樣大小的分段合起來。", parts: 8, shaded: 7, color: "#b15979" },
-    { expression: "1/3 + 1/3", answer: "2/3", choices: ["2/3", "2/6", "1/3", "3/3"], note: "分母保持 3，只把分子相加。", parts: 3, shaded: 2, color: "#b15979" },
-    { expression: "7/8 − 3/8", answer: "4/8", choices: ["4/8", "4/16", "10/8", "3/8"], note: "同分母相減，7 減 3 是 4。", parts: 8, shaded: 4, color: "#b15979" },
-    { expression: "2/5 + 1/5", answer: "3/5", choices: ["3/5", "3/10", "2/5", "1/5"], note: "五分之二加五分之一是五分之三。", parts: 5, shaded: 3, color: "#b15979" },
-    { expression: "9/10 − 4/10", answer: "5/10", choices: ["5/10", "5/20", "13/10", "4/10"], note: "十分之九減十分之四，剩下十分之五。", parts: 10, shaded: 5, color: "#b15979" },
-    { expression: "4/7 + 2/7", answer: "6/7", choices: ["6/7", "6/14", "2/7", "5/7"], note: "分母是 7 不變，4 加 2 是 6。", parts: 7, shaded: 6, color: "#b15979" },
+    { expression: "四分之一 + 四分之二", answer: "四分之三", choices: ["四分之二", "四分之三", "八分之三", "四分之四"], note: "分母相同，只需要把分子相加。", parts: 4, shaded: 3, color: "#b15979" },
+    { expression: "六分之五 − 六分之二", answer: "六分之三", choices: ["六分之三", "十二分之三", "六分之七", "六分之二"], note: "分母相同，5 減 2，分母仍然是 6。", parts: 6, shaded: 3, color: "#b15979" },
+    { expression: "八分之三 + 八分之四", answer: "八分之七", choices: ["八分之七", "十六分之七", "八分之一", "八分之八"], note: "把同樣大小的分段合起來。", parts: 8, shaded: 7, color: "#b15979" },
+    { expression: "三分之一 + 三分之一", answer: "三分之二", choices: ["三分之二", "六分之二", "三分之一", "三分之三"], note: "分母保持 3，只把分子相加。", parts: 3, shaded: 2, color: "#b15979" },
+    { expression: "八分之七 − 八分之三", answer: "八分之四", choices: ["八分之四", "十六分之四", "八分之十", "八分之三"], note: "同分母相減，7 減 3 是 4。", parts: 8, shaded: 4, color: "#b15979" },
+    { expression: "五分之二 + 五分之一", answer: "五分之三", choices: ["五分之三", "十分之三", "五分之二", "五分之一"], note: "五分之二加五分之一是五分之三。", parts: 5, shaded: 3, color: "#b15979" },
+    { expression: "十分之九 − 十分之四", answer: "十分之五", choices: ["十分之五", "二十分之五", "十分之十三", "十分之四"], note: "十分之九減十分之四，剩下十分之五。", parts: 10, shaded: 5, color: "#b15979" },
+    { expression: "七分之四 + 七分之二", answer: "七分之六", choices: ["七分之六", "十四分之六", "七分之二", "七分之五"], note: "分母是 7 不變，4 加 2 是 6。", parts: 7, shaded: 6, color: "#b15979" },
   ],
   decimals: [
     { expression: "0.3 + 0.4", answer: "0.7", choices: ["0.34", "0.7", "0.12", "7.0"], note: "把十分位對齊：3 個十分之一加 4 個十分之一。", parts: 10, shaded: 7, color: "#0e8b87" },
@@ -37,14 +37,14 @@ const questionSets: Record<Mode, Question[]> = {
     { expression: "2.1 + 0.6", answer: "2.7", choices: ["2.7", "2.16", "1.5", "2.6"], note: "個位和十分位分開對齊計算。", parts: 10, shaded: 7, color: "#0e8b87" },
   ],
   convert: [
-    { expression: "3/4 = ?", answer: "0.75", choices: ["0.34", "0.75", "0.4", "0.8"], note: "四分之三等於 75 個百分之一。", parts: 4, shaded: 3, color: "#4f6eae" },
-    { expression: "0.5 = ?", answer: "1/2", choices: ["1/5", "1/2", "2/5", "5/1"], note: "0.5 是 5 個十分之一，也就是一半。", parts: 2, shaded: 1, color: "#4f6eae" },
-    { expression: "0.25 = ?", answer: "1/4", choices: ["1/2", "1/4", "2/5", "4/1"], note: "0.25 是 25 個百分之一，即四分之一。", parts: 4, shaded: 1, color: "#4f6eae" },
-    { expression: "1/2 = ?", answer: "0.5", choices: ["0.5", "0.2", "0.25", "2.0"], note: "二分之一就是一半，即 0.5。", parts: 2, shaded: 1, color: "#4f6eae" },
-    { expression: "0.8 = ?", answer: "4/5", choices: ["4/5", "8/5", "1/8", "5/4"], note: "0.8 是十分之八，約成五分之四。", parts: 5, shaded: 4, color: "#4f6eae" },
-    { expression: "3/10 = ?", answer: "0.3", choices: ["0.3", "0.13", "3.0", "0.7"], note: "十分之三就是 0.3。", parts: 10, shaded: 3, color: "#4f6eae" },
-    { expression: "0.6 = ?", answer: "3/5", choices: ["3/5", "6/5", "1/6", "5/3"], note: "0.6 是十分之六，約成五分之三。", parts: 5, shaded: 3, color: "#4f6eae" },
-    { expression: "2/5 = ?", answer: "0.4", choices: ["0.4", "0.2", "0.25", "2.5"], note: "五分之二等於 4 個十分之一。", parts: 5, shaded: 2, color: "#4f6eae" },
+    { expression: "四分之三 = ?", answer: "0.75", choices: ["0.34", "0.75", "0.4", "0.8"], note: "四分之三等於 75 個百分之一。", parts: 4, shaded: 3, color: "#4f6eae" },
+    { expression: "0.5 = ?", answer: "二分之一", choices: ["五分之一", "二分之一", "五分之二", "一分之五"], note: "0.5 是 5 個十分之一，也就是一半。", parts: 2, shaded: 1, color: "#4f6eae" },
+    { expression: "0.25 = ?", answer: "四分之一", choices: ["二分之一", "四分之一", "五分之二", "一分之四"], note: "0.25 是 25 個百分之一，即四分之一。", parts: 4, shaded: 1, color: "#4f6eae" },
+    { expression: "二分之一 = ?", answer: "0.5", choices: ["0.5", "0.2", "0.25", "2.0"], note: "二分之一就是一半，即 0.5。", parts: 2, shaded: 1, color: "#4f6eae" },
+    { expression: "0.8 = ?", answer: "五分之四", choices: ["五分之四", "五分之八", "八分之一", "四分之五"], note: "0.8 是十分之八，約成五分之四。", parts: 5, shaded: 4, color: "#4f6eae" },
+    { expression: "十分之三 = ?", answer: "0.3", choices: ["0.3", "0.13", "3.0", "0.7"], note: "十分之三就是 0.3。", parts: 10, shaded: 3, color: "#4f6eae" },
+    { expression: "0.6 = ?", answer: "五分之三", choices: ["五分之三", "五分之六", "六分之一", "三分之五"], note: "0.6 是十分之六，約成五分之三。", parts: 5, shaded: 3, color: "#4f6eae" },
+    { expression: "五分之二 = ?", answer: "0.4", choices: ["0.4", "0.2", "0.25", "2.5"], note: "五分之二等於 4 個十分之一。", parts: 5, shaded: 2, color: "#4f6eae" },
   ],
 };
 

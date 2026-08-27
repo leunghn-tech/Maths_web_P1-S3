@@ -13,11 +13,16 @@ const questions = [
   { a: "1/3", op: "×", b: "3/5", answer: "1/5", choices: ["1/5", "3/8", "4/5", "1/8"] }, { a: "4/5", op: "×", b: "2/5", answer: "8/25", choices: ["8/25", "6/10", "8/10", "2/25"] },
 ];
 type Result = "idle" | "correct" | "incorrect";
+const chineseDigits = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+const spokenFraction = (value: string) => {
+  const match = value.match(/^(\d+)\/(\d+)$/);
+  return match ? `${chineseDigits[Number(match[2])] ?? match[2]}分之${chineseDigits[Number(match[1])] ?? match[1]}` : value;
+};
 const Fraction = ({ value }: { value: string }) => value.includes("/") ? <span className="inline-flex flex-col align-middle leading-none"><b className="border-b-2 px-1">{value.split("/")[0]}</b><b className="px-1">{value.split("/")[1]}</b></span> : <span>{value}</span>;
 
 export default function P5FractionVisualPractice() {
   const [index, setIndex] = useState(0); const [result, setResult] = useState<Result>("idle"); const [finished, setFinished] = useState(false); const [mistakes, setMistakes] = useState<number[]>([]);
-  const question = questions[index]; const prompt = `計算 ${question.a} ${question.op} ${question.b}，並把答案約成最簡分數。`;
+  const question = questions[index]; const prompt = `計算 ${spokenFraction(question.a)} ${question.op} ${spokenFraction(question.b)}，並把答案約成最簡分數。`;
   const choose = (value: string) => { if (result !== "idle") return; if (value === question.answer) { setResult("correct"); speakCorrectEncouragement(); return; } setResult("incorrect"); setMistakes((items) => items.includes(index) ? items : [...items, index]); speakTryAgain(); recordPracticeMistake({ key: "p5-fraction-visual", grade: "P5", title: "分數乘除圖形模型", href: "/practice/p5-fraction-visual" }); };
   const next = () => { if (index === 7) { markPracticeCompleted("p5-fraction-visual"); recordDailyPractice("p5-fraction-visual"); setFinished(true); speakCantonese("你完成了八題分數挑戰！"); return; } setIndex((value) => value + 1); setResult("idle"); };
   const restart = () => { setIndex(0); setResult("idle"); setFinished(false); setMistakes([]); };

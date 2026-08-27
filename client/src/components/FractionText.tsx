@@ -9,7 +9,7 @@ export default function FractionText({ value, className }: Props) {
   return <span className={className}>{tokens.map((token, index) => {
     if (index % 3 === 1) {
       const denominator = tokens[index + 1];
-      return <span key={`${token}-${denominator}-${index}`} className="mq-fraction" aria-label={`${token} 分之 ${denominator}`}><sup>{token}</sup><sub>{denominator}</sub></span>;
+      return <span key={`${token}-${denominator}-${index}`} className="mq-fraction" aria-label={`${denominator} 分之 ${token}`}><sup>{token}</sup><sub>{denominator}</sub></span>;
     }
     if (index % 3 === 2) return null;
     return <Fragment key={`${token}-${index}`}>{token}</Fragment>;

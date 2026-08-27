@@ -253,6 +253,15 @@
 .mq-fraction-model span:last-child { border-right: none; }
 .mq-p4-card::before { content: "P4.01 · 分數與小數"; }
 .mq-p4-card::after { border-color: rgba(177,89,121,.3); }
+.mq-p4-practice .mq-question-note + .mq-fraction-model + div > span:first-child { white-space: nowrap; }
+@media (max-width: 640px) {
+  .mq-p4-practice .mq-question-note + .mq-fraction-model + div { gap: .28rem; font-size: clamp(1rem, 4.2vw, 1.25rem); letter-spacing: -.045em; }
+  .mq-p4-practice .mq-question-note + .mq-fraction-model + div > span:first-child { letter-spacing: -.07em; }
+  .mq-practice-card > .flex + h2 { font-size: clamp(1.4rem, 6.4vw, 1.65rem); line-height: 1.25; }
+  .mq-random-card .mq-question-note + p + div { gap: .28rem; font-size: clamp(1rem, 4.2vw, 1.28rem); letter-spacing: -.045em; }
+  .mq-random-card .mq-question-note + p + div > span:first-child { white-space: nowrap; letter-spacing: -.07em; }
+  .mq-random-card .mq-choice { white-space: nowrap; font-size: clamp(.92rem, 4.4vw, 1.12rem); letter-spacing: -.07em; }
+}
 .mq-difficulty-switch { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; }
 .mq-difficulty-switch > button:not(.mq-randomize) { display: grid; grid-template-columns: 28px auto; grid-template-rows: auto auto; column-gap: .45rem; min-width: 126px; padding: .55rem .7rem; border: 1px solid rgba(23,43,63,.13); border-radius: .9rem; background: rgba(255,255,255,.72); text-align: left; transition: transform 180ms cubic-bezier(.23,1,.32,1), border-color 180ms cubic-bezier(.23,1,.32,1); }
 .mq-difficulty-switch > button:not(.mq-randomize):hover { transform: translateY(-2px); border-color: #f05a3c; }

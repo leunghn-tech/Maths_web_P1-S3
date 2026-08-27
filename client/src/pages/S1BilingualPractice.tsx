@@ -29,6 +29,7 @@ const topics = {
 };
 
 const formalQuestionText = {
+  "哪一個較大？": "在 -5 和 -2 之間，哪個數較大？",
   "哪一個較大？": "下列各數中，哪個數最大？",
   "+4 在 0 的哪一邊？": "在數線上，+4 位於 0 的哪一側？",
   "4n 的意思是？": "代數式 4n 表示甚麼？",
@@ -42,6 +43,7 @@ const formalQuestionText = {
   "用尺量長度常取至？": "量度長度時，應按量具的最小刻度記錄讀數。下列哪個是長度單位？",
   "收集班內喜好資料可用？": "若要收集班內同學的喜好資料，最合適的方法是甚麼？",
 };
+const formalEnglishQuestionText = { "Which is greater?": "Which number is greater: -5 or -2?" };
 
 export default function S1BilingualPractice() {
   const id = new URLSearchParams(location.search).get("topic") || "directed";
@@ -52,7 +54,7 @@ export default function S1BilingualPractice() {
   const [status, setStatus] = useState("");
   const [finished, setFinished] = useState(false);
   const sourceQuestion = station.questions[getDifficultyQuestionIndex(difficulty, index, station.questions.length)];
-  const question = { ...sourceQuestion, zh: formalQuestionText[sourceQuestion.zh] ?? sourceQuestion.zh };
+  const question = { ...sourceQuestion, zh: formalQuestionText[sourceQuestion.zh] ?? sourceQuestion.zh, en: formalEnglishQuestionText[sourceQuestion.en] ?? sourceQuestion.en };
   const title = station.title[language === "zh" ? 0 : 1];
   const speak = () => { const text = language === "zh" ? question.zh : question.en; if (language === "zh") speakCantonese(text); else if ("speechSynthesis" in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = "en-HK"; window.speechSynthesis.speak(utterance); } };
   const choose = (value) => { if (value === question.answer) { setStatus("correct"); } else { setStatus("wrong"); recordPracticeMistake({ key: `s1-${id}`, grade: "S1", title: station.title[0], href: `/practice/s1?topic=${id}` }); } };

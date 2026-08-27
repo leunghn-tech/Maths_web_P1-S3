@@ -12,9 +12,10 @@ const routeQuestions = [
   { destination: "校務處", moves: "向右走 2 格", answer: "東", arrow: "→" }, { destination: "音樂室", moves: "向左走 2 格", answer: "西", arrow: "←" },
   { destination: "圖書館", moves: "向上走 2 格", answer: "北", arrow: "↑" }, { destination: "醫療室", moves: "向下走 2 格", answer: "南", arrow: "↓" },
 ];
-const comparisonQuestions = [{ a: 4, b: 2, unit: 5 }, { a: 3, b: 5, unit: 2 }, { a: 6, b: 4, unit: 2 }, { a: 2, b: 5, unit: 5 }, { a: 5, b: 3, unit: 2 }, { a: 4, b: 6, unit: 5 }, { a: 3, b: 2, unit: 10 }, { a: 5, b: 4, unit: 2 }].map((item) => ({ ...item, answer: Math.abs(item.a - item.b) * item.unit }));
+export const comparisonQuestions = [{ a: 4, b: 2, unit: 5 }, { a: 3, b: 5, unit: 2 }, { a: 6, b: 4, unit: 2 }, { a: 2, b: 5, unit: 5 }, { a: 5, b: 3, unit: 2 }, { a: 4, b: 6, unit: 5 }, { a: 3, b: 2, unit: 10 }, { a: 5, b: 4, unit: 2 }].map((item) => ({ ...item, answer: Math.abs(item.a - item.b) * item.unit }));
 type Result = "idle" | "correct" | "incorrect";
 const unique = <T,>(values: T[]) => Array.from(new Set(values));
+export const comparisonChoices = (bar: { answer: number; unit: number }) => unique([bar.answer, bar.answer + bar.unit, bar.answer - bar.unit, bar.answer + bar.unit * 2, bar.answer + bar.unit * 3]).filter((value) => value > 0).slice(0, 4).map((value) => `${value} 人`);
 
 export default function P4AdvancedDataPractice() {
   const mode = location.pathname.includes("route") ? "route" : "bar";
@@ -26,7 +27,7 @@ export default function P4AdvancedDataPractice() {
   const route = routeQuestions[index];
   const bar = comparisonQuestions[index];
   const answer = mode === "route" ? route.answer : `${bar.answer} 人`;
-  const options = mode === "route" ? ["東北", "西北", "東南", "西南", "東", "西", "北", "南"] : unique([bar.answer, bar.answer + bar.unit, Math.max(bar.unit, bar.answer - bar.unit), bar.answer + bar.unit * 2]).map((value) => `${value} 人`);
+  const options = mode === "route" ? ["東北", "西北", "東南", "西南", "東", "西", "北", "南"] : comparisonChoices(bar);
   const prompt = mode === "route" ? `小明由圖書館出發，${route.moves}，到達${route.destination}。${route.destination}在圖書館的哪個方向？` : `甲有 ${bar.a} 格，乙有 ${bar.b} 格，每格代表 ${bar.unit} 人。兩組相差多少人？`;
   const choose = (value: string) => { if (result !== "idle") return; if (value === answer) { setResult("correct"); speakCorrectEncouragement(); return; } setResult("incorrect"); setMistakes((items) => items.includes(index) ? items : [...items, index]); speakTryAgain(); recordPracticeMistake({ key: config.key, grade: "P4", title: config.title, href: config.href }); };
   const next = () => { if (index === 7) { markPracticeCompleted(config.key); recordDailyPractice(config.key); setFinished(true); speakCantonese("你完成了八題挑戰，得到一顆完成星星！"); return; } setIndex((value) => value + 1); setResult("idle"); };

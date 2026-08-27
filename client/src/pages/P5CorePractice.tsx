@@ -6,11 +6,11 @@ import { recordDailyPractice } from "@/lib/dailyPractice";
 import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 
-const fractions = [
-  { equation: "1/2 ＋ 1/3", answer: "5/6", choices: ["5/6", "1/2", "2/3", "3/4"] }, { equation: "1/4 ＋ 1/2", answer: "3/4", choices: ["3/4", "1/2", "2/3", "5/6"] },
-  { equation: "2/3 ＋ 1/6", answer: "5/6", choices: ["5/6", "1/2", "2/3", "3/4"] }, { equation: "3/4 ＋ 1/8", answer: "7/8", choices: ["7/8", "3/4", "5/8", "1/2"] },
-  { equation: "1/5 ＋ 1/2", answer: "7/10", choices: ["7/10", "3/5", "1/2", "4/5"] }, { equation: "2/5 ＋ 1/4", answer: "13/20", choices: ["13/20", "3/5", "7/10", "1/2"] },
-  { equation: "1/3 ＋ 1/4", answer: "7/12", choices: ["7/12", "2/7", "1/2", "5/12"] }, { equation: "3/8 ＋ 1/2", answer: "7/8", choices: ["7/8", "5/8", "3/4", "1/2"] },
+export const fractions = [
+  { equation: "二分之一 ＋ 三分之一", answer: "六分之五", choices: ["六分之五", "二分之一", "三分之二", "四分之三"] }, { equation: "四分之一 ＋ 二分之一", answer: "四分之三", choices: ["四分之三", "二分之一", "三分之二", "六分之五"] },
+  { equation: "三分之二 ＋ 六分之一", answer: "六分之五", choices: ["六分之五", "二分之一", "三分之二", "四分之三"] }, { equation: "四分之三 ＋ 八分之一", answer: "八分之七", choices: ["八分之七", "四分之三", "八分之五", "二分之一"] },
+  { equation: "五分之一 ＋ 二分之一", answer: "十分之七", choices: ["十分之七", "五分之三", "二分之一", "五分之四"] }, { equation: "五分之二 ＋ 四分之一", answer: "二十分之十三", choices: ["二十分之十三", "五分之三", "十分之七", "二分之一"] },
+  { equation: "三分之一 ＋ 四分之一", answer: "十二分之七", choices: ["十二分之七", "七分之二", "二分之一", "十二分之五"] }, { equation: "八分之三 ＋ 二分之一", answer: "八分之七", choices: ["八分之七", "八分之五", "四分之三", "二分之一"] },
 ];
 const areas = [[4, 3], [6, 5], [8, 4], [10, 3], [7, 6], [12, 4], [9, 2], [6, 8]].map(([base, height]) => ({ base, height, answer: base * height / 2 }));
 const datasets = [[4, 6, 3, 7], [3, 9, 5, 4, 8], [8, 4, 6, 5], [7, 5, 4, 8, 6, 9], [2, 10, 6, 4], [6, 6, 8, 3, 5], [9, 3, 6, 7], [5, 7, 4, 8, 6, 3]];

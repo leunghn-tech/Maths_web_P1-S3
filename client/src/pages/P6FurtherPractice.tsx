@@ -9,6 +9,11 @@ const banks = {
   stats: { title: "統計與集中趨勢", tag: "平均數・中位數・眾數・加權", icon: "⌁", q: [["3、5、7 的平均數是多少？", "5"], ["2、4、4、6、8 的眾數是？", "4"], ["1、3、5、7、9 的中位數是？", "5"], ["測驗 80 分佔 40%、90 分佔 60%，加權平均是多少？", "86"], ["10、12、14、16 的平均數是多少？", "13"], ["5、5、6、7、7、7 的眾數是？", "7"], ["2、8、10 的平均數是多少？", "6.67"], ["圓形圖全圓有多少度？", "360°"]] },
 };
 
+const choicesFor = (answer: string, mode: "finance" | "solid" | "stats") => {
+  const distractors = mode === "finance" ? ["$0", "$100", "10%", "$500"] : mode === "solid" ? ["圓形", "三角形", "長方形", "60 cm³"] : ["4", "5", "6", "7", "360°"];
+  return [answer, ...distractors.filter((value) => value !== answer)].slice(0, 4);
+};
+
 export default function P6FurtherPractice() {
   const path = location.pathname;
   const mode = path.includes("finance") ? "finance" : path.includes("solid") ? "solid" : "stats";
@@ -17,7 +22,7 @@ export default function P6FurtherPractice() {
   const [correct, setCorrect] = useState(false);
   const question = station.q[index];
   const answer = question[1];
-  const options = [answer, "4", "$100", "圓形"].filter((value, position, all) => all.indexOf(value) === position);
+  const options = choicesFor(answer, mode);
   const visual = mode === "finance" ? <div className="grid h-full w-full grid-cols-[1fr_auto_1fr] items-center gap-1 px-3 font-mono text-sm font-black"><span className="rounded bg-[#f6be5d] px-1 py-2">$</span><b className="text-[#f05a3c]">−%</b><span className="rounded border-2 border-dashed border-[#4f6eae] px-1 py-2">$</span></div> : mode === "solid" ? <div className="relative grid h-full w-full place-items-center"><span className="absolute size-14 border-2 border-[#172b3f] bg-[#dceaff]"/><span className="absolute size-14 translate-x-3 -translate-y-3 border-2 border-[#172b3f] bg-[#eef5ff]"/><span className="relative font-mono text-xs">πr²h</span></div> : <div className="flex h-full items-end justify-center gap-1 pb-4">{[30, 48, 70, 42].map((height, index) => <i key={index} className="w-3 bg-[#7c6cb0]" style={{ height }} />)}</div>;
   const choose = (value: string) => { const yes = value === answer; setCorrect(yes); if (!yes) recordPracticeMistake({ key: `p6-${mode}`, grade: "P6", title: station.title, href: path }); };
   const next = () => { setCorrect(false); setIndex(index === 7 ? 0 : index + 1); };

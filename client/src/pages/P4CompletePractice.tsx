@@ -6,11 +6,15 @@ import { recordDailyPractice } from "@/lib/dailyPractice";
 import { recordPracticeMistake } from "@/lib/reviewRecommendations";
 import { speakCantonese, speakCorrectEncouragement, speakTryAgain } from "@/lib/speech";
 
-const quadrilateralQuestions = [
-  { feature: "四條邊一樣長，四個角都是直角", answer: "正方形", symbol: "□" }, { feature: "兩組對邊一樣長，四個角都是直角，但四條邊不全相等", answer: "長方形", symbol: "▭" },
-  { feature: "兩組對邊分別平行，沒有直角", answer: "平行四邊形", symbol: "▱" }, { feature: "只有一組對邊平行", answer: "梯形", symbol: "⏢" },
-  { feature: "四條邊一樣長，四個角都是直角", answer: "正方形", symbol: "□" }, { feature: "兩組對邊一樣長，四個角都是直角，但四條邊不全相等", answer: "長方形", symbol: "▭" },
-  { feature: "兩組對邊分別平行，沒有直角", answer: "平行四邊形", symbol: "▱" }, { feature: "只有一組對邊平行", answer: "梯形", symbol: "⏢" },
+export const quadrilateralQuestions = [
+  { feature: "四條邊一樣長，四個角都是直角", answer: "正方形", symbol: "□" },
+  { feature: "兩組對邊一樣長，四個角都是直角，但四條邊不全相等", answer: "長方形", symbol: "▭" },
+  { feature: "兩組對邊分別平行，沒有直角", answer: "平行四邊形", symbol: "▱" },
+  { feature: "只有一組對邊平行，另外兩邊不平行", answer: "梯形", symbol: "⏢" },
+  { feature: "長和闊相等，四個角都是直角", answer: "正方形", symbol: "□" },
+  { feature: "長和闊不同，四個角都是直角", answer: "長方形", symbol: "▭" },
+  { feature: "相對的兩組邊分別平行，而且相對兩邊一樣長", answer: "平行四邊形", symbol: "▱" },
+  { feature: "上底和下底平行，兩腰不必平行", answer: "梯形", symbol: "⏢" },
 ];
 const barQuestions = [{ blocks: 4, unit: 2 }, { blocks: 3, unit: 5 }, { blocks: 5, unit: 2 }, { blocks: 4, unit: 5 }, { blocks: 2, unit: 10 }, { blocks: 3, unit: 10 }, { blocks: 6, unit: 2 }, { blocks: 4, unit: 10 }].map((item) => ({ ...item, answer: item.blocks * item.unit }));
 const shoppingQuestions = [
