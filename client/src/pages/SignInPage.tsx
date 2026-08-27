@@ -50,7 +50,7 @@ export default function SignInPage() {
   };
 
   const studentLogin = trpc.auth.loginStudent.useMutation({
-    onSuccess: (data) => void afterLogin("/", data.sessionToken),
+    onSuccess: (data) => void afterLogin("/dashboard", data.sessionToken),
     onError: (error) => toast.error(error.message),
   });
 
@@ -106,7 +106,7 @@ export default function SignInPage() {
   });
 
   useEffect(() => {
-    if (user && !recoveryCode) setLocation(user.role === "admin" ? "/teacher" : "/");
+    if (user && !recoveryCode) setLocation(user.role === "admin" ? "/teacher" : "/dashboard");
   }, [recoveryCode, setLocation, user]);
 
   const pending = studentLogin.isPending || studentRegister.isPending || teacherLogin.isPending || requestReset.isPending || resetPassword.isPending;
@@ -189,7 +189,7 @@ export default function SignInPage() {
           </div>
 
           {recoveryCode ? (
-            <RecoveryCode code={recoveryCode} onContinue={() => { setRecoveryCode(null); setLocation("/"); }} />
+            <RecoveryCode code={recoveryCode} onContinue={() => { setRecoveryCode(null); setLocation("/dashboard"); }} />
           ) : (
             <form onSubmit={submit} className="mt-7 grid gap-4">
               {mode === "student-register" && (

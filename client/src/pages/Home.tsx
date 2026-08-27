@@ -3,7 +3,7 @@
  */
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { toast } from "sonner";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import {
   ArrowRight,
   BookOpen,
@@ -231,6 +231,7 @@ export default function Home() {
   // startLogin() during render (no href={startLogin()}) — it mints a one-time
   // nonce cookie and must run only at the moment of navigation.
   const { user, loading, isAuthenticated, logout } = useAuth();
+  const [, setLocation] = useLocation();
   const accountName = user?.name?.trim() || "我的帳戶";
   const handleLogout = async () => {
     try { await logout(); toast.success("已登出帳戶，本機練習仍可繼續使用。"); }
@@ -254,6 +255,11 @@ export default function Home() {
   const [pendingTarget, setPendingTarget] = useState(() => getDailyPracticeProgress().target);
   const [pinnedPractices, setPinnedPractices] = useState<string[]>(() => getPinnedPractices());
   const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    if (loading) return;
+    setLocation(!isAuthenticated ? "/sign-in" : user?.role === "admin" ? "/teacher" : "/dashboard");
+  }, [isAuthenticated, loading, setLocation, user?.role]);
 
   useEffect(() => {
     const syncCompletion = () => setCompletedPractices(getCompletedPractices());
@@ -304,6 +310,9 @@ export default function Home() {
     });
   };
 
+  if (loading || !isAuthenticated) return <main className="grid min-h-screen place-items-center bg-[#f8f5ed] font-bold text-[#172b3f]">正在前往登入頁…</main>;
+  if (user?.role === "admin") return <main className="grid min-h-screen place-items-center bg-[#f8f5ed] font-bold text-[#172b3f]">正在前往教師管理頁…</main>;
+
   return (
     <div className="mq-app min-h-screen overflow-x-clip bg-[#f8f5ed] text-[#172b3f]">
       <header className="mq-header sticky top-0 z-50 border-b border-[#172b3f]/10 bg-[#f8f5ed]/92 backdrop-blur-xl dark:border-white/10 dark:bg-[#111c28]/92">
@@ -335,7 +344,7 @@ export default function Home() {
             <button onClick={toggleTheme} className="mq-theme-switch grid size-10 place-items-center rounded-full border border-[#172b3f]/15 bg-white/70 text-[#172b3f] transition hover:-translate-y-0.5 hover:border-[#f05a3c] hover:text-[#f05a3c] dark:border-white/15 dark:bg-white/10 dark:text-white" aria-label={theme === "light" ? "切換至深色模式" : "切換至淺色模式"} title={theme === "light" ? "深色模式" : "淺色模式"}>
               {theme === "light" ? <Moon className="size-[17px]" /> : <Sun className="size-[18px]" />}
             </button>
-            {isAuthenticated ? <><Link href={user?.role === "admin" ? "/teacher" : "/account"} className="hidden max-w-28 truncate text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block" title={accountName}>{accountName}</Link><button onClick={handleLogout} className="hidden text-sm font-bold text-[#617286] transition-colors hover:text-[#f05a3c] dark:text-[#b7c8ce] sm:block">登出</button></> : <Link href="/sign-in" className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block">{loading ? "讀取帳戶…" : "登入／註冊"}</Link>}
+            {isAuthenticated ? <><Link href="/account" className="hidden max-w-28 truncate text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block" title={accountName}>{accountName}</Link><button onClick={handleLogout} className="hidden text-sm font-bold text-[#617286] transition-colors hover:text-[#f05a3c] dark:text-[#b7c8ce] sm:block">登出</button></> : <Link href="/sign-in" className="hidden text-sm font-bold text-[#172b3f] transition-colors hover:text-[#f05a3c] dark:text-white sm:block">{loading ? "讀取帳戶…" : "登入／註冊"}</Link>}
             <a href="#path" className="mq-start hidden items-center gap-2 rounded-full bg-[#f05a3c] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_0_#c84932] transition duration-200 hover:-translate-y-0.5 active:translate-y-0 active:shadow-none sm:flex">開始練習 <ArrowRight className="size-4" /></a>
             <button onClick={() => setMenuOpen((open) => !open)} className="grid size-10 place-items-center rounded-full border border-[#172b3f]/15 lg:hidden" aria-label="開啟選單" aria-expanded={menuOpen}>
               {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -347,7 +356,7 @@ export default function Home() {
             <div className="mx-auto grid max-w-[1280px] gap-2 text-sm font-bold">
               <a onClick={() => setMenuOpen(false)} href="#path" className="rounded-xl px-3 py-3 hover:bg-white">學習路徑</a>
               <a onClick={() => setMenuOpen(false)} href="#curriculum" className="rounded-xl px-3 py-3 hover:bg-white">課程地圖</a>
-              {isAuthenticated ? <Link onClick={() => setMenuOpen(false)} href={user?.role === "admin" ? "/teacher" : "/account"} className="rounded-xl px-3 py-3 hover:bg-white">我的帳戶與同步</Link> : <Link onClick={() => setMenuOpen(false)} href="/sign-in" className="rounded-xl px-3 py-3 text-left hover:bg-white">登入／註冊以備份進度</Link>}
+              {isAuthenticated ? <Link onClick={() => setMenuOpen(false)} href="/account" className="rounded-xl px-3 py-3 hover:bg-white">我的帳戶與同步</Link> : <Link onClick={() => setMenuOpen(false)} href="/sign-in" className="rounded-xl px-3 py-3 text-left hover:bg-white">登入／註冊以備份進度</Link>}
               {isAuthenticated && <button onClick={() => { setMenuOpen(false); void handleLogout(); }} className="rounded-xl px-3 py-3 text-left hover:bg-white">登出</button>}
               <button onClick={() => { setMenuOpen(false); setResetOpen(true); }} className="rounded-xl px-3 py-3 text-left text-[#f05a3c] hover:bg-white">重設進度</button>
             </div>

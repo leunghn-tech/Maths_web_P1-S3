@@ -13,6 +13,7 @@ const assert = (condition, message) => {
 };
 
 const home = read("client/src/pages/Home.tsx");
+const studentHome = read("client/src/pages/StudentLearningHome.tsx");
 const app = read("client/src/App.tsx");
 const homeRoutes = [...home.matchAll(/href: "([^"?]+)(?:\?[^\"]*)?"/g)].map((match) => match[1]);
 const appRoutes = new Set([...app.matchAll(/path="([^\"]+)"/g)].map((match) => match[1]));
@@ -20,6 +21,10 @@ for (const route of [...new Set(homeRoutes)]) assert(appRoutes.has(route), `首�
 assert(!app.includes('/practice/s1') && !app.includes('/practice/s2') && !app.includes('/practice/s3'), "應已移除全部中學作答路由");
 assert(!home.includes('grade: "S1"') && !home.includes('grade: "S2"') && !home.includes('grade: "S3"'), "首頁不應保留中一至中三年級資料或課題卡");
 assert(home.includes("由小一至小六，所有年級都可直接點選。") && !home.includes("由小一至中三"), "首頁年級說明必須清楚標示小一至小六");
+assert(home.includes('setLocation(!isAuthenticated ? "/sign-in"'), "根目錄必須在未登入時導向學生登入頁");
+assert(appRoutes.has("/dashboard"), "登入學生的個人學習首頁路徑必須已註冊");
+assert(studentHome.includes("trpc.learning.overview.useQuery"), "學生個人學習首頁必須讀取帳戶的雲端學習資料");
+assert(studentHome.includes("getPriorityReviewItems"), "學生個人學習首頁必須按錯題優先顯示重溫課題");
 
 const p1Routes = [
   "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",

@@ -10,6 +10,7 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import StudentLearningHome from "./pages/StudentLearningHome";
 import P1Practice from "./pages/P1Practice";
 import P1NumbersPractice from "./pages/P1NumbersPractice";
 import P1TimePractice from "./pages/P1TimePractice";
@@ -68,6 +69,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/dashboard" component={StudentLearningHome} />
       <Route path="/practice/p1-add-subtract" component={P1Practice} />
       <Route path="/practice/p1-numbers" component={P1NumbersPractice} />
       <Route path="/practice/p1-time" component={P1TimePractice} />
