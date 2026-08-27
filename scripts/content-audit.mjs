@@ -19,6 +19,7 @@ const appRoutes = new Set([...app.matchAll(/path="([^\"]+)"/g)].map((match) => m
 for (const route of [...new Set(homeRoutes)]) assert(appRoutes.has(route), `首頁路徑未註冊：${route}`);
 assert(!app.includes('/practice/s1') && !app.includes('/practice/s2') && !app.includes('/practice/s3'), "應已移除全部中學作答路由");
 assert(!home.includes('grade: "S1"') && !home.includes('grade: "S2"') && !home.includes('grade: "S3"'), "首頁不應保留中一至中三年級資料或課題卡");
+assert(home.includes("由小一至小六，所有年級都可直接點選。") && !home.includes("由小一至中三"), "首頁年級說明必須清楚標示小一至小六");
 
 const p1Routes = [
   "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",

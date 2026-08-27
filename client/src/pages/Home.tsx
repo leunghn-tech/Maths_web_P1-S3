@@ -406,7 +406,7 @@ export default function Home() {
             <div>
               <p className="font-mono text-xs font-bold tracking-[0.17em] text-[#f05a3c]">CHOOSE YOUR STATION — 02</p>
               <h2 className="mt-3 text-3xl font-black tracking-[-0.055em] md:text-4xl">你的學習路徑，從年級開始。</h2>
-              <p className="mt-2 text-sm font-bold text-[#617286]">由小一至中三，所有年級都可直接點選。</p>
+              <p className="mt-2 text-sm font-bold text-[#617286]">由小一至小六，所有年級都可直接點選。</p>
             </div>
           </div>
 
