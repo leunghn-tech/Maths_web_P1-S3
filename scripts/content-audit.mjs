@@ -371,8 +371,8 @@ const s3Lab = read("client/src/pages/S3LabPlus.tsx");
 assert(s3Lab.includes("height / Math.tan(angle * Math.PI / 180)"), "S3 反算三角學站須以高度除正切求水平距離");
 assert(s3Lab.includes("Math.atan(height / distance)"), "S3 反算三角學站須以反正切求角度");
 assert(s3Lab.includes("bag.filter((_, i) => i !== pick)"), "S3 自訂抽樣袋必須在不放回抽樣後移除已抽球");
-assert(s3Lab.includes("principal * Math.pow(1 + monthlyRate, months)"), "S3 儲蓄目標站須以複利公式計算本金增長");
-assert(s3Lab.includes("monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate)"), "S3 每月供款模擬須使用年金終值公式");
+assert(!s3Lab.includes("monthly") && !s3Lab.includes("Savings Goal"), "S3 不應保留未明列於初中課程的每月供款或儲蓄目標延伸站");
+assert(home.includes('href: "/practice/s3-sim?topic=finance"') && home.includes('detail: "百分法應用"'), "S3 財務入口須指向複利與折舊的百分法核心站");
 
 if (failures.length) {
   console.error("Maths Quest content audit failed:");
