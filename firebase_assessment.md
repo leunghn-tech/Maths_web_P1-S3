@@ -24,6 +24,8 @@ Firebase 專案 **MathsQuest-Primary**（`mathsquest-primary`）獨立於任何�
 
 舊帳戶（用戶名稱／密碼）在原有 MySQL 系統，不能由 Firebase Hosting 直接核對。因此，新學生與教師流程可脫離 Manus，而舊帳戶搬遷仍需一次性的安全處置：保留舊入口一段期限，或以可審核的一次性匯出遷移學習資料。無論採用哪個方案，舊密碼不可遷移。
 
+沙盒重設後，已以公開 HTTP 回應直接核對 `https://mathsquest-primary.web.app/sign-in` 的正式前端資產，確認仍包含學生電郵登入、唯一 Google 教師登入及 `studentLearning` 同步程式。重設同時清除了本沙盒的 Firebase CLI 登入狀態；因此，恢復後的原始碼已完成測試、檢查點及 GitHub 同步，但待重新取得 Firebase CLI 授權後才可再次部署並以真實教師身份測試。
+
 ## 維護優先次序
 
 在公開前應定期檢視 Firebase Authentication 使用者數、Firestore 讀寫與 Hosting 流量。日後可評估 Firebase App Check 與 Firebase API key 的應用限制；兩者不應在未確認對現有登入及課堂裝置相容性的情況下直接啟用。
