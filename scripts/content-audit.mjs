@@ -25,12 +25,12 @@ assert(home.includes("由小一至小六，所有年級都可直接點選。") &
 assert(home.includes("if (!isAuthenticated)") && home.includes('setLocation("/sign-in")'), "根目錄必須在未登入時導向學生登入頁");
 assert(appRoutes.has("/dashboard"), "登入學生的個人學習首頁路徑必須已註冊");
 assert(appRoutes.has("/library"), "學生年級題目庫路徑必須已註冊");
-assert(studentHome.includes("trpc.learning.overview.useQuery"), "學生個人學習首頁必須讀取帳戶的雲端學習資料");
+assert(studentHome.includes("isFirebaseUser") && studentHome.includes("getLocalLearningSnapshot"), "學生個人學習首頁必須在 Firebase 登入時讀取已同步的學習快照，而非要求舊 API");
 assert(studentHome.includes("getPriorityReviewItems"), "學生個人學習首頁必須按錯題優先顯示重溫課題");
 assert(studentHome.includes('["P1", "P2", "P3", "P4", "P5", "P6"]') && studentHome.includes('href="/library#path"'), "學生個人學習首頁必須提供 P1 至 P6 題目庫選擇");
 assert(home.includes('window.location.hash === "#path"') && home.includes('setLocation("/library#path")'), "原有返回題目庫連結必須開啟已選年級的題目庫");
-assert(!signIn.includes('setUsername("admin")') && !signIn.includes('value="admin"'), "教師登入頁不應固定或預填 admin 帳戶名稱");
-assert(!signIn.includes("教師帳戶固定為 admin") && signIn.includes("teacherLogin.mutate({ username, password })"), "教師登入必須使用學生輸入的帳戶名稱，且不顯示固定 admin 提示");
+assert(signIn.includes("createUserWithEmailAndPassword") && signIn.includes("signInWithEmailAndPassword") && signIn.includes("sendPasswordResetEmail"), "學生登入頁必須使用 Firebase 電郵／密碼註冊、登入及安全重設流程");
+assert(signIn.includes("signInWithPopup") && signIn.includes("isFirebaseTeacherEmail") && !signIn.includes("teacherLogin.mutate"), "教師登入必須使用唯一 Firebase Google 身份，且不再呼叫舊教師帳密 API");
 
 const p1Routes = [
   "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",

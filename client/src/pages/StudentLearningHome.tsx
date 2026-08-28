@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { getPriorityReviewItems, getStudentStartHref } from "@/lib/studentDashboard";
+import { getLocalLearningSnapshot } from "@/lib/localLearningSnapshot";
 
 function formatDate(value: Date | string) {
   return new Intl.DateTimeFormat("zh-HK", { month: "short", day: "numeric" }).format(new Date(value));
@@ -12,20 +13,22 @@ function formatDate(value: Date | string) {
 
 export default function StudentLearningHome() {
   const [, setLocation] = useLocation();
-  const { user, loading, isAuthenticated, logout } = useAuth();
-  const overview = trpc.learning.overview.useQuery(undefined, { enabled: isAuthenticated && user?.role === "user" });
+  const { user, loading, isAuthenticated, isFirebaseUser, logout } = useAuth();
+  const overview = trpc.learning.overview.useQuery(undefined, { enabled: isAuthenticated && user?.role === "user" && !isFirebaseUser });
 
   useEffect(() => {
     if (!loading && !isAuthenticated) setLocation("/sign-in");
     if (!loading && user?.role === "admin") setLocation("/teacher");
   }, [isAuthenticated, loading, setLocation, user?.role]);
 
-  const progress = overview.data?.progress ?? [];
-  const reviews = useMemo(() => getPriorityReviewItems(overview.data?.reviewRecords ?? []), [overview.data?.reviewRecords]);
-  const correctAnswers = progress.reduce((total, item) => total + item.bestScore, 0);
-  const missedAnswers = (overview.data?.reviewRecords ?? []).reduce((total, item) => total + item.misses, 0);
+  const firebaseSnapshot = getLocalLearningSnapshot();
+  const progress = isFirebaseUser ? firebaseSnapshot.completedPractices.map((practiceKey) => ({ practiceKey })) : overview.data?.progress ?? [];
+  const rawReviews = isFirebaseUser ? firebaseSnapshot.reviewRecords.map((record) => ({ practiceKey: record.key, grade: record.grade, title: record.title, href: record.href, misses: record.misses, updatedAt: new Date(record.updatedAt) })) : overview.data?.reviewRecords ?? [];
+  const reviews = useMemo(() => getPriorityReviewItems(rawReviews), [rawReviews]);
+  const correctAnswers = isFirebaseUser ? 0 : (overview.data?.progress ?? []).reduce((total, item) => total + item.bestScore, 0);
+  const missedAnswers = rawReviews.reduce((total, item) => total + item.misses, 0);
   const attempts = correctAnswers + missedAnswers;
-  const accuracy = attempts ? Math.round((correctAnswers / attempts) * 100) : null;
+  const accuracy = !isFirebaseUser && attempts ? Math.round((correctAnswers / attempts) * 100) : null;
   const savedGrade = typeof window === "undefined" ? null : window.localStorage.getItem("mq-selected-primary-grade");
   const selectedGrade = /^P[1-6]$/.test(savedGrade ?? "") ? savedGrade! : "P1";
   const defaultStartHref = getStudentStartHref(selectedGrade);

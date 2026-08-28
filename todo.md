@@ -787,3 +787,11 @@
 - [x] 在學生個人學習首頁加入 P1–P6 年級選擇及已選年級的題目庫。
 - [x] 讓作答頁與完成頁的返回題目庫入口回到已選年級題目庫。
 - [x] 驗證跨年級選擇、作答後返回及手機版流程，並同步更新 GitHub 與預覽版本。
+
+# Firebase-first 獨立運作與沙盒重設恢復
+
+- [ ] 恢復 Firebase Web App、Authentication、Firestore 與 Hosting 的版本化設定及學生電郵登入流程原始碼。
+- [ ] 恢復學生學習快照跨裝置同步、UID 隔離、錯題與完成進度合併機制，且不傳送或保存學生密碼。
+- [ ] 恢復唯一 `justsayhi0915@gmail.com` Google 教師身份及 Firebase-only 唯讀學生摘要／詳情頁。
+- [ ] 恢復並驗證 Firestore 學生 UID 隔離、教師唯讀與禁止刪除規則，不開啟任何付費 Firebase 服務。
+- [ ] 完成 Firebase Hosting 的桌面／手機流程驗證、文件更新、檢查點及非破壞性 GitHub 同步。

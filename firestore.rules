@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function ownsStudentDocument(uid) { return signedIn() && request.auth.uid == uid; }
+    function isTeacher() { return signedIn() && request.auth.token.email == 'justsayhi0915@gmail.com'; }
+    match /studentLearning/{uid} {
+      allow get: if ownsStudentDocument(uid) || isTeacher();
+      allow list: if isTeacher();
+      allow create: if ownsStudentDocument(uid) && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if ownsStudentDocument(uid) && request.resource.data.ownerUid == resource.data.ownerUid;
+      allow delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
