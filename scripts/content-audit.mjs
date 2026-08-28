@@ -16,6 +16,8 @@ const home = read("client/src/pages/Home.tsx");
 const studentHome = read("client/src/pages/StudentLearningHome.tsx");
 const signIn = read("client/src/pages/SignInPage.tsx");
 const app = read("client/src/App.tsx");
+const teacherDashboard = read("client/src/pages/TeacherDashboard.tsx");
+const cloudSync = read("client/src/components/CloudLearningSync.tsx");
 const homeRoutes = [...home.matchAll(/href: "([^"?]+)(?:\?[^\"]*)?"/g)].map((match) => match[1]);
 const appRoutes = new Set([...app.matchAll(/path="([^\"]+)"/g)].map((match) => match[1]));
 for (const route of [...new Set(homeRoutes)]) assert(appRoutes.has(route), `首頁路徑未註冊：${route}`);
@@ -31,6 +33,8 @@ assert(studentHome.includes('["P1", "P2", "P3", "P4", "P5", "P6"]') && studentHo
 assert(home.includes('window.location.hash === "#path"') && home.includes('setLocation("/library#path")'), "原有返回題目庫連結必須開啟已選年級的題目庫");
 assert(signIn.includes("createUserWithEmailAndPassword") && signIn.includes("signInWithEmailAndPassword") && signIn.includes("sendPasswordResetEmail"), "學生登入頁必須使用 Firebase 電郵／密碼註冊、登入及安全重設流程");
 assert(signIn.includes("signInWithPopup") && signIn.includes("isFirebaseTeacherEmail") && !signIn.includes("teacherLogin.mutate"), "教師登入必須使用唯一 Firebase Google 身份，且不再呼叫舊教師帳密 API");
+assert(!teacherDashboard.includes("trpc.") && teacherDashboard.includes("loadFirebaseTeacherStudents"), "Firebase 教師後台只能讀取 Firestore 學習摘要，不可呼叫舊教師 API");
+assert(cloudSync.includes("shouldSyncFirebaseLearning") && cloudSync.includes('user?.role !== "admin"'), "雲端同步不可把 Firebase 教師身份當作學生文件寫入者");
 
 const p1Routes = [
   "/practice/p1-add-subtract", "/practice/p1-numbers", "/practice/p1-time", "/practice/p1-number-line",
