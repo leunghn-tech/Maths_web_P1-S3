@@ -796,3 +796,4 @@
 - [x] 恢復並驗證 Firestore 學生 UID 隔離、教師唯讀與禁止刪除規則，不開啟任何付費 Firebase 服務。
 - [ ] 完成 Firebase Hosting 的桌面／手機流程驗證、文件更新、檢查點及非破壞性 GitHub 同步。
 - [ ] 在新沙盒的 Firebase CLI 再次取得 `mathsquest-primary` 發布授權後，將已恢復原始碼發布至正式 Hosting，並以指定 Google 教師身份完成實機唯讀驗證。
+- [x] 在不要求使用者操作終端機下完成內部測試、建置、公開 Firebase 資產核對及授權限制記錄；不虛報尚未重新發布的版本。
